@@ -1,1 +1,1 @@
-# cross-cosmo
+# CrossCosmo
