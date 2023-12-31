@@ -41,3 +41,5 @@ class LaFargeWord(lafarge_word_db.Entity):
 
 
 lafarge_word_db.generate_mapping(create_tables=True)
+
+

@@ -3,6 +3,7 @@
 
 # Expose submodules
 from . import (
+    digraph,
     letter_utils,
     wordlists
 )
