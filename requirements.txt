@@ -6,5 +6,8 @@ numpy
 pandas
 pony
 pydantic
+pygtrie
+rapidfuzz
 requests
+thefuzz
 tqdm
