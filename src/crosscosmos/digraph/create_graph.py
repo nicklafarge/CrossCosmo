@@ -22,8 +22,6 @@ pony.options.CUT_TRACEBACK = False
 ls = LetterSet(3)
 xg = ls.create_graph()
 
-def has_numbers(inputString: str):
-    return any(char.isdigit() for char in inputString)
 
 n_words = 100
 l3 = [w for w in LaFargeWord.select() if len(w.word) == 3 and not has_numbers(w.word)]

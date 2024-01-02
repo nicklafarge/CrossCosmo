@@ -3,8 +3,9 @@
 
 # Expose submodules
 from . import (
+    data_models,
     digraph,
-    letter_utils,
+    smatch,
     wordlists
 )
 
