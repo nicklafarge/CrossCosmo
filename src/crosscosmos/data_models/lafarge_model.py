@@ -39,7 +39,24 @@ class LaFargeWord(lafarge_word_db.Entity):
     notes = orm.Optional(str)
     is_word = orm.Optional(bool)
 
+    def __repr__(cls):
+        return f"LaFargeWord[\'{cls.word}\', {cls.collab_score}]"
+
+    def verbose(cls, override_xword=True):
+        if override_xword:
+            xword_link = f"https://crosswordtracker.com/answer/{cls.word.lower()}/"
+        else:
+            xword_link = cls.xword_link
+        return f"LaFargeWord[\'{cls.word}\', Collab={cls.collab_score}, Diehl={cls.diehl_score}, xword={xword_link}]"
+# class LaFargeWordMeta(type):
+#     def __repr__(cls):
+#         return f"LaFargeWord[\'{cls.word}\', {cls.collab_score:%i}]"
+
+
+# def laf_word_repr(w: LaFargeWord) -> str:
+#     return
+
+
+# LaFargeWord.__metaclass__ = LaFargeWordMeta
 
 lafarge_word_db.generate_mapping(create_tables=True)
-
-
