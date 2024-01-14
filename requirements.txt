@@ -1,3 +1,4 @@
+arcade
 beautifulsoup4
 fastapi
 matplotlib

@@ -13,7 +13,7 @@ import crosscosmos as xc
 logger = logging.getLogger(__name__)
 
 # xd database (see crosscosmos/wordlists/parse_xd.py)
-lafarge_db_path = xc.crosscosmos_root / "word_dbs" / "lafarge_words.sqlite"
+lafarge_db_path = xc.crosscosmos_project_root / "word_dbs" / "lafarge_words.sqlite"
 lafarge_word_db = orm.Database()
 lafarge_word_db.bind(
     provider="sqlite",

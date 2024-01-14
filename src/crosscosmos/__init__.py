@@ -5,10 +5,13 @@
 from . import (
     data_models,
     digraph,
+    gui,
+    letter_utils,
+    log_config,
+    standards,
     smatch,
     wordlists
 )
-
 # Retrieve the explicitly exported variables from crosscosmos.config
 from .config import *
 

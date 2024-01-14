@@ -13,7 +13,7 @@ import crosscosmos as xc
 logger = logging.getLogger(__name__)
 
 # xd database (see crosscosmos/wordlists/parse_xd.py)
-xd_word_db_path = xc.crosscosmos_root / "word_dbs" / "xd_words.sqlite"
+xd_word_db_path = xc.crosscosmos_project_root / "word_dbs" / "xd_words.sqlite"
 xd_word_db = orm.Database()
 xd_word_db.bind(
     provider="sqlite",

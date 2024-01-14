@@ -13,7 +13,7 @@ import crosscosmos as xc
 logger = logging.getLogger(__name__)
 
 # diehl database (see crosscosmos/wordlists/parse_diehl.py)
-diehl_db_path = xc.crosscosmos_root / "word_dbs" / "diehl_words.sqlite"
+diehl_db_path = xc.crosscosmos_project_root / "word_dbs" / "diehl_words.sqlite"
 diehl_word_db = orm.Database()
 diehl_word_db.bind(
     provider="sqlite",

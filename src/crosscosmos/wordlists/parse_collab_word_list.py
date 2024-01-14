@@ -17,7 +17,7 @@ from crosscosmos.wordlists import parse_word_score
 
 logger = logging.getLogger(__name__)
 
-collab_word_list_path = xc.crosscosmos_root / 'resources' / 'collab_word_list.csv'
+collab_word_list_path = xc.crosscosmos_project_root / 'resources' / 'collab_word_list.csv'
 
 parse_word_score.parse_word_score(collab_word_list_path,
                                   collab_word_list_model.CollabWordListWord,
