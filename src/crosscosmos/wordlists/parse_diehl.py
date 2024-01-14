@@ -22,7 +22,7 @@ from crosscosmos.wordlists import parse_word_score
 logger = logging.getLogger(__name__)
 
 
-diehl_path = xc.crosscosmos_root / 'resources' / 'broda_trimmed_by_diehl_2020.csv'
+diehl_path = xc.crosscosmos_project_root / 'resources' / 'broda_trimmed_by_diehl_2020.csv'
 
 
 parse_word_score.parse_word_score(diehl_path,

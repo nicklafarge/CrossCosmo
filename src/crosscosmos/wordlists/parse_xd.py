@@ -18,7 +18,7 @@ csv.field_size_limit(sys.maxsize)
 
 logger = logging.getLogger(__name__)
 
-xd_path = xc.crosscosmos_root / 'resources' / 'xd_0_to_2m.tsv'
+xd_path = xc.crosscosmos_project_root / 'resources' / 'xd_0_to_2m.tsv'
 # xd_path = xc.crosscosmos_root / 'resources' / 'xd_4m_onward.tsv'
 i = 0
 for row in xc.wordlists.parsing_utils.read_csv_generator(xd_path, "\t"):
