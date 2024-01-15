@@ -20,7 +20,10 @@ xc.gui.setup.create_gui(config)
 # Begin render section
 arcade.start_render()
 
-xc.gui.setup.create_grid(config, xc.standards.GridSize.NYT_REGULAR.value)
+# Create the grid
+# xc.gui.setup.create_grid(config, xc.standards.GridSize.NYT_SUNDAY.value)
+# xc.gui.setup.create_grid(config, xc.standards.GridSize.NYT_REGULAR.value)
+xc.gui.setup.create_grid(config, (6,6))
 
 # Finish render section
 arcade.finish_render()
