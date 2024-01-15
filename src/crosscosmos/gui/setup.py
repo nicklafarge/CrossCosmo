@@ -19,9 +19,17 @@ def create_gui(config: ConfigParser):
 
 
 def create_grid(config: ConfigParser, gridsize: Tuple):
+    total_height = config.getint('window', 'height')
+
     bottom = config.getint('grid', 'bottom')
     left = config.getint('grid', 'left')
-    x = config.getint('grid', 'square_size')
+    top = config.getint('grid', 'top')
+    # x = config.getint('grid', 'square_size')
+
+    height = total_height - (top + bottom)
+    x = height / gridsize[1]
+    print(f'{height=}')
+    print(f'{x=}')
 
     for i in range(gridsize[0]):
         dx = i * x
