@@ -4,7 +4,8 @@ Defines a Grid class, interfacing between the data and gui laters
 """
 
 # Standard library
-from typing import Tuple
+from enum import Enum
+from typing import Tuple, Union
 
 # Third-party
 from matplotlib import pyplot as plt
@@ -15,6 +16,40 @@ import crosscosmos as xc
 from crosscosmos.data_models.pydantic_model import Letter, Word
 
 
+class CellStatus(Enum):
+    EMPTY = 0
+    SET = 1
+    LOCKED = 2
+    BLACK = 3
+
+
+class Cell(object):
+    def __init__(self,
+                 status: CellStatus = CellStatus.EMPTY,
+                 value: str = "",
+                 matrix_index: Union[Tuple[int, int], None] = None,
+                 gui_coordinates: Union[Tuple[float, float], None] = None
+                 ):
+        self.status = status
+        self.value = value
+        self.matrix_index = matrix_index
+        self.gui_coordinates = gui_coordinates
+
+    def update(self, value: str):
+        if value == " " or value == "":
+            self.status = CellStatus.EMPTY
+            self.value = ""
+        elif value is None:
+            self.status = CellStatus.BLACK
+            self.value = None
+        else:
+            self.status = CellStatus.SET
+            self.value = value
+
+    def __repr__(self):
+        return f"Cell(val='{self.value}', loc={self.matrix_index})"
+
+
 class Grid(object):
 
     def __init__(self, grid_size: Tuple[int, int], corpus: xc.corpus.Corpus):
@@ -23,15 +58,17 @@ class Grid(object):
             raise ValueError("Currently only even numbers are supported for grids")
 
         self.grid_size = grid_size
+        self.row_count = self.grid_size[0]
+        self.col_count = self.grid_size[1]
+
         self.corpus = corpus
 
-        self.grid = np.full(self.grid_size, ' ', dtype='U1')
-        # self.grid = []
-        # for i in range(grid_size[0]):
-        #     self.grid.append([])
-        #     for j in range(grid_size[1]):
-        #         self.grid[i].append('')
-
+        # self.grid = np.full(self.grid_size, ' ', dtype='U1')
+        default = [Cell() for _ in range(self.row_count * self.col_count)]
+        self.grid = np.full(self.grid_size, None, dtype=object)
+        for i in range(self.row_count):
+            for j in range(self.col_count):
+                self.grid[i, j] = Cell(matrix_index=(i, j))
         self.center = [((self.grid_size[0] - 1) / 2), ((self.grid_size[1] - 1) / 2)]
 
     def __repr__(self):
@@ -45,7 +82,7 @@ class Grid(object):
         return self.grid[*x]
 
     def __setitem__(self, x: Tuple[int, int], value: str):
-        self.set_grid(*x, value)
+        self.set_grid(x[0], x[1], value)
 
     def set_grid(self, x: int, y: int, value: str):
         # Check index
@@ -61,11 +98,7 @@ class Grid(object):
             raise IndexError(f"Invalid value: {value}")
 
         # Set value
-        self.grid[x][y] = val
-
-        print(f"x={x}")
-        print(f"y={y}")
-        print(f"val={val}")
+        self.grid[x][y].update(val)
 
         # Set symmetry
         coord_center = self.corner2center(x, y)
@@ -74,10 +107,10 @@ class Grid(object):
 
         if val and not self.grid[cr1][cr2]:
             # If the rotated state is black, then reset that black square to default
-            self.grid[cr1][cr2] = " "
+            self.grid[cr1][cr2].update("")
         elif not val:
             # Set the rotated state to black
-            self.grid[cr1][cr2] = ""
+            self.grid[cr1][cr2].update(None)
 
     def corner2center(self, x: int, y: int) -> Tuple[float, float]:
         """ Convert coordinate measured form corner, to coordinate measured from center of grid
@@ -108,12 +141,18 @@ class Grid(object):
         for i in range(self.grid_size[0]):
             grid_vals = []
             for x in self.grid[i]:
-                if x == ' ':
+                match x.status:
+                    case CellStatus.EMPTY:
+                        gv = "-"
+                    case CellStatus.BLACK:
+                        gv = "■"
+                    j
+                if x.status == CellStatus.EMPTY:
                     grid_vals += "-"
                 elif not x:
                     grid_vals += "■"
                 else:
-                    grid_vals += x
+                    grid_vals += x.value
 
             out_str += " ".join(grid_vals)
 
