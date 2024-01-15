@@ -1,11 +1,4 @@
-"""
-Copyright 2023 The Johns Hopkins University Applied Physics Laboratory LLC (JHU/APL).
 
-All Rights Reserved.
-This material may be only be used, modified, or reproduced by or for the U.S. Government
-pursuant to the license rights granted under the clauses at DFARS 252.227-7013/7014 or
-FAR 52.227-14. For any other permission, please contact the Office of Technology Transfer at JHU/APL.
-"""
 
 # Standard library imports
 import logging
@@ -17,21 +10,10 @@ import pygtrie
 
 # Local imports
 from crosscosmos.data_models.lafarge_model import LaFargeWord
+from crosscosmos.data_models.diehl_model import DiehlWord, TestWord
 from crosscosmos import letter_utils
 
 logger = logging.getLogger(__name__)
-
-TEST_WORDS = [
-    'SKIP',
-    'JUMP',
-    'HELP',
-    'FLOP',
-    'SLOW',
-    'HAND',
-    'SLAP',
-    'LUMP',
-    'LEAP'
-]
 
 AZRE_PATTERN = "[a-zA-Z]"
 
@@ -56,13 +38,17 @@ class Corpus(object):
                  ]
         return cls(words)
 
+    @classmethod
+    def from_test(cls):
+        return cls([w for w in TestWord.select()])
+
     def to_n_letter_corpus(self, n: int):
         assert 3 <= n <= 22
 
         return Corpus([w for w in self.word_list if len(w.word) == n])
 
     def query(self, query_str: str) -> List[LaFargeWord]:
-        query_pattern = fr"\b{query_str.replace("?", AZRE_PATTERN)}\b"
+        query_pattern = fr"\b{query_str.replace('?', AZRE_PATTERN)}\b"
         compiled_pattern = re.compile(query_pattern, re.IGNORECASE)
         matching = [w for w in self.word_list if compiled_pattern.search(w.word)]
         return sorted(matching, key=lambda w: w.collab_score or 0, reverse=True)
@@ -86,3 +72,17 @@ class Corpus(object):
 
     def str2laf(self, word: str):
         return LaFargeWord.select(lambda w: w.word == word)
+
+
+if __name__ == '__main__':
+    TEST_WORDS = [
+        'SKIP',
+        'JUMP',
+        'HELP',
+        'FLOP',
+        'SLOW',
+        'HAND',
+        'SLAP',
+        'LUMP',
+        'LEAP'
+    ]
