@@ -1,8 +1,12 @@
 """ Root __init__.py for CrossCosmos.
 """
 
+# Retrieve the explicitly exported variables from crosscosmos.config
+from .config import *
+
 # Expose submodules
 from . import (
+    corpus,
     data_models,
     digraph,
     gui,
@@ -12,10 +16,8 @@ from . import (
     smatch,
     wordlists
 )
-# Retrieve the explicitly exported variables from crosscosmos.config
-from .config import *
 
 # Setup logging
 from . import log_config
 
-log_config.setup_logging(crosscosmos_root)
+log_config.setup_logging(crosscosmos_project_root)

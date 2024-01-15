@@ -20,6 +20,14 @@ diehl_word_db.bind(
     filename=str(diehl_db_path),
     create_db=True,
 )
+# test database
+test_db_path = xc.crosscosmos_project_root / "word_dbs" / "test_words.sqlite"
+test_word_db = orm.Database()
+test_word_db.bind(
+    provider="sqlite",
+    filename=str(test_db_path),
+    create_db=True,
+)
 
 
 class DiehlWord(diehl_word_db.Entity):
@@ -28,3 +36,11 @@ class DiehlWord(diehl_word_db.Entity):
 
 
 diehl_word_db.generate_mapping(create_tables=True)
+
+
+class TestWord(test_word_db.Entity):
+    word = orm.PrimaryKey(str)
+    score = orm.Required(int)
+
+
+test_word_db.generate_mapping(create_tables=True)
