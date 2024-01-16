@@ -9,6 +9,7 @@ from . import (
     corpus,
     data_models,
     digraph,
+    grid,
     gui,
     letter_utils,
     log_config,

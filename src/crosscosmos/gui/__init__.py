@@ -1,5 +1,5 @@
 
-from . import grid, setup
+from . import setup
 
 import logging
 logger = logging.getLogger(__file__)

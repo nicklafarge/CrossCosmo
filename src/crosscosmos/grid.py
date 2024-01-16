@@ -4,16 +4,22 @@ Defines a Grid class, interfacing between the data and gui laters
 """
 
 # Standard library
+import copy
 from enum import Enum
+import random
+import string
 from typing import Tuple, Union
 
 # Third-party
 from matplotlib import pyplot as plt
+import logging
 import numpy as np
 
 # Local
 import crosscosmos as xc
 from crosscosmos.data_models.pydantic_model import Letter, Word
+
+logger = logging.getLogger(__name__)
 
 
 class CellStatus(Enum):
@@ -25,15 +31,29 @@ class CellStatus(Enum):
 
 class Cell(object):
     def __init__(self,
+                 x: int, y: int,
                  status: CellStatus = CellStatus.EMPTY,
                  value: str = "",
-                 matrix_index: Union[Tuple[int, int], None] = None,
                  gui_coordinates: Union[Tuple[float, float], None] = None
                  ):
         self.status = status
         self.value = value
-        self.matrix_index = matrix_index
+        self.matrix_index = (x, y)
+        self.x = x
+        self.y = y
         self.gui_coordinates = gui_coordinates
+
+        self.is_h_start = False
+        self.is_h_end = False
+        self.is_v_start = False
+        self.is_v_end = False
+
+        self.queue_order = list(reversed(string.ascii_uppercase))
+        # self.queue = list(string.ascii_uppercase)
+        # random.shuffle(self.queue)
+
+        self.queue = copy.deepcopy(self.queue_order)
+        self.excluded = []
 
     def update(self, value: str):
         if value == " " or value == "":
@@ -47,6 +67,12 @@ class Cell(object):
             self.value = value.upper()
         else:
             raise ValueError(f"Invalid input: {value}")
+
+    def reset_cell(self):
+        self.status = CellStatus.EMPTY
+        self.value = ""
+        self.queue = copy.deepcopy(self.queue_order)
+        self.excluded = []
 
     def __repr__(self):
         return f"Cell(val='{self.value}', loc={self.matrix_index})"
@@ -62,21 +88,25 @@ class Grid(object):
         self.grid_size = grid_size
         self.row_count = self.grid_size[0]
         self.col_count = self.grid_size[1]
+        self.h_heads = []
+        self.v_heads = []
 
         self.corpus = corpus
 
         # self.grid = np.full(self.grid_size, ' ', dtype='U1')
-        default = [Cell() for _ in range(self.row_count * self.col_count)]
         self.grid = np.full(self.grid_size, None, dtype=object)
         for i in range(self.row_count):
             for j in range(self.col_count):
-                self.grid[i, j] = Cell(matrix_index=(i, j))
+                self.grid[i, j] = Cell(x=i, y=j)
         self.center = [((self.grid_size[0] - 1) / 2), ((self.grid_size[1] - 1) / 2)]
+
+        # Update the heads for horizontal and vertical clues
+        self.update_grid_data()
 
     def __repr__(self):
         return f"Grid(dim=({self.grid_size[0]}, {self.grid_size[1]})"
 
-    def __getitem__(self, x: Tuple[int, int]) -> str:
+    def __getitem__(self, x: Tuple[int, int]) -> Cell:
         # Check index
         if (x[0] < 0 or x[0] > self.grid_size[0]) or (x[1] < 0 or x[1] > self.grid_size[1]):
             raise IndexError(f"Index outside grid bounds:({self.grid_size[0]}, {self.grid_size[1]})")
@@ -99,12 +129,15 @@ class Grid(object):
         coord_rot_center = -coord_center[0], -coord_center[1]
         cr1, cr2 = self.center2corner(*coord_rot_center)
 
-        if self.grid[x][y].status != CellStatus.BLACK and self.grid[cr1][cr2].status == CellStatus.Black:
+        if self.grid[x][y].status != CellStatus.BLACK and self.grid[cr1][cr2].status == CellStatus.BLACK:
             # If the rotated state is black, then reset that black square to default
             self.grid[cr1][cr2].update("")
         elif self.grid[x][y].status == CellStatus.BLACK:
             # Set the rotated state to black
             self.grid[cr1][cr2].update(None)
+
+        # Update heads
+        self.update_grid_data()
 
     def corner2center(self, x: int, y: int) -> Tuple[float, float]:
         """ Convert coordinate measured form corner, to coordinate measured from center of grid
@@ -130,6 +163,80 @@ class Grid(object):
         """
         return int(self.center[0] + c1), int(self.center[1] + c2)
 
+    def update_grid_data(self):
+
+        # Update horizontal / vertical heads
+        self.h_heads = []
+        self.v_heads = []
+        for i in range(self.row_count):
+            for j in range(self.col_count):
+
+                # Update lists of head nodes
+                if self.is_h_start(i, j):
+                    self.h_heads.append((i, j))
+
+                if self.is_v_start(i, j):
+                    self.v_heads.append((i, j))
+
+                # Update start/end data
+                self[i, j].is_h_start = self.is_h_start(i, j)
+                self[i, j].is_h_end = self.is_h_end(i, j)
+                self[i, j].is_v_start = self.is_v_start(i, j)
+                self[i, j].is_v_end = self.is_v_end(i, j)
+
+    def get_h_word_up_to(self, i: int, j: int, as_str=True):
+        cells = []
+
+        # Move right until it's the beginning of the word
+        is_h_start = False
+        while not is_h_start:
+            c = self[i, j]
+            is_h_start = c.is_h_start
+            cells.insert(0, c)
+            j -= 1
+
+        cell_list = list(cells)
+        if as_str:
+            return ''.join([c.value for c in cell_list])
+        else:
+            return cell_list
+
+    def get_v_word_up_to(self, i: int, j: int, as_str: bool = True):
+        cells = []
+
+        # Move up until it's the beginning of the word
+        is_v_start = False
+        while not is_v_start:
+            c = self[i, j]
+            is_v_start = c.is_v_start
+            cells.insert(0, c)
+            i -= 1
+
+        cell_list = list(cells)
+        if as_str:
+            return ''.join([c.value for c in cell_list])
+        else:
+            return cell_list
+
+    def is_h_start(self, i: int, j: int) -> bool:
+        return j == 0 or (self[i, j - 1].status == xc.grid.CellStatus.BLACK and
+                          self[i, j].status != xc.grid.CellStatus.BLACK)
+
+    def is_h_end(self, i: int, j: int) -> bool:
+        return j == (self.col_count - 1) or (self[i, j + 1].status == xc.grid.CellStatus.BLACK and
+                                             self[i, j].status != xc.grid.CellStatus.BLACK)
+
+    def is_v_start(self, i: int, j: int) -> bool:
+        return i == 0 or (self[i - 1, j].status == xc.grid.CellStatus.BLACK and
+                          self[i, j].status != xc.grid.CellStatus.BLACK)
+
+    def is_v_end(self, i: int, j: int) -> bool:
+        return i == (self.row_count - 1) or (self[i + 1, j].status == xc.grid.CellStatus.BLACK and
+                                             self[i, j].status != xc.grid.CellStatus.BLACK)
+
+    def print(self):
+        self.to_console()
+
     def to_console(self):
         out_str = ""
         for i in range(self.grid_size[0]):
@@ -142,6 +249,38 @@ class Grid(object):
                         gv = "■"
                     case _:
                         gv = x.value
+
+                grid_vals += gv
+
+            out_str += " ".join(grid_vals)
+
+            if i < self.grid_size[0] - 1:
+                out_str += "\n"
+        print(out_str)
+
+    def print_boundaries(self):
+        out_str = ""
+        for i in range(self.row_count):
+            grid_vals = []
+            for j in range(self.col_count):
+                if self.is_h_start(i, j) and self.is_v_start(i, j):
+                    gv = "x"
+                elif self.is_h_end(i, j) and self.is_v_end(i, j):
+                    gv = "X"
+                elif self.is_h_start(i, j) and self.is_v_end(i, j):
+                    gv = "y"
+                elif self.is_h_end(i, j) and self.is_v_start(i, j):
+                    gv = "Y"
+                elif self.is_h_start(i, j):
+                    gv = "h"
+                elif self.is_v_start(i, j):
+                    gv = "v"
+                elif self.is_h_end(i, j):
+                    gv = "H"
+                elif self.is_v_end(i, j):
+                    gv = "V"
+                else:
+                    gv = "-"
 
                 grid_vals += gv
 

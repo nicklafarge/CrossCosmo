@@ -1,6 +1,5 @@
 # Standard
 from configparser import ConfigParser
-from typing import Tuple
 
 # Third-party
 import arcade
@@ -14,7 +13,7 @@ logger = logging.getLogger("gui")
 
 
 class CrossCosmosGame(arcade.Window):
-    def __init__(self, config: ConfigParser, grid: xc.gui.grid.Grid):
+    def __init__(self, config: ConfigParser, grid: crosscosmos.grid.Grid):
         super().__init__(config.getint('window', 'width'),
                          config.getint('window', 'height'),
                          config['window']['title'])
@@ -135,7 +134,7 @@ def main():
 
     size = 6, 6
     lc = xc.corpus.Corpus.from_test()
-    grid = xc.gui.grid.Grid(size, lc)
+    grid = crosscosmos.grid.Grid(size, lc)
 
     CrossCosmosGame(config, grid)
     arcade.run()
