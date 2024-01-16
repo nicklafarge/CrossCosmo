@@ -1,5 +1,3 @@
-
-
 # Standard library imports
 import logging
 from typing import List
@@ -22,7 +20,7 @@ class Corpus(object):
 
     def __init__(self, word_list: List[LaFargeWord]):
         self.word_list = word_list
-        self.trie = self.build_trie()
+        self.trie = None
 
     def __getitem__(self, position):
         return self.word_list[position]
@@ -53,13 +51,19 @@ class Corpus(object):
         matching = [w for w in self.word_list if compiled_pattern.search(w.word)]
         return sorted(matching, key=lambda w: w.collab_score or 0, reverse=True)
 
-    def build_trie(self) -> pygtrie.CharTrie:
+    def build_trie(self):
+        self.trie = self.to_trie()
+
+    def to_trie(self) -> pygtrie.CharTrie:
         t = pygtrie.CharTrie()
         for lw in self.word_list:
             t[lw.word] = True
         return t
 
     def subtree(self, prefix: str, as_corpus=True):
+        if not self.trie:
+            self.build_trie()
+
         try:
             subree_words = [x[0] for x in self.trie.items(prefix)]
         except KeyError:
