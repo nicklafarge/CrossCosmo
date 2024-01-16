@@ -42,9 +42,11 @@ class Cell(object):
         elif value is None:
             self.status = CellStatus.BLACK
             self.value = None
-        else:
+        elif isinstance(value, str) and len(value) == 1:
             self.status = CellStatus.SET
-            self.value = value
+            self.value = value.upper()
+        else:
+            raise ValueError(f"Invalid input: {value}")
 
     def __repr__(self):
         return f"Cell(val='{self.value}', loc={self.matrix_index})"
@@ -89,26 +91,18 @@ class Grid(object):
         if (x < 0 or x > self.grid_size[0]) or (y < 0 or y > self.grid_size[1]):
             raise IndexError(f"Index outside grid bounds:({self.grid_size[0]}, {self.grid_size[1]})")
 
-        # Check string input
-        if isinstance(value, str) and len(value) == 1:
-            val = value.upper()
-        elif not value:
-            val = ''
-        else:
-            raise IndexError(f"Invalid value: {value}")
-
         # Set value
-        self.grid[x][y].update(val)
+        self.grid[x][y].update(value)
 
         # Set symmetry
         coord_center = self.corner2center(x, y)
         coord_rot_center = -coord_center[0], -coord_center[1]
         cr1, cr2 = self.center2corner(*coord_rot_center)
 
-        if val and not self.grid[cr1][cr2]:
+        if self.grid[x][y].status != CellStatus.BLACK and self.grid[cr1][cr2].status == CellStatus.Black:
             # If the rotated state is black, then reset that black square to default
             self.grid[cr1][cr2].update("")
-        elif not val:
+        elif self.grid[x][y].status == CellStatus.BLACK:
             # Set the rotated state to black
             self.grid[cr1][cr2].update(None)
 
@@ -146,13 +140,10 @@ class Grid(object):
                         gv = "-"
                     case CellStatus.BLACK:
                         gv = "■"
-                    j
-                if x.status == CellStatus.EMPTY:
-                    grid_vals += "-"
-                elif not x:
-                    grid_vals += "■"
-                else:
-                    grid_vals += x.value
+                    case _:
+                        gv = x.value
+
+                grid_vals += gv
 
             out_str += " ".join(grid_vals)
 
