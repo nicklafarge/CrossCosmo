@@ -41,9 +41,22 @@ class Corpus(object):
         return cls([w for w in TestWord.select()])
 
     def to_n_letter_corpus(self, n: int):
-        assert 3 <= n <= 22
+        return self.to_subcorpus(n, n)
 
-        return Corpus([w for w in self.word_list if len(w.word) == n])
+    def to_subcorpus(self, n: int, m: int):
+        assert 3 <= n <= 22
+        assert 3 <= m <= 22
+        assert m >= n
+
+        return Corpus([w for w in self.word_list if n <= len(w.word) <= m])
+
+    def to_n_tries(self, n, padded=False):
+        assert n >= 3
+        tries = [self.to_n_letter_corpus(i).to_trie() for i in range(3, n+1)]
+        if padded:
+            return [None] * 3 + tries
+        else:
+            return tries
 
     def query(self, query_str: str) -> List[LaFargeWord]:
         query_pattern = fr"\b{query_str.replace('?', AZRE_PATTERN)}\b"

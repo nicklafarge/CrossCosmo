@@ -1,13 +1,16 @@
 # Standard
 from enum import Enum
+from typing import List
 
 # Third-party
 import logging
+from unittest import case
+
 import pygtrie
 
 # CrossCosmos
 import crosscosmos as xc
-from crosscosmos.grid import CellStatus
+from crosscosmos.grid import CellStatus, WordDirection
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +23,8 @@ class GridStatus(Enum):
 
 class MoveDirection(Enum):
     FORWARD = 1
-    BACK = 2
+    BACK_HORIZONTAL = 2
+    BACK_VERTICAL = 2
 
 
 class LetterStatus(Enum):
@@ -34,8 +38,54 @@ class LetterSequenceStatus(Enum):
     VALID_WORD = 3
 
 
-def get_previous_cell_index(i: int, j: int):
-    pass
+def check_letter_sequence(cell, the_grid, trie_list, direction: WordDirection):
+    match direction:
+        case WordDirection.HORIZONTAL:
+            letter_sequence = the_grid.get_h_word_up_to(cell.x, cell.y)
+            word_len = the_grid[cell.x, cell.y].hlen
+        case WordDirection.VERTICAL:
+            letter_sequence = the_grid.get_v_word_up_to(c.x, c.y)
+            word_len = the_grid[cell.x, cell.y].vlen
+        case _:
+            raise ValueError(f"Unknown direction: {direction}")
+
+    return trie_list[word_len].has_node(letter_sequence)
+
+
+def reset_cell_with_trie(the_grid, x: int, y: int, trie_list: List[pygtrie]):
+    # Reset the cell's status
+    removed_words = the_grid[x, y].reset_cell()
+
+    # If the cell had previously removed a word from the trie put it back in
+    if removed_words:
+        for rem_word, rem_dir in removed_words:
+            match rem_dir:
+                case WordDirection.HORIZONTAL:
+                    trie_list[c.hlen][rem_word] = True
+                case WordDirection.VERTICAL:
+                    trie_list[c.vlen][rem_word] = True
+
+
+def move_back_horizontal(the_grid, x: int, y: int, trie_list):
+    # Save for readability
+    on_left_column = y == 0
+    on_right_column = y == (the_grid.col_count - 1)
+    on_top_row = x == 0
+    on_bottom_row = x == (the_grid.row_count - 1)
+
+    reset_cell_with_trie(the_grid, x, y, trie_list)
+    new_x = x
+    new_y = y
+    status = GridStatus.INCOMPLETE
+    if on_left_column and on_top_row:  # We are at square one and out of options!
+        status = GridStatus.INVALID
+    elif on_left_column:  # Move one row up to the right-most column
+        new_y = grid.col_count - 1
+        new_x -= 1
+    else:  # Move one square to the left
+        new_y -= 1
+
+    return new_x, new_y, status
 
 
 def validate_grid_letter_sequence(grid_trie: pygtrie, letter_sequence: str, is_end: bool) -> LetterSequenceStatus:
@@ -49,29 +99,46 @@ def validate_grid_letter_sequence(grid_trie: pygtrie, letter_sequence: str, is_e
 
 
 if __name__ == '__main__':
-    lc = xc.corpus.Corpus.from_test()
-    lc4 = lc.to_n_letter_corpus(4)
-    lc4.build_trie()
-    trie = lc4.trie
+    corpus = xc.corpus.Corpus.from_lafarge_db()
+    # lc4 = lc.to_n_letter_corpus(4)
+    # lc5 = lc.to_subcorpus(4, 5)
+    # lc6 = lc.to_subcorpus(4, 6)
+    tries = corpus.to_n_tries(6, padded=True)
+    # lc4.build_trie()
+    # trie = lc4.trie
+    # lc.build_trie()
+    # trie = lc.trie
 
-    grid = xc.grid.Grid((4, 4), lc4)
-    grid.print()
-    grid.print_boundaries()
-    grid_status = GridStatus.INCOMPLETE
+    # corpus = lc
+    # corpus.build_trie()
+    # trie = corpus.trie
+
+    grid = xc.grid.Grid((5, 4), corpus)
+    grid.lock_section( "GAMER", 0, 3, direction=WordDirection.VERTICAL)
 
     # Start in top left (0, 0)
     i = 0
     j = 0
 
+    # Track iterations
+    n_iters = 0
+
     # Get the next value that exists
     while grid_status == grid_status.INCOMPLETE:
+
+        n_iters += 1
+        grid.print()
+        if n_iters % 2000 == 0:
+            pass
+
+        # Get the current grid value
         c = grid[i, j]
 
         # Initialize variables
         move_dir = MoveDirection.FORWARD
         letter_status = LetterStatus.INVALID
 
-        # Continue on if this square is black
+        # Continue on if this square is black (automatically considered valid)
         if c.status == CellStatus.BLACK:
             letter_status = LetterStatus.VALID
 
@@ -85,16 +152,24 @@ if __name__ == '__main__':
             letter_status = LetterStatus.VALID
 
             # Get the cross word up to this point
-            word_to_xy = grid.get_h_word_up_to(c.x, c.y)
+            trie_has_h_word = check_letter_sequence(c, grid, tries, WordDirection.HORIZONTAL)
+            trie_has_v_word = check_letter_sequence(c, grid, tries, WordDirection.VERTICAL)
 
             # See if the word up to now is valid. If not, move back
-            t_has_node = trie.has_node(word_to_xy)
-            if not t_has_node:
-                move_dir = MoveDirection.BACK
+            if not trie_has_h_word or not trie_has_v_word:
+                move_dir = MoveDirection.BACK_HORIZONTAL
 
-            # If we've reached a horizontal barrier and don't have a word, then move back
-            if c.is_h_end and t_has_node == pygtrie.Trie.HAS_SUBTRIE:
-                move_dir = MoveDirection.BACK
+            # If either is true, move back one square to the left:
+            #     1) the horizontal word up to now is invalid
+            #     2) we've reached a horizontal barrier and don't have a valid word
+            if c.is_h_end and trie_has_h_word == pygtrie.Trie.HAS_SUBTRIE:
+                move_dir = MoveDirection.BACK_HORIZONTAL
+
+            # If either is true, move back one square up:
+            #     1) the vertical word up to now is invalid
+            #     2) we've reached a vertical barrier and don't have a valid word
+            if c.is_v_end and trie_has_v_word == pygtrie.Trie.HAS_SUBTRIE:
+                move_dir = MoveDirection.BACK_VERTICAL
 
         # Choose the next letter by proceeding through the grid entry's letter list and selecting the
         # first letter than yields a valid subtrie
@@ -102,7 +177,7 @@ if __name__ == '__main__':
 
             # If there are no more letters, then no word exists, and we need to move back
             if len(grid[i, j].queue) == 0:
-                move_dir = MoveDirection.BACK
+                move_dir = MoveDirection.BACK_HORIZONTAL
                 break
 
             # Set the value in the grid with the next letter in the queue
@@ -111,12 +186,12 @@ if __name__ == '__main__':
 
             # Check if the horizontal letter sequence is valid
             h_word_to_xy = grid.get_h_word_up_to(c.x, c.y)
-            horizontal_word_status = validate_grid_letter_sequence(trie, h_word_to_xy, c.is_h_end)
+            horizontal_word_status = validate_grid_letter_sequence(tries[c.hlen], h_word_to_xy, c.is_h_end)
             horizontal_letter_accepted = horizontal_word_status != LetterSequenceStatus.INVALID
 
             # Check if the vertical letter sequence is valid
             v_word_to_xy = grid.get_v_word_up_to(c.x, c.y)
-            vertical_word_status = validate_grid_letter_sequence(trie, v_word_to_xy, c.is_v_end)
+            vertical_word_status = validate_grid_letter_sequence(tries[c.vlen], v_word_to_xy, c.is_v_end)
             vertical_letter_accepted = vertical_word_status != LetterSequenceStatus.INVALID
 
             # The selected letter is only accepted if it is valid in both vertical and horizontal directions
@@ -125,16 +200,16 @@ if __name__ == '__main__':
 
                 # If horizontal word is complete, remove it to avoid duplication
                 if horizontal_word_status == LetterSequenceStatus.VALID_WORD:
-                    trie.pop(h_word_to_xy)
-                    grid[i, j].removed_words.append(h_word_to_xy)
+                    tries[c.hlen].pop(h_word_to_xy)
+                    grid[i, j].remove_word(h_word_to_xy, WordDirection.HORIZONTAL)
 
                 # If vertical word is complete, remove it to avoid duplication
                 if vertical_word_status == LetterSequenceStatus.VALID_WORD:
-                    trie.pop(v_word_to_xy)
-                    grid[i, j].removed_words.append(v_word_to_xy)
+                    tries[c.vlen].pop(v_word_to_xy)
+                    grid[i, j].remove_word(v_word_to_xy, WordDirection.VERTICAL)
 
         # For debugging
-        grid.print()
+        # grid.print()
 
         # Save for readability
         on_left_column = j == 0
@@ -154,23 +229,29 @@ if __name__ == '__main__':
                     j = 0
                     i += 1
 
-            case MoveDirection.BACK:
-                # Reset the cell's status
-                removed_words = grid[i, j].reset_cell()
+            case MoveDirection.BACK_HORIZONTAL:
+                # Move back until a non-locked cell is encountered
+                continue_moving = True
+                while continue_moving:
+                    i, j, grid_status = move_back_horizontal(grid, i, j, tries)
+                    if grid_status == GridStatus.INVALID:
+                        continue_moving = False
+                    elif grid[i, j].status == CellStatus.BLACK or grid[i, j].status == CellStatus.LOCKED:
+                        continue_moving = True
+                    else:
+                        continue_moving = False
 
-                # If the cell had previously removed a word from the trie put it back in
-                if removed_words:
-                    for w in removed_words:
-                        trie[w] = True
+            case MoveDirection.BACK_VERTICAL:
 
-                if on_left_column and on_top_row:  # We aren't square one an out of options!
+                for left_of_cell in range(j):
+                    reset_cell_with_trie(grid, i, left_of_cell, tries)
+                for right_of_above in range(grid.col_count - j):
+                    reset_cell_with_trie(grid, i - 1, right_of_above, tries)
+
+                if on_top_row:  # Undefined behavior
                     grid_status = GridStatus.INVALID
-                elif on_left_column:  # Move one row up to the right-most column
-                    j = grid.col_count - 1
+                else:  # Move one square up the left
                     i -= 1
-                else:  # Move one square to the left
-                    j -= 1
-
     match grid_status:
         case GridStatus.COMPLETE:
             print("Grid complete!")
