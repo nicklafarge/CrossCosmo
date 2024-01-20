@@ -48,11 +48,15 @@ class Cell(object):
         self.is_v_start = False
         self.is_v_end = False
 
+        # Kep track of any word that have been removed from consideration due to this cell
+        self.removed_words = []
+
         self.queue_order = list(reversed(string.ascii_uppercase))
         # self.queue = list(string.ascii_uppercase)
         # random.shuffle(self.queue)
 
         self.queue = copy.deepcopy(self.queue_order)
+        random.shuffle(self.queue)
         self.excluded = []
 
     def update(self, value: str):
@@ -73,6 +77,11 @@ class Cell(object):
         self.value = ""
         self.queue = copy.deepcopy(self.queue_order)
         self.excluded = []
+
+        # Return the word (if any) that is now valid again
+        removed_words = self.removed_words
+        self.removed_words = []
+        return removed_words
 
     def __repr__(self):
         return f"Cell(val='{self.value}', loc={self.matrix_index})"

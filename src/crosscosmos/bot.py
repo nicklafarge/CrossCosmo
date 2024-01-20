@@ -28,18 +28,24 @@ class LetterStatus(Enum):
     INVALID = 2
 
 
+class LetterSequenceStatus(Enum):
+    INVALID = 1
+    VALID_SUBTRIE = 2
+    VALID_WORD = 3
+
+
 def get_previous_cell_index(i: int, j: int):
     pass
 
 
-def validate_grid_letter_sequence(grid_trie: pygtrie, letter_sequence: str, is_end: bool):
+def validate_grid_letter_sequence(grid_trie: pygtrie, letter_sequence: str, is_end: bool) -> LetterSequenceStatus:
     node_in_trie = grid_trie.has_node(letter_sequence)
     if is_end and node_in_trie == pygtrie.Trie.HAS_VALUE:
-        return True
+        return LetterSequenceStatus.VALID_WORD
     elif not is_end and node_in_trie == pygtrie.Trie.HAS_SUBTRIE:
-        return True
+        return LetterSequenceStatus.VALID_SUBTRIE
     else:
-        return False
+        return LetterSequenceStatus.INVALID
 
 
 if __name__ == '__main__':
@@ -51,13 +57,11 @@ if __name__ == '__main__':
     grid = xc.grid.Grid((4, 4), lc4)
     grid.print()
     grid.print_boundaries()
+    grid_status = GridStatus.INCOMPLETE
 
-    # for i in range(grid.row_count):
-    #     for j in range(grid.col_count):
+    # Start in top left (0, 0)
     i = 0
     j = 0
-    grid_status = GridStatus.INCOMPLETE
-    h_word_counter = 0
 
     # Get the next value that exists
     while grid_status == grid_status.INCOMPLETE:
@@ -107,15 +111,27 @@ if __name__ == '__main__':
 
             # Check if the horizontal letter sequence is valid
             h_word_to_xy = grid.get_h_word_up_to(c.x, c.y)
-            horizontally_valid = validate_grid_letter_sequence(trie, h_word_to_xy, c.is_h_end)
+            horizontal_word_status = validate_grid_letter_sequence(trie, h_word_to_xy, c.is_h_end)
+            horizontal_letter_accepted = horizontal_word_status != LetterSequenceStatus.INVALID
 
             # Check if the vertical letter sequence is valid
             v_word_to_xy = grid.get_v_word_up_to(c.x, c.y)
-            vertically_valid = validate_grid_letter_sequence(trie, v_word_to_xy, c.is_v_end)
+            vertical_word_status = validate_grid_letter_sequence(trie, v_word_to_xy, c.is_v_end)
+            vertical_letter_accepted = vertical_word_status != LetterSequenceStatus.INVALID
 
             # The selected letter is only accepted if it is valid in both vertical and horizontal directions
-            if horizontally_valid and vertically_valid:
+            if horizontal_letter_accepted and vertical_letter_accepted:
                 letter_status = letter_status.VALID
+
+                # If horizontal word is complete, remove it to avoid duplication
+                if horizontal_word_status == LetterSequenceStatus.VALID_WORD:
+                    trie.pop(h_word_to_xy)
+                    grid[i, j].removed_words.append(h_word_to_xy)
+
+                # If vertical word is complete, remove it to avoid duplication
+                if vertical_word_status == LetterSequenceStatus.VALID_WORD:
+                    trie.pop(v_word_to_xy)
+                    grid[i, j].removed_words.append(v_word_to_xy)
 
         # For debugging
         grid.print()
@@ -139,7 +155,13 @@ if __name__ == '__main__':
                     i += 1
 
             case MoveDirection.BACK:
-                c.reset_cell()
+                # Reset the cell's status
+                removed_words = grid[i, j].reset_cell()
+
+                # If the cell had previously removed a word from the trie put it back in
+                if removed_words:
+                    for w in removed_words:
+                        trie[w] = True
 
                 if on_left_column and on_top_row:  # We aren't square one an out of options!
                     grid_status = GridStatus.INVALID
