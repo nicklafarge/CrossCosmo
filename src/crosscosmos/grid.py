@@ -29,6 +29,18 @@ class CellStatus(Enum):
     BLACK = 3
 
 
+class Direction(Enum):
+    UP = 0
+    DOWN = 1
+    LEFT = 2
+    RIGHT = 3
+
+
+class WordDirection(Enum):
+    HORIZONTAL = 1
+    VERTICAL = 2
+
+
 class Cell(object):
     def __init__(self,
                  x: int, y: int,
@@ -47,6 +59,9 @@ class Cell(object):
         self.is_h_end = False
         self.is_v_start = False
         self.is_v_end = False
+
+        self.hlen = 0
+        self.vlen = 0
 
         # Kep track of any word that have been removed from consideration due to this cell
         self.removed_words = []
@@ -73,6 +88,10 @@ class Cell(object):
             raise ValueError(f"Invalid input: {value}")
 
     def reset_cell(self):
+        # Nothing to reset if locked
+        if self.status == CellStatus.LOCKED:
+            return
+
         self.status = CellStatus.EMPTY
         self.value = ""
         self.queue = copy.deepcopy(self.queue_order)
@@ -83,6 +102,9 @@ class Cell(object):
         self.removed_words = []
         return removed_words
 
+    def remove_word(self, word: str, direction: WordDirection):
+        self.removed_words.append((word, direction))
+
     def __repr__(self):
         return f"Cell(val='{self.value}', loc={self.matrix_index})"
 
@@ -91,18 +113,21 @@ class Grid(object):
 
     def __init__(self, grid_size: Tuple[int, int], corpus: xc.corpus.Corpus):
 
-        if grid_size[0] % 2 != 0 or grid_size[1] % 2 != 0:
-            raise ValueError("Currently only even numbers are supported for grids")
+        # if grid_size[0] % 2 != 0 or grid_size[1] % 2 != 0:
+        #     raise ValueError("Currently only even numbers are supported for grids")
 
         self.grid_size = grid_size
         self.row_count = self.grid_size[0]
         self.col_count = self.grid_size[1]
+
+        assert (self.row_count >= 3)
+        assert (self.col_count >= 3)
+
         self.h_heads = []
         self.v_heads = []
 
         self.corpus = corpus
 
-        # self.grid = np.full(self.grid_size, ' ', dtype='U1')
         self.grid = np.full(self.grid_size, None, dtype=object)
         for i in range(self.row_count):
             for j in range(self.col_count):
@@ -193,6 +218,78 @@ class Grid(object):
                 self[i, j].is_v_start = self.is_v_start(i, j)
                 self[i, j].is_v_end = self.is_v_end(i, j)
 
+        # Update word lengths
+        for i in range(self.row_count):
+            for j in range(self.col_count):
+                self[i, j].hlen = self.horizontal_word_len(i, j)
+                self[i, j].vlen = self.vertical_word_len(i, j)
+
+    def lock_section(self, word: str, i: int, j: int, direction: WordDirection):
+
+        match direction:
+            case direction.HORIZONTAL:
+                if self.col_count - j < len(word):
+                    raise ValueError("Cannot fit word within horizontal section")
+
+                for lix in range(len(word)):
+                    self[i, j + lix].value = word[lix]
+                    self[i, j + lix].status = CellStatus.LOCKED
+            case direction.VERTICAL:
+                if self.row_count - i < len(word):
+                    raise ValueError("Cannot fit word within vertical section")
+                for lix in range(len(word)):
+                    self[i + lix, j].value = word[lix]
+                    self[i + lix, j].status = CellStatus.LOCKED
+            case _:
+                raise ValueError("Invalid word directin")
+
+    def count(self, i: int, j: int, which: Direction) -> int:
+        current_cell = self[i, j]
+        n = 0
+
+        match which:
+            case Direction.UP:
+                def termination_criteria(c):
+                    return c.is_v_start
+
+                def update(c):
+                    return self[c.x - 1, c.y]
+            case Direction.DOWN:
+                def termination_criteria(c):
+                    return c.is_v_end
+
+                def update(c):
+                    return self[c.x + 1, c.y]
+            case Direction.LEFT:
+                def termination_criteria(c):
+                    return c.is_h_start
+
+                def update(c):
+                    return self[c.x, c.y - 1]
+            case Direction.RIGHT:
+                def termination_criteria(c):
+                    return c.is_h_end
+
+                def update(c):
+                    return self[c.x, c.y + 1]
+            case _:
+                raise ValueError("invalid direction encountered")
+
+        while not termination_criteria(current_cell):
+            current_cell = update(current_cell)
+            n += 1
+        return n
+
+    def horizontal_word_len(self, i: int, j: int):
+        left = self.count(i, j, Direction.LEFT)
+        right = self.count(i, j, Direction.RIGHT)
+        return left + right + 1
+
+    def vertical_word_len(self, i: int, j: int):
+        up = self.count(i, j, Direction.UP)
+        down = self.count(i, j, Direction.DOWN)
+        return up + down + 1
+
     def get_h_word_up_to(self, i: int, j: int, as_str=True):
         cells = []
 
@@ -247,6 +344,9 @@ class Grid(object):
         self.to_console()
 
     def to_console(self):
+        print(self.to_str())
+
+    def to_str(self, delimiter="\n"):
         out_str = ""
         for i in range(self.grid_size[0]):
             grid_vals = []
@@ -264,8 +364,8 @@ class Grid(object):
             out_str += " ".join(grid_vals)
 
             if i < self.grid_size[0] - 1:
-                out_str += "\n"
-        print(out_str)
+                out_str += delimiter
+        return out_str
 
     def print_boundaries(self):
         out_str = ""
@@ -299,10 +399,27 @@ class Grid(object):
                 out_str += "\n"
         print(out_str)
 
+    def print_lens(self, direction: WordDirection):
+        out_str = ""
+        for i in range(self.grid_size[0]):
+            grid_vals = []
+            for j in range(self.col_count):
+                match direction:
+                    case WordDirection.HORIZONTAL:
+                        grid_vals += str(self[i, j].hlen)
+                    case WordDirection.VERTICAL:
+                        grid_vals += str(self[i, j].vlen)
+
+            out_str += " ".join(grid_vals)
+
+            if i < self.grid_size[0] - 1:
+                out_str += "\n"
+        print(out_str)
+
 
 if __name__ == '__main__':
     lc = xc.corpus.Corpus.from_test()
-    g = Grid((4, 4), lc)
+    g = Grid((5, 5), lc)
 
     x1, x2 = 0, 2
     c1, c2 = g.corner2center(x1, x2)
