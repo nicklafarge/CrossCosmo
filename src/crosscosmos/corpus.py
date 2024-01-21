@@ -40,6 +40,10 @@ class Corpus(object):
     def from_test(cls):
         return cls([w for w in TestWord.select()])
 
+    @classmethod
+    def from_diehl(cls):
+        return cls([w for w in DiehlWord.select()])
+
     def to_n_letter_corpus(self, n: int):
         return self.to_subcorpus(n, n)
 

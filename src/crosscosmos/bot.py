@@ -4,9 +4,9 @@ from typing import List
 
 # Third-party
 import logging
-from unittest import case
-
+from tqdm import tqdm
 import pygtrie
+import numpy as np
 
 # CrossCosmos
 import crosscosmos as xc
@@ -44,7 +44,7 @@ def check_letter_sequence(cell, the_grid, trie_list, direction: WordDirection):
             letter_sequence = the_grid.get_h_word_up_to(cell.x, cell.y)
             word_len = the_grid[cell.x, cell.y].hlen
         case WordDirection.VERTICAL:
-            letter_sequence = the_grid.get_v_word_up_to(c.x, c.y)
+            letter_sequence = the_grid.get_v_word_up_to(cell.x, cell.y)
             word_len = the_grid[cell.x, cell.y].vlen
         case _:
             raise ValueError(f"Unknown direction: {direction}")
@@ -99,11 +99,13 @@ def validate_grid_letter_sequence(grid_trie: pygtrie, letter_sequence: str, is_e
 
 
 if __name__ == '__main__':
-    corpus = xc.corpus.Corpus.from_lafarge_db()
+    corpus = xc.corpus.Corpus.from_test()
+    # corpus = xc.corpus.Corpus.from_diehl()
+    # corpus = xc.corpus.Corpus.from_lafarge_db()
     # lc4 = lc.to_n_letter_corpus(4)
     # lc5 = lc.to_subcorpus(4, 5)
     # lc6 = lc.to_subcorpus(4, 6)
-    tries = corpus.to_n_tries(6, padded=True)
+    tries = corpus.to_n_tries(7, padded=True)
     # lc4.build_trie()
     # trie = lc4.trie
     # lc.build_trie()
@@ -113,8 +115,26 @@ if __name__ == '__main__':
     # corpus.build_trie()
     # trie = corpus.trie
 
-    grid = xc.grid.Grid((5, 4), corpus)
-    grid.lock_section( "GAMER", 0, 3, direction=WordDirection.VERTICAL)
+    grid = xc.grid.Grid((5, 7), corpus, shuffle=True)
+    grid.set_grid(0, 4, None)
+    grid.set_grid(4, 0, None)
+    # grid.set_grid(1, 0, None)
+    grid.set_grid(0, 5, None)
+
+    # grid[0, 0].status = CellStatus.BLACK
+    # grid.lock_section("ACER", 0, 0, direction=WordDirection.HORIZONTAL)
+    # grid.lock_section("", 0, 0, direction=WordDirection.VERTICAL)
+    # grid.lock_section("PAT", 0, 1, direction=WordDirection.HORIZONTAL)
+    # grid.lock_section("TOOTHY", 0, 3, direction=WordDirection.VERTICAL)
+    grid_status = GridStatus.INCOMPLETE
+    grid.update_grid_data()
+    grid.print()
+    print()
+    grid.print_lens(direction=WordDirection.HORIZONTAL)
+    print()
+    grid.print_lens(direction=WordDirection.VERTICAL)
+    print()
+    grid.print_boundaries()
 
     # Start in top left (0, 0)
     i = 0
@@ -127,9 +147,10 @@ if __name__ == '__main__':
     while grid_status == grid_status.INCOMPLETE:
 
         n_iters += 1
-        grid.print()
-        if n_iters % 2000 == 0:
-            pass
+        if n_iters % 1000 == 0:
+            grid.print()
+            print()
+
 
         # Get the current grid value
         c = grid[i, j]
