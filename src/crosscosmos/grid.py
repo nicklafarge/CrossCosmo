@@ -71,7 +71,6 @@ class Cell(object):
         # random.shuffle(self.queue)
 
         self.queue = copy.deepcopy(self.queue_order)
-        random.shuffle(self.queue)
         self.excluded = []
 
     def update(self, value: str):
@@ -89,13 +88,13 @@ class Cell(object):
 
     def reset_cell(self):
         # Nothing to reset if locked
-        if self.status == CellStatus.LOCKED:
+        if self.status == CellStatus.LOCKED or self.status == CellStatus.BLACK:
             return
 
+        self.excluded.append(self.value)
         self.status = CellStatus.EMPTY
         self.value = ""
         self.queue = copy.deepcopy(self.queue_order)
-        self.excluded = []
 
         # Return the word (if any) that is now valid again
         removed_words = self.removed_words
@@ -111,7 +110,7 @@ class Cell(object):
 
 class Grid(object):
 
-    def __init__(self, grid_size: Tuple[int, int], corpus: xc.corpus.Corpus):
+    def __init__(self, grid_size: Tuple[int, int], corpus: xc.corpus.Corpus, shuffle=True):
 
         # if grid_size[0] % 2 != 0 or grid_size[1] % 2 != 0:
         #     raise ValueError("Currently only even numbers are supported for grids")
@@ -132,6 +131,8 @@ class Grid(object):
         for i in range(self.row_count):
             for j in range(self.col_count):
                 self.grid[i, j] = Cell(x=i, y=j)
+                if shuffle:
+                    random.shuffle(self[i, j].queue)
         self.center = [((self.grid_size[0] - 1) / 2), ((self.grid_size[1] - 1) / 2)]
 
         # Update the heads for horizontal and vertical clues
@@ -247,6 +248,9 @@ class Grid(object):
         current_cell = self[i, j]
         n = 0
 
+        if current_cell.status == CellStatus.BLACK:
+            return 0
+
         match which:
             case Direction.UP:
                 def termination_criteria(c):
@@ -325,20 +329,37 @@ class Grid(object):
             return cell_list
 
     def is_h_start(self, i: int, j: int) -> bool:
-        return j == 0 or (self[i, j - 1].status == xc.grid.CellStatus.BLACK and
-                          self[i, j].status != xc.grid.CellStatus.BLACK)
+        if j > 0:
+            is_after_black = (self[i, j - 1].status == xc.grid.CellStatus.BLACK and
+                              self[i, j].status != xc.grid.CellStatus.BLACK)
+        else:
+            is_after_black = False
+
+        return self[i, j].status != CellStatus.BLACK and (j == 0 or is_after_black)
 
     def is_h_end(self, i: int, j: int) -> bool:
-        return j == (self.col_count - 1) or (self[i, j + 1].status == xc.grid.CellStatus.BLACK and
-                                             self[i, j].status != xc.grid.CellStatus.BLACK)
+        if j < self.col_count - 1:
+            is_before_black = (self[i, j + 1].status == xc.grid.CellStatus.BLACK and
+                               self[i, j].status != xc.grid.CellStatus.BLACK)
+        else:
+            is_before_black = False
+        return self[i, j].status != CellStatus.BLACK and (j == (self.col_count - 1) or is_before_black)
 
     def is_v_start(self, i: int, j: int) -> bool:
-        return i == 0 or (self[i - 1, j].status == xc.grid.CellStatus.BLACK and
-                          self[i, j].status != xc.grid.CellStatus.BLACK)
+        if i > 0:
+            is_after_black = (self[i - 1, j].status == xc.grid.CellStatus.BLACK and
+                              self[i, j].status != xc.grid.CellStatus.BLACK)
+        else:
+            is_after_black = False
+        return self[i, j].status != CellStatus.BLACK and (i == 0 or is_after_black)
 
     def is_v_end(self, i: int, j: int) -> bool:
-        return i == (self.row_count - 1) or (self[i + 1, j].status == xc.grid.CellStatus.BLACK and
-                                             self[i, j].status != xc.grid.CellStatus.BLACK)
+        if i < self.row_count - 1:
+            is_before_black = (self[i + 1, j].status == xc.grid.CellStatus.BLACK and
+                               self[i, j].status != xc.grid.CellStatus.BLACK)
+        else:
+            is_before_black = False
+        return self[i, j].status != CellStatus.BLACK and (i == (self.row_count - 1) or is_before_black)
 
     def print(self):
         self.to_console()
