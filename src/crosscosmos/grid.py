@@ -41,6 +41,12 @@ class WordDirection(Enum):
     VERTICAL = 2
 
 
+class Symmetry(Enum):
+    NONE = 0
+    ROTATIONAL = 1
+    REFLECTION = 2
+
+
 class Cell(object):
     def __init__(self,
                  x: int, y: int,
@@ -59,6 +65,7 @@ class Cell(object):
         self.is_h_end = False
         self.is_v_start = False
         self.is_v_end = False
+        self.answer_number = None
 
         self.hlen = 0
         self.vlen = 0
@@ -110,7 +117,8 @@ class Cell(object):
 
 class Grid(object):
 
-    def __init__(self, grid_size: Tuple[int, int], corpus: xc.corpus.Corpus, shuffle=True):
+    def __init__(self, grid_size: Tuple[int, int], corpus: xc.corpus.Corpus, shuffle=True,
+                 symmetry: Symmetry = Symmetry.ROTATIONAL, auto_symmetry=False):
 
         # if grid_size[0] % 2 != 0 or grid_size[1] % 2 != 0:
         #     raise ValueError("Currently only even numbers are supported for grids")
@@ -138,6 +146,9 @@ class Grid(object):
         # Update the heads for horizontal and vertical clues
         self.update_grid_data()
 
+        self.auto_symmetry = auto_symmetry
+        self.symmetry = symmetry
+
     def __repr__(self):
         return f"Grid(dim=({self.grid_size[0]}, {self.grid_size[1]})"
 
@@ -164,12 +175,13 @@ class Grid(object):
         coord_rot_center = -coord_center[0], -coord_center[1]
         cr1, cr2 = self.center2corner(*coord_rot_center)
 
-        if self.grid[x][y].status != CellStatus.BLACK and self.grid[cr1][cr2].status == CellStatus.BLACK:
-            # If the rotated state is black, then reset that black square to default
-            self.grid[cr1][cr2].update("")
-        elif self.grid[x][y].status == CellStatus.BLACK:
-            # Set the rotated state to black
-            self.grid[cr1][cr2].update(None)
+        if self.auto_symmetry and self.symmetry == Symmetry.ROTATIONAL:
+            if self.grid[x][y].status != CellStatus.BLACK and self.grid[cr1][cr2].status == CellStatus.BLACK:
+                # If the rotated state is black, then reset that black square to default
+                self.grid[cr1][cr2].update("")
+            elif self.grid[x][y].status == CellStatus.BLACK:
+                # Set the rotated state to black
+                self.grid[cr1][cr2].update(None)
 
         # Update heads
         self.update_grid_data()
@@ -203,15 +215,25 @@ class Grid(object):
         # Update horizontal / vertical heads
         self.h_heads = []
         self.v_heads = []
+        answer_counter = 1
         for i in range(self.row_count):
             for j in range(self.col_count):
 
                 # Update lists of head nodes
-                if self.is_h_start(i, j):
+                is_h_start = self.is_h_start(i, j)
+                is_v_start = self.is_v_start(i, j)
+
+                if is_h_start:
                     self.h_heads.append((i, j))
 
-                if self.is_v_start(i, j):
+                if is_v_start:
                     self.v_heads.append((i, j))
+
+                if is_h_start or is_v_start:
+                    self[i, j].answer_number = answer_counter
+                    answer_counter += 1
+                else:
+                    self[i, j].answer_number = None
 
                 # Update start/end data
                 self[i, j].is_h_start = self.is_h_start(i, j)
