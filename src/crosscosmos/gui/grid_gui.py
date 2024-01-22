@@ -13,6 +13,35 @@ from crosscosmos.grid import CellStatus
 
 logger = logging.getLogger("gui")
 
+UPDATES_PER_FRAME = 100
+
+
+class Curser(arcade.SpriteSolidColor):
+
+    def __init__(self, width: int, height: int, color: arcade.Color):
+
+        # Set up parent class
+        super().__init__(width, height, color)
+
+        # Used for flipping between image sequences
+        self.blink_timer = 0
+
+    def update_animation(self, delta_time: float = 1 / 60):
+
+        self.blink_timer += 1
+        if self.blink_timer > 7 * UPDATES_PER_FRAME:
+            self.blink_timer = 0
+
+        frame = self.blink_timer // UPDATES_PER_FRAME
+        if frame % 2 == 0:
+
+            if self.color == arcade.color.BLACK:
+                print("Curser white")
+                self.color = arcade.color.WHITE
+            else:
+                print("Curser black")
+                self.color = arcade.color.BLACK
+
 
 class CrossCosmosGame(arcade.Window):
     def __init__(self, config_in: ConfigParser, grid_in: xc.grid.Grid):
@@ -21,6 +50,9 @@ class CrossCosmosGame(arcade.Window):
                          config_in['window']['title'])
 
         self.grid = grid_in
+
+        # Frame counter
+        self.n_frames = 0
 
         self.inner_margin = config_in.getint('grid', 'inner_margin')
         self.outer_margin = config_in.getint('grid', 'outer_margin')
@@ -34,13 +66,20 @@ class CrossCosmosGame(arcade.Window):
         # One dimensional list of all sprites in the two-dimensional sprite list
         self.grid_sprite_list = arcade.SpriteList()
 
+        # test_dummy
+        # self.text_curser_list = arcade.SpriteList()
+
         # This will be a two-dimensional grid of sprites to mirror the two
         # dimensional grid of numbers. This points to the SAME sprites that are
         # in grid_sprite_list, just in a 2d manner.
         # self.grid_sprites = []
         self.grid_sprites = np.empty(grid.grid_size, dtype=arcade.Sprite)
+        self.grid_sprites2 = np.empty(grid.grid_size, dtype=arcade.Sprite)
         self.text_labels = np.empty(grid.grid_size, dtype=arcade.Text)
 
+        self.text_curser_blink_frequency = 30
+        text_curser = arcade.SpriteSolidColor(2, int(self.square_size * 0.45), arcade.color.WHITE)
+        self.text_curser = text_curser
         # Create a list of solid-color sprites to represent each grid location
         for row in range(grid.row_count):
             for column in range(grid.col_count):
@@ -53,9 +92,20 @@ class CrossCosmosGame(arcade.Window):
                 self.grid_sprites[row, column] = sprite
                 self.grid_sprite_list.append(sprite)
 
+                if row == grid.row_count - 1 and column == 0:
+                    text_curser.center_x = x - self.square_size/7
+                    text_curser.center_y = y
+                    self.grid_sprite_list.append(text_curser)
+                # text_curser = arcade.SpriteSolidColor(3, int(self.square_size * 0.45), arcade.color.WHITE)
+                # text_curser.center_x = x
+                # text_curser.center_y = y
+                # self.grid_sprites2[row, column] = text_curser
+
                 # Store the location in the grid
                 grid_row, grid_col = self.gui_row_col_to_grid_row_col(row, column)
                 self.grid[grid_row, grid_col].gui_coordinates = (x, y)
+                self.grid[grid_row, grid_col].gui_row = row
+                self.grid[grid_row, grid_col].gui_col = column
 
                 # Create text labels
                 half_square = self.square_size / 2
@@ -68,6 +118,15 @@ class CrossCosmosGame(arcade.Window):
                                 font_size=10)
                 self.text_labels[row, column] = t
 
+        # # Create curser (default 0,0)
+        # sixth_square = self.square_size / 6
+        # x0, y0 = self.grid[0, 0].gui_coordinates
+        # text_curser = arcade.SpriteSolidColor(5, int(self.square_size * 0.45), arcade.color.BLACK)
+        # text_curser.center_x = x0 - sixth_square
+        # text_curser.center_y = y0
+        # # self.grid_sprite_list.append(text_curser)
+        # self.text_curser = text_curser
+
     def on_draw(self):
         """
         Render the screen.
@@ -78,11 +137,28 @@ class CrossCosmosGame(arcade.Window):
         # Batch draw the grid sprites
         self.grid_sprite_list.draw()
 
+        # Render the text_curser
+        # self.text_curser.draw()
+
         # Draw the text labels
         for t in self.text_labels.flatten():
             t.draw()
 
     def on_update(self, delta_time: float):
+        self.n_frames += 1
+        # print(self.n_frames)
+        # self.text_curser.update_animation()
+        if self.n_frames % self.text_curser_blink_frequency == 0:
+            if self.text_curser.color == arcade.color.BLACK:
+                print("b->w")
+                self.text_curser.color = arcade.color.WHITE
+            else:
+                print("w->b")
+                self.text_curser.color = arcade.color.BLACK
+        #
+        #     # self.text_curser.update()
+        #     # self.text_curser.draw()
+
         self.draw_answer_numbers()
 
     def draw_answer_numbers(self):
@@ -92,24 +168,6 @@ class CrossCosmosGame(arcade.Window):
                 grid_row, grid_col = self.gui_row_col_to_grid_row_col(gui_row, gui_col)
                 cell = self.grid[grid_row, grid_col]
                 self.text_labels[gui_row, gui_col].text = "" if not cell.answer_number else str(cell.answer_number)
-
-    def toggle_black_square(self, gui_row: int, gui_column: int):
-        grid_row, grid_col = self.gui_row_col_to_grid_row_col(gui_row, gui_column)
-
-        grid_cell_is_black = self.grid[grid_row, grid_col].status == CellStatus.BLACK
-        gui_is_black = self.grid_sprites[gui_row][gui_column].color == arcade.color.BLACK
-
-        if grid_cell_is_black != gui_is_black:
-            raise RuntimeError("grid/gui black cells have fallen out of sync")
-
-        if grid_cell_is_black:
-            self.grid.set_grid(grid_row, grid_col, "")
-            self.grid_sprites[gui_row][gui_column].color = arcade.color.WHITE
-        else:
-            self.grid.set_grid(grid_row, grid_col, None)
-            self.grid_sprites[gui_row][gui_column].color = arcade.color.BLACK
-
-        self.draw_answer_numbers()
 
     def on_mouse_press(self, x_grid: float, y_grid: float, button, modifiers):
         """ Called when the user presses a mouse button.
@@ -132,6 +190,30 @@ class CrossCosmosGame(arcade.Window):
         # Lock / unlock
         elif modifiers & arcade.key.MOD_SHIFT:
             pass
+
+        # Select square
+
+        # No modifier - add text
+
+    def toggle_black_square(self, gui_row: int, gui_column: int):
+        grid_row, grid_col = self.gui_row_col_to_grid_row_col(gui_row, gui_column)
+
+        grid_cell_is_black = self.grid[grid_row, grid_col].status == CellStatus.BLACK
+        gui_is_black = self.grid_sprites[gui_row][gui_column].color == arcade.color.BLACK
+
+        if grid_cell_is_black != gui_is_black:
+            raise RuntimeError("grid/gui black cells have fallen out of sync")
+
+        if grid_cell_is_black:
+            self.grid.set_grid(grid_row, grid_col, "")
+            self.grid_sprites[gui_row][gui_column].color = arcade.color.WHITE
+            self.text_curser.color = arcade.color.BLUE
+        else:
+            self.grid.set_grid(grid_row, grid_col, None)
+            self.grid_sprites[gui_row][gui_column].color = arcade.color.BLACK
+            self.text_curser.color = arcade.color.RED
+
+        self.draw_answer_numbers()
 
     def gui_row_col_to_grid_row_col(self, gui_row: int, gui_col: int) -> Tuple[int, int]:
         return self.grid.row_count - gui_row - 1, gui_col

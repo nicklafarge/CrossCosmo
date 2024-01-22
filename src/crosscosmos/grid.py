@@ -60,6 +60,8 @@ class Cell(object):
         self.x = x
         self.y = y
         self.gui_coordinates = gui_coordinates
+        self.gui_row = None
+        self.gui_col = None
 
         self.is_h_start = False
         self.is_h_end = False
