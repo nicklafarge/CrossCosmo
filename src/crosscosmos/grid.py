@@ -268,11 +268,27 @@ class Grid(object):
             case _:
                 raise ValueError("Invalid word directin")
 
-    def count(self, i: int, j: int, which: Direction) -> int:
-        current_cell = self[i, j]
-        n = 0
+    def full_word_from_cell(self, i: int, j: int, direction: WordDirection):
 
-        if current_cell.status == CellStatus.BLACK:
+        start_cell = self[i, j]
+
+        if start_cell.status == CellStatus.BLACK:
+            return []
+
+        match direction:
+            case direction.VERTICAL:
+                up_cells = list(reversed(self.aggregate_cells(i, j, Direction.UP)[1:]))
+                down_cells = self.aggregate_cells(i, j, Direction.DOWN)[1:]
+                return up_cells + [start_cell] + down_cells
+            case direction.HORIZONTAL:
+                left = list(reversed(self.aggregate_cells(i, j, Direction.LEFT)[1:]))
+                right = self.aggregate_cells(i, j, Direction.RIGHT)[1:]
+                return left + [start_cell] + right
+
+    def aggregate_cells(self, i: int, j: int, which: Direction) -> int:
+        cells = [self[i, j]]
+
+        if cells[0].status == CellStatus.BLACK:
             return 0
 
         match which:
@@ -303,20 +319,15 @@ class Grid(object):
             case _:
                 raise ValueError("invalid direction encountered")
 
-        while not termination_criteria(current_cell):
-            current_cell = update(current_cell)
-            n += 1
-        return n
+        while not termination_criteria(cells[-1]):
+            cells.append(update(cells[-1]))
+        return cells
 
     def horizontal_word_len(self, i: int, j: int):
-        left = self.count(i, j, Direction.LEFT)
-        right = self.count(i, j, Direction.RIGHT)
-        return left + right + 1
+        return len(self.full_word_from_cell(i, j, WordDirection.HORIZONTAL))
 
     def vertical_word_len(self, i: int, j: int):
-        up = self.count(i, j, Direction.UP)
-        down = self.count(i, j, Direction.DOWN)
-        return up + down + 1
+        return len(self.full_word_from_cell(i, j, WordDirection.VERTICAL))
 
     def get_h_word_up_to(self, i: int, j: int, as_str=True):
         cells = []

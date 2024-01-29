@@ -99,13 +99,13 @@ def validate_grid_letter_sequence(grid_trie: pygtrie, letter_sequence: str, is_e
 
 
 if __name__ == '__main__':
-    corpus = xc.corpus.Corpus.from_test()
+    # corpus = xc.corpus.Corpus.from_test()
     # corpus = xc.corpus.Corpus.from_diehl()
-    # corpus = xc.corpus.Corpus.from_lafarge_db()
+    corpus = xc.corpus.Corpus.from_lafarge_db()
     # lc4 = lc.to_n_letter_corpus(4)
     # lc5 = lc.to_subcorpus(4, 5)
     # lc6 = lc.to_subcorpus(4, 6)
-    tries = corpus.to_n_tries(7, padded=True)
+    tries = corpus.to_n_tries(8, padded=True)
     # lc4.build_trie()
     # trie = lc4.trie
     # lc.build_trie()
@@ -115,11 +115,15 @@ if __name__ == '__main__':
     # corpus.build_trie()
     # trie = corpus.trie
 
-    grid = xc.grid.Grid((5, 7), corpus, shuffle=True)
-    grid.set_grid(0, 4, None)
-    grid.set_grid(4, 0, None)
-    # grid.set_grid(1, 0, None)
-    grid.set_grid(0, 5, None)
+    grid = xc.grid.Grid((3, 5), corpus, shuffle=True)
+    # grid.set_grid(0, 5, None)
+    # grid.set_grid(0, 4, None)
+    # grid.set_grid(3, 0, None)
+    # grid.set_grid(3, 1, None)
+
+    grid.lock_section("LIENE", 2, 0, WordDirection.HORIZONTAL)
+    # grid.lock_section("SAD", 0, 0, WordDirection.VERTICAL)
+    # grid.lock_section("PRO", 0, 1, WordDirection.VERTICAL)
 
     # grid[0, 0].status = CellStatus.BLACK
     # grid.lock_section("ACER", 0, 0, direction=WordDirection.HORIZONTAL)
