@@ -147,17 +147,15 @@ class CrossCosmosGame(arcade.Window):
         for t in self.cell_letters.flatten():
             t.draw()
 
-        #
-
     def on_update(self, delta_time: float):
         self.n_frames += 1
 
         if self.curser_visible and self.n_frames % self.text_curser_blink_frequency == 0:
             if self.text_curser.color == CURSER_COLOR_1:
-                logger.debug("Curser color 1->2")
+                # logger.debug("Curser color 1->2")
                 self.text_curser.color = CURSER_COLOR_2
             else:
-                logger.debug("Curser color 2->1")
+                # logger.debug("Curser color 2->1")
                 self.text_curser.color = CURSER_COLOR_1
 
     def draw_answer_numbers(self):
@@ -200,6 +198,11 @@ class CrossCosmosGame(arcade.Window):
         """ Called when the user presses a mouse button.
         """
 
+        # Keep track of modifiers
+        with_shift = modifiers & arcade.key.MOD_SHIFT
+        with_cmd = modifiers & arcade.key.MOD_COMMAND
+        with_win = modifiers & arcade.key.MOD_WINDOWS
+
         # See which row/col was clicked
         success, gui_row, gui_column = self.gui_xy_to_gui_row_col(x_grid, y_grid)
         grid_row, grid_col = self.gui_row_col_to_grid_row_col(gui_row, gui_column)
@@ -208,39 +211,41 @@ class CrossCosmosGame(arcade.Window):
             return
 
         logger.debug(f"Clicked grid row/col: {grid_row}, {grid_col}")
+        hide_cursor = False
 
         # Toggle black square
-        with_shift = modifiers & arcade.key.MOD_SHIFT
-        with_cmd = modifiers & arcade.key.MOD_COMMAND
-        with_win = modifiers & arcade.key.MOD_WINDOWS
         if with_shift and (with_cmd or with_win):
             logger.info("Shift+Command+Click")
-            self.toggle_black_square(gui_row, gui_column)
-            self.selected_x = grid_row
-            self.selected_y = grid_col
-            self.update_grid()
-            if self.curser_visible and grid_row == self.selected_cell.x and grid_col == self.selected_cell.y:
-                self.hide_curser()
-                self.reset_colors()
-            return
 
-        # Do nothing if already black
+            # Switch the selected square default -> black (or vice versa)
+            self.toggle_black_square(gui_row, gui_column)
+
+            # Update number entries across the entire grid
+            self.draw_answer_numbers()
+
+            # Hide the cursor if the click is [normal -> black] AND [on the current square]
+            if self.curser_visible and grid_row == self.selected_cell.x and grid_col == self.selected_cell.y:
+                hide_cursor = True
+
+        # Normal click on a black square: Do nothing
         elif self.grid[grid_row, grid_col].status == CellStatus.BLACK:
             logger.debug("Clicked on black square")
-            self.hide_curser()
-            self.reset_colors()
 
-        # Lock / unlock
+        # Shift+ click: Lock / unlock selected square
         elif modifiers & arcade.key.MOD_SHIFT:
             pass
 
+        # Normal click: Update the selected square
         else:
-            self.show_curser()
+            self.selected_x = grid_row
+            self.selected_y = grid_col
 
-        # Select square
-        self.selected_x = grid_row
-        self.selected_y = grid_col
-        self.update_grid()
+        # Update the grid colors/numbers
+        if hide_cursor:
+            self.hide_curser()
+            self.update_grid(False)
+        else:
+            self.update_grid(True)
 
     def toggle_black_square(self, gui_row: int, gui_column: int):
         grid_row, grid_col = self.gui_row_col_to_grid_row_col(gui_row, gui_column)
@@ -252,14 +257,15 @@ class CrossCosmosGame(arcade.Window):
             raise RuntimeError("grid/gui black cells have fallen out of sync")
 
         if grid_cell_is_black:
+            # Convert Black -> Default
             self.grid.set_grid(grid_row, grid_col, "")
             self.grid_sprites[gui_row][gui_column].color = DEFAULT_CELL_COLOR
         else:
+            # Convert Default -> Black
             self.grid.set_grid(grid_row, grid_col, None)
             self.grid_sprites[gui_row][gui_column].color = BLACKED_CELL_COLOR
 
         self.cell_letters[gui_row][gui_column].text = ""
-        self.draw_answer_numbers()
 
     def reset_colors(self):
         logger.info("Resetting colors on grid")
@@ -276,7 +282,7 @@ class CrossCosmosGame(arcade.Window):
                 else:
                     self.grid_sprites[gui_x][gui_y].color = DEFAULT_CELL_COLOR
 
-    def update_grid(self):
+    def update_grid(self, show_cursor=True):
         logger.info("Updating grid")
         selected_gui_x, selected_gui_y = self.selected_cell.gui_coordinates
 
@@ -288,7 +294,10 @@ class CrossCosmosGame(arcade.Window):
             logger.info("Cursor on right")
             self.text_curser.center_x = selected_gui_x + self.square_size / 4
         self.text_curser.center_y = selected_gui_y
-        # self.show_curser()
+
+        if show_cursor:
+            self.show_curser()
+
         self.reset_colors()
 
         active_direction = WordDirection.HORIZONTAL if self.horizontal_mode else WordDirection.VERTICAL
