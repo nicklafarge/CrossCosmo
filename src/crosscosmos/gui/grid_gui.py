@@ -17,13 +17,20 @@ logger.setLevel(logging.DEBUG)
 
 UPDATES_PER_FRAME = 100
 
-# Colors
+# Background colors
 BACKGROUND_COLOR = arcade.color.BLACK
 CELL_BACKGROUND_COLOR = arcade.color.WHITE
+
+# Text colors
 TEXT_COLOR = arcade.color.BLACK
+LOCK_TEXT_COLOR = (0, 153, 255)  # cyan
+
+# Curser colors
 CURSER_COLOR_1 = arcade.color.BLACK
 CURSER_COLOR_2 = arcade.color.DARK_GRAY
-DEFAULT_CELL_COLOR = (80, 80, 80)
+
+# Cell colors
+DEFAULT_CELL_COLOR = (80, 80, 80)  # Dark-ish Gray
 BLACKED_CELL_COLOR = arcade.color.BLACK
 SELECTED_CELL_COLOR = arcade.color.LIGHT_GRAY
 ACTIVE_WORD_CELL_COLOR = arcade.color.GRAY
@@ -229,8 +236,8 @@ class CrossCosmosGame(arcade.Window):
             logger.info(f"Key pressed: {key_value}")
             new_val = key_value
 
-        elif (
-                key == arcade.key.DELETE or key == arcade.key.BACKSPACE) and self.selected_grid_cell.status == CellStatus.SET:
+        elif ((key == arcade.key.DELETE or key == arcade.key.BACKSPACE) and
+              self.selected_grid_cell.status == CellStatus.SET):
             logger.info("Backspace pressed")
             new_val = ""
 
@@ -249,8 +256,8 @@ class CrossCosmosGame(arcade.Window):
         with_win = modifiers & arcade.key.MOD_WINDOWS
 
         # See which row/col was clicked
-        success, gui_row, gui_column = self.gui_xy_to_gui_row_col(x_grid, y_grid)
-        grid_row, grid_col = self.gui_row_col_to_grid_row_col(gui_row, gui_column)
+        success, gui_row, gui_col = self.gui_xy_to_gui_row_col(x_grid, y_grid)
+        grid_row, grid_col = self.gui_row_col_to_grid_row_col(gui_row, gui_col)
 
         if not success:
             return
@@ -263,7 +270,7 @@ class CrossCosmosGame(arcade.Window):
             logger.info("Shift+Command+Click")
 
             # Switch the selected square default -> black (or vice versa)
-            self.toggle_black_square(gui_row, gui_column)
+            self.toggle_black_square(gui_row, gui_col)
 
             # Update number entries across the entire grid
             self.draw_answer_numbers()
@@ -283,6 +290,7 @@ class CrossCosmosGame(arcade.Window):
             # Only toggle if it is SET or LOCKED
             if self.grid[grid_row, grid_row].status in [CellStatus.LOCKED, CellStatus.SET]:
                 self.grid.toggle_locked(grid_row, grid_col)
+                self.update_locked_color(gui_row, gui_col)
 
         # Normal click: Update the selected square
         else:
@@ -296,10 +304,25 @@ class CrossCosmosGame(arcade.Window):
 
         # Update the grid colors/numbers
         if hide_cursor:
+            self.update_gui_colors(show_cursor=False)
             self.hide_curser()
-            self.update_gui_colors(False)
         else:
-            self.update_gui_colors(True)
+            self.update_gui_colors(show_cursor=True)
+
+    def update_locked_color(self, gui_row: int, gui_col: int):
+        # gui_sprite = self.grid_sprites[gui_row, gui_col]
+        gui_text_label = self.cell_letters[gui_row, gui_col]
+
+        grid_row, grid_col = self.gui_row_col_to_grid_row_col(gui_row, gui_col)
+        cell = self.grid[grid_row, grid_col]
+
+        if cell.status == CellStatus.LOCKED:
+            logger.debug(f"Setting gui [{gui_row},{gui_col}], grid [{grid_row},{grid_col}] to locked")
+            # gui_text_label.color = arcade.color.SAE
+            # gui_text_label.color = (255, 0, 153)
+            gui_text_label.color = (0, 153, 255)
+        else:
+            gui_text_label.color = TEXT_COLOR
 
     def draw_answer_numbers(self):
         """ Draw the cell numbers in the GUI (as applicable)
@@ -376,12 +399,16 @@ class CrossCosmosGame(arcade.Window):
         selected_gui_x, selected_gui_y = self.selected_grid_cell.gui_coordinates
 
         # Move the curser
-        if self.selected_grid_cell.status == CellStatus.EMPTY:
-            logger.info("Cursor on left")
-            self.text_curser.center_x = selected_gui_x - self.square_size / 4
-        elif self.selected_grid_cell.status == CellStatus.SET:
+        # if self.selected_grid_cell.status in [CellStatus.EMPTY, CellStatus.LOCKED]:
+        #     logger.info("Cursor on left")
+        #     self.text_curser.center_x = selected_gui_x - self.square_size / 4
+        if self.selected_grid_cell.status == CellStatus.SET:
             logger.info("Cursor on right")
             self.text_curser.center_x = selected_gui_x + self.square_size / 4
+        else:
+            logger.info("Cursor on left")
+            self.text_curser.center_x = selected_gui_x - self.square_size / 4
+            
         self.text_curser.center_y = selected_gui_y
 
         # Optionally display the text cursor
@@ -462,12 +489,11 @@ class CrossCosmosGame(arcade.Window):
 
 
 if __name__ == "__main__":
-    
     # Parse config file
     config_path = xc.crosscosmos_root / "gui" / "gui_config.ini"
     config = ConfigParser()
     config.read(config_path)
-    
+
     # Create grid backend
     size = 6, 6
     corpus_backend = xc.corpus.Corpus.from_test()
