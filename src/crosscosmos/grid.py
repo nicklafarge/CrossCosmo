@@ -17,7 +17,6 @@ import numpy as np
 
 # Local
 import crosscosmos as xc
-from crosscosmos.data_models.pydantic_model import Letter, Word
 
 logger = logging.getLogger(__name__)
 
@@ -164,7 +163,7 @@ class Grid(object):
     def __setitem__(self, x: Tuple[int, int], value: str):
         self.set_grid(x[0], x[1], value)
 
-    def set_grid(self, x: int, y: int, value: str):
+    def set_grid(self, x: int, y: int, value: Union[str, None]):
         # Check index
         if (x < 0 or x > self.grid_size[0]) or (y < 0 or y > self.grid_size[1]):
             raise IndexError(f"Index outside grid bounds:({self.grid_size[0]}, {self.grid_size[1]})")
@@ -248,6 +247,35 @@ class Grid(object):
             for j in range(self.col_count):
                 self[i, j].hlen = self.horizontal_word_len(i, j)
                 self[i, j].vlen = self.vertical_word_len(i, j)
+
+    def lock_entry(self, i: int, j: int):
+
+        # Change from set -> locked
+        if self[i, j].status == CellStatus.SET:
+            logger.debug(f"Entry [{i},{j}] status changed to LOCKED")
+            self[i, j].status = CellStatus.LOCKED
+        else:
+            logger.error(f"Cannot lock entry [{i},{j}]: it is not currently set")
+
+    def unlock_entry(self, i: int, j: int):
+
+        # Change from locked -> set
+        if self[i, j].status == CellStatus.LOCKED:
+            logger.debug(f"Entry [{i},{j}] status changed to SET")
+            self[i, j].status = CellStatus.SET
+        else:
+            logger.error(f"Cannot unlock entry [{i},{j}]: it is not currently locked")
+
+    def toggle_locked(self, i: int, j: int):
+        # Change from locked -> set
+        if self[i, j].status == CellStatus.LOCKED:
+            self[i, j].status = CellStatus.SET
+            logger.debug(f"Entry [{i},{j}] status changed to SET")
+        elif self[i, j].status == CellStatus.SET:
+            logger.debug(f"Entry [{i},{j}] status changed to LOCKED")
+            self[i, j].status = CellStatus.LOCKED
+        else:
+            logger.error(f"Cannot toggle locked status for entry [{i},{j}]: it is neither SET nor LOCKED")
 
     def lock_section(self, word: str, i: int, j: int, direction: WordDirection):
 
