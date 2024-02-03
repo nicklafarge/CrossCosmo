@@ -9,7 +9,7 @@ import numpy as np
 
 # Local
 import crosscosmos as xc
-from crosscosmos.grid import CellStatus, Direction, WordDirection
+from crosscosmos.grid import CellStatus, WordDirection, Cell
 
 logger = logging.getLogger("gui")
 # logger.setLevel(logging.INFO)
@@ -37,49 +37,71 @@ class CrossCosmosGame(arcade.Window):
 
         self.grid = grid_in
 
-        # Frame counter
-        self.n_frames = 0
+        # Frame counter to keep track of blinking curser
+        self.frame_update_count = 0
 
-        self.inner_margin = config_in.getint('grid', 'inner_margin')
-        self.outer_margin = config_in.getint('grid', 'outer_margin')
-        total_inner_margin = (grid.row_count - 1) * self.inner_margin
-        self.grid_height = self.height - (2 * self.outer_margin) - total_inner_margin
-        self.square_size = int(self.grid_height // grid.row_count)
+        # Size computations -------------------------------------------------------------------------------------------#
 
-        # Set the background color of the window
-        self.background_color = BACKGROUND_COLOR
+        # Set GUI layout parameters based on the inputted configuration
+        self.inner_margin = config_in.getint('grid', 'inner_margin')  # space between each grid cell
+        self.outer_margin = config_in.getint('grid', 'outer_margin')  # space between grid and edge of GUI
+
+        # The sum of all inner margins
+        vertical_inner_margin_sum = (self.grid.row_count - 1) * self.inner_margin
+
+        # The total grid height is 
+        #   The height of the GUI (from arcade.Window) -
+        #   2 * the outer margin size - 
+        #   the sum of all inner margins in the vertical direction
+        self.grid_height = self.height - (2 * self.outer_margin) - vertical_inner_margin_sum
+
+        # The size of each square is the height of the total grid divided by the number of rows (as an integer)
+        self.square_size = int(self.grid_height // self.grid.row_count)
+
+        # Data values -------------------------------------------------------------------------------------------------#
 
         # One dimensional list of all sprites in the two-dimensional sprite list
         self.grid_sprite_list = arcade.SpriteList()
 
-        # This will be a two-dimensional grid of sprites to mirror the two
-        # dimensional grid of numbers. This points to the SAME sprites that are
-        # in grid_sprite_list, just in a 2d manner.
-        # self.grid_sprites = []
-        self.grid_sprites = np.empty(grid.grid_size, dtype=arcade.Sprite)
-        self.grid_sprites2 = np.empty(grid.grid_size, dtype=arcade.Sprite)
-        self.text_labels = np.empty(grid.grid_size, dtype=arcade.Text)
-        self.cell_letters = np.empty(grid.grid_size, dtype=arcade.Text)
+        # 2D grid of sprites that mirrors the underlying 2D data structure.
+        self.grid_sprites = np.empty(self.grid.grid_size, dtype=arcade.Sprite)
 
-        self.text_curser_blink_frequency = 30
+        # 2D grid of text labels that represent the vertical/horizontal crossword numbers
+        self.text_labels = np.empty(self.grid.grid_size, dtype=arcade.Text)
+
+        # 2D grid of text labels that represent the string value of each cell
+        self.cell_letters = np.empty(self.grid.grid_size, dtype=arcade.Text)
+
+        # GUI Objects -------------------------------------------------------------------------------------------------#
+
+        # Create the text cursor
+        self.text_curser_blink_frequency = config_in.getint('advanced', 'text_curser_blink_frequency')
         text_curser = arcade.SpriteSolidColor(2, int(self.square_size * 0.37), arcade.color.WHITE)
-        self.text_curser = text_curser
-        self.curser_visible = True
-        self.horizontal_mode = True
+        self.text_curser: arcade.SpriteSolidColor = text_curser
+        self.curser_visible: bool = True
 
-        self.selected_x = 0
-        self.selected_y = 0
+        # Keep track of if we are editing in the horizontal or vertical directinons
+        self.edit_direction: WordDirection = WordDirection.HORIZONTAL
+
+        # Keep track of which square is currently selected
+        self.selected_x: int = 0
+        self.selected_y: int = 0
+
+        # For readability
+        self.half_square = self.square_size / 2
 
         # Create a list of solid-color sprites to represent each grid location
-        for row in range(grid.row_count):
-            for column in range(grid.col_count):
-                # Create grid
-                x = column * (self.square_size + self.inner_margin) + (self.square_size / 2 + self.outer_margin)
-                y = row * (self.square_size + self.inner_margin) + (self.square_size / 2 + self.outer_margin)
+        for row in range(self.grid.row_count):
+            for column in range(self.grid.col_count):
 
+                # Convert from GUI row/col indices to underlying grid row/col indices
                 grid_row, grid_col = self.gui_row_col_to_grid_row_col(row, column)
 
-                # Text placeholders
+                # Compute GUI (x,y) coordinates where (x,y) is the CENTER of each grid square 
+                x = column * (self.square_size + self.inner_margin) + self.half_square + self.outer_margin
+                y = row * (self.square_size + self.inner_margin) + self.half_square + self.outer_margin
+
+                # Create text placeholders at (x,y) for SET or LOCKED cells
                 text = ""
                 if self.grid[grid_row, grid_col].status in [CellStatus.SET, CellStatus.LOCKED]:
                     text = self.grid[grid_row, grid_col].value
@@ -93,7 +115,7 @@ class CrossCosmosGame(arcade.Window):
                 self.cell_letters[row, column] = cell_letter
 
                 # Cell number labels
-                half_square = self.square_size / 2
+                half_square = self.half_square
                 t = arcade.Text(text="",
                                 start_x=x - half_square * 0.7,
                                 start_y=y + half_square * 0.7,
@@ -103,35 +125,54 @@ class CrossCosmosGame(arcade.Window):
                                 font_size=10)
                 self.text_labels[row, column] = t
 
-                # Background
+                # Add solid color square background to the cell
                 sprite = arcade.SpriteSolidColor(self.square_size, self.square_size, CELL_BACKGROUND_COLOR)
                 sprite.center_x = x
                 sprite.center_y = y
                 self.grid_sprites[row, column] = sprite
                 self.grid_sprite_list.append(sprite)
 
-                # Store the location in the grid
+                # Store the gui locations for this cell in the underlying grid object
                 self.grid[grid_row, grid_col].gui_coordinates = (x, y)
                 self.grid[grid_row, grid_col].gui_row = row
                 self.grid[grid_row, grid_col].gui_col = column
 
-        # Curser
+        # Create the text cursor object
         self.grid_sprite_list.append(text_curser)
 
-        self.update_grid()
+        # Update the cell colors
+        self.update_gui_colors(show_cursor=True)
+
+        # Draw answer numbers based on the underlying grid cells
         self.draw_answer_numbers()
 
     @property
-    def selected_cell(self):
+    def selected_grid_cell(self) -> Cell:
+        """ Returns the currently selected cell located by the selected x/y coordinates
+        """
         return self.grid[self.selected_x, self.selected_y]
 
+    @property
+    def selected_gui_cell(self) -> arcade.Sprite:
+        """ Returns the currently selected cell located by the selected x/y coordinates
+        """
+        return self.grid_sprites[self.selected_grid_cell.gui_row, self.selected_grid_cell.gui_col]
+
     def update_selected_cell(self, new_value: str):
+        """ Update the currently selected cell with a new string
+        
+        Details:
+            Updates in the GUI in addition to the underlying grid
+        """
         logger.info(f"Updating cell {self.selected_x}, {self.selected_y} to {new_value}")
         self.grid.set_grid(self.selected_x, self.selected_y, new_value)
 
     def on_draw(self):
-        """
-        Render the screen.
+        """ Initial rendering the screen
+
+        1) Clear out existing pixels
+        2) Draw all sprites on the grid
+        3) Draw text/letters on the grid
         """
         # We should always start by clearing the window pixels
         self.clear()
@@ -148,24 +189,19 @@ class CrossCosmosGame(arcade.Window):
             t.draw()
 
     def on_update(self, delta_time: float):
-        self.n_frames += 1
+        """ Frequent update calls from the grid that are used for a text blinking animation
+        """
+        self.frame_update_count += 1
 
-        if self.curser_visible and self.n_frames % self.text_curser_blink_frequency == 0:
+        if self.curser_visible and self.frame_update_count % self.text_curser_blink_frequency == 0:
+            # Reset the counter number
+            self.frame_update_count = 0
+
+            # Swap cursor color
             if self.text_curser.color == CURSER_COLOR_1:
-                # logger.debug("Curser color 1->2")
                 self.text_curser.color = CURSER_COLOR_2
             else:
-                # logger.debug("Curser color 2->1")
                 self.text_curser.color = CURSER_COLOR_1
-
-    def draw_answer_numbers(self):
-        logger.info("Drawing answer numbers")
-        # Draw grid numbers
-        for gui_row in range(self.grid.row_count):
-            for gui_col in range(self.grid.col_count):
-                grid_row, grid_col = self.gui_row_col_to_grid_row_col(gui_row, gui_col)
-                cell = self.grid[grid_row, grid_col]
-                self.text_labels[gui_row, gui_col].text = "" if not cell.answer_number else str(cell.answer_number)
 
     def on_key_release(self, key, modifiers):
         """Called when the user releases a key. """
@@ -174,25 +210,34 @@ class CrossCosmosGame(arcade.Window):
         if modifiers and not ((modifiers & arcade.key.MOD_SHIFT) or (modifiers & arcade.key.MOD_CAPSLOCK)):
             return
 
+        # Tab: rotate between vertical and horizontal editing
         if key == arcade.key.TAB and self.curser_visible:
             logger.info("Switching between horizontal/vertical editing")
-            self.horizontal_mode = not self.horizontal_mode
-            self.update_grid()
+
+            # Switch horizontal <-> vertical editing
+            if self.edit_direction == WordDirection.HORIZONTAL:
+                self.edit_direction = WordDirection.VERTICAL
+            else:
+                self.edit_direction = WordDirection.HORIZONTAL
+
+            # Update the gui
+            self.update_gui_colors()
 
         new_val = None
-        if key >= arcade.key.A and key <= arcade.key.Z and self.selected_cell.status == CellStatus.EMPTY:
+        if arcade.key.A <= key <= arcade.key.Z and self.selected_grid_cell.status == CellStatus.EMPTY:
             key_value = chr(key).upper()
             logger.info(f"Key pressed: {key_value}")
             new_val = key_value
 
-        elif (key == arcade.key.DELETE or key == arcade.key.BACKSPACE) and self.selected_cell.status == CellStatus.SET:
-            logger.info(f"Backspace pressed")
+        elif (
+                key == arcade.key.DELETE or key == arcade.key.BACKSPACE) and self.selected_grid_cell.status == CellStatus.SET:
+            logger.info("Backspace pressed")
             new_val = ""
 
         if new_val is not None:
             self.update_selected_cell(new_val)
-            self.cell_letters[self.selected_cell.gui_row, self.selected_cell.gui_col].text = new_val
-            self.update_grid()
+            self.cell_letters[self.selected_grid_cell.gui_row, self.selected_grid_cell.gui_col].text = new_val
+            self.update_gui_colors()
 
     def on_mouse_press(self, x_grid: float, y_grid: float, button, modifiers):
         """ Called when the user presses a mouse button.
@@ -224,7 +269,7 @@ class CrossCosmosGame(arcade.Window):
             self.draw_answer_numbers()
 
             # Hide the cursor if the click is [normal -> black] AND [on the current square]
-            if self.curser_visible and grid_row == self.selected_cell.x and grid_col == self.selected_cell.y:
+            if self.curser_visible and grid_row == self.selected_grid_cell.x and grid_col == self.selected_grid_cell.y:
                 hide_cursor = True
 
         # Normal click on a black square: Do nothing
@@ -233,26 +278,58 @@ class CrossCosmosGame(arcade.Window):
 
         # Shift+ click: Lock / unlock selected square
         elif modifiers & arcade.key.MOD_SHIFT:
-            pass
+            logger.debug(f"Toggling locked status of [{grid_row},{grid_col}]")
+
+            # Only toggle if it is SET or LOCKED
+            if self.grid[grid_row, grid_row].status in [CellStatus.LOCKED, CellStatus.SET]:
+                self.grid.toggle_locked(grid_row, grid_col)
 
         # Normal click: Update the selected square
         else:
             self.selected_x = grid_row
             self.selected_y = grid_col
 
+        # Hide the cursor if the cell is locked
+        if self.selected_grid_cell.status == CellStatus.LOCKED:
+            logger.info("Locked cell: hiding cursor")
+            hide_cursor = True
+
         # Update the grid colors/numbers
         if hide_cursor:
             self.hide_curser()
-            self.update_grid(False)
+            self.update_gui_colors(False)
         else:
-            self.update_grid(True)
+            self.update_gui_colors(True)
+
+    def draw_answer_numbers(self):
+        """ Draw the cell numbers in the GUI (as applicable)
+        """
+        for gui_row in range(self.grid.row_count):
+            for gui_col in range(self.grid.col_count):
+                # Convert gui row/col to grid row/col
+                grid_row, grid_col = self.gui_row_col_to_grid_row_col(gui_row, gui_col)
+                cell = self.grid[grid_row, grid_col]
+
+                # Update the text label based on if the cell has an associated answer number
+                self.text_labels[gui_row, gui_col].text = "" if not cell.answer_number else str(cell.answer_number)
 
     def toggle_black_square(self, gui_row: int, gui_column: int):
+        """ Toggle a cell to or from a BLACK status
+        
+        Args:
+            gui_row: Selected row in the gui (int)
+            gui_column: selected column in the gui (int)
+
+        """
+
+        # Convert gui row/col to grid row/col
         grid_row, grid_col = self.gui_row_col_to_grid_row_col(gui_row, gui_column)
 
+        # Determine the status of the selected cell 
         grid_cell_is_black = self.grid[grid_row, grid_col].status == CellStatus.BLACK
         gui_is_black = self.grid_sprites[gui_row][gui_column].color == BLACKED_CELL_COLOR
 
+        # This should never happen, so throw an error
         if grid_cell_is_black != gui_is_black:
             raise RuntimeError("grid/gui black cells have fallen out of sync")
 
@@ -265,6 +342,7 @@ class CrossCosmosGame(arcade.Window):
             self.grid.set_grid(grid_row, grid_col, None)
             self.grid_sprites[gui_row][gui_column].color = BLACKED_CELL_COLOR
 
+        # Set the text to empty whenever BLACK status is changed
         self.cell_letters[gui_row][gui_column].text = ""
 
     def reset_colors(self):
@@ -282,39 +360,77 @@ class CrossCosmosGame(arcade.Window):
                 else:
                     self.grid_sprites[gui_x][gui_y].color = DEFAULT_CELL_COLOR
 
-    def update_grid(self, show_cursor=True):
+    def update_gui_colors(self, show_cursor=True):
+        """ Update the GUI
+        
+        Updating includes:
+            - Moving the cursor to the currently selected cell
+            - Optionally showing the cursor
+            - Resetting all grid cell colors to their default value
+            - Set the currently selected cell to the select color
+            - Set active cell colors based on if they're in the current edit direction line
+        Args:
+            show_cursor: True if the update should display the text cursor
+        """
         logger.info("Updating grid")
-        selected_gui_x, selected_gui_y = self.selected_cell.gui_coordinates
+        selected_gui_x, selected_gui_y = self.selected_grid_cell.gui_coordinates
 
         # Move the curser
-        if self.selected_cell.status == CellStatus.EMPTY:
+        if self.selected_grid_cell.status == CellStatus.EMPTY:
             logger.info("Cursor on left")
             self.text_curser.center_x = selected_gui_x - self.square_size / 4
-        elif self.selected_cell.status == CellStatus.SET:
+        elif self.selected_grid_cell.status == CellStatus.SET:
             logger.info("Cursor on right")
             self.text_curser.center_x = selected_gui_x + self.square_size / 4
         self.text_curser.center_y = selected_gui_y
 
+        # Optionally display the text cursor
         if show_cursor:
             self.show_curser()
 
+        # Reset all cells to default color
         self.reset_colors()
 
-        active_direction = WordDirection.HORIZONTAL if self.horizontal_mode else WordDirection.VERTICAL
-        active_word_cells = self.grid.full_word_from_cell(self.selected_cell.x, self.selected_cell.y,
-                                                          active_direction)
+        # Get "active" based on the current edit direction
+        active_word_cells = self.grid.full_word_from_cell(self.selected_grid_cell.x,
+                                                          self.selected_grid_cell.y,
+                                                          self.edit_direction)
+
+        # Update the cell based on its status, and whether it is selected
         for cell in active_word_cells:
             if cell.status == CellStatus.BLACK:
                 continue
-            elif cell.x == self.selected_cell.x and cell.y == self.selected_cell.y:
+            elif cell.x == self.selected_grid_cell.x and cell.y == self.selected_grid_cell.y:
                 self.grid_sprites[cell.gui_row][cell.gui_col].color = SELECTED_CELL_COLOR
             else:
                 self.grid_sprites[cell.gui_row][cell.gui_col].color = ACTIVE_WORD_CELL_COLOR
 
     def gui_row_col_to_grid_row_col(self, gui_row: int, gui_col: int) -> Tuple[int, int]:
+        """ Convert gui row/col to underlying grid row/col
+        
+        Args:
+            gui_row: row index in the gui grid (int)
+            gui_col: column index in the gui grid (int)
+
+        Returns:
+            Tuple[int, int]: row/column index in the underlying grid data object
+        """
         return self.grid.row_count - gui_row - 1, gui_col
 
     def gui_xy_to_gui_row_col(self, x_grid: float, y_grid: float) -> Tuple[bool, int, int]:
+        """ Determine which gui cell corresponds to an (x,y) location in the gui
+        
+        Args:
+            x_grid: x coordinate in the arcade.Window gui (float)
+            y_grid: y coordinate in the arcade.Window gui (float)
+
+        Returns:
+            Tuple[bool, int, int]:
+                1) True if (x,y) is within the grid portion of the gui
+                2) row index in the gui grid (int)
+                3) column index in the gui grid (int)
+        """
+
         # Adjust for outer margins
         x = x_grid - self.outer_margin
         y = y_grid - self.outer_margin
@@ -323,23 +439,21 @@ class CrossCosmosGame(arcade.Window):
         col = int(x // (self.square_size + self.inner_margin))
         row = int(y // (self.square_size + self.inner_margin))
 
-        logger.debug(f"Clicked x,y coordinates: {x}, {y}")
-        logger.debug(f"Clicked gui row/col: {row}, {col}")
+        logger.debug(f"Clicked x,y coordinates: {x}, {y} -> gui row/col: {row}, {col}")
 
-        # Make sure we are on-grid. It is possible to click in the upper right
-        # corner in the margin and go to a grid location that doesn't exist
+        # Make sure we are on-grid. 
+        #   - It is possible to click outside the grid margins within the arcade.Window
         if row < 0 or row >= self.grid.row_count or col < 0 or col >= self.grid.col_count:
             # Simply return from this method since nothing needs updating
-            logger.debug("Click out of grid range")
+            logger.debug("Clicked (x,y) coordinate is outside of grid range")
             return False, 0, 0
 
         return True, row, col
 
     def hide_curser(self):
         logger.info("Hiding curser")
-
-        self.text_curser.color = BLACKED_CELL_COLOR
         self.curser_visible = False
+        self.text_curser.color = self.selected_gui_cell.color
 
     def show_curser(self):
         logger.info("Showing curser")
@@ -347,51 +461,18 @@ class CrossCosmosGame(arcade.Window):
         self.text_curser.color = CURSER_COLOR_1
 
 
-# def on_mouse_press(self, x, y, button, modifiers):
-#     """
-#     Called when the user presses a mouse button.
-#     """
-#
-#     # Ignore if in margins
-#     if x < self.outer_margin or x > (self.width - self.outer_margin):
-#         return
-#
-#     if y < self.outer_margin or y > (self.height - self.outer_margin):
-#         return
-#
-#     # Convert the clicked mouse position into grid coordinates
-#     column = int((x + self.outer_margin) // (self.square_size + self.inner_margin))
-#     row = int((y + self.outer_margin) // (self.square_size + self.inner_margin))
-#
-#     print(f"Click coordinates: ({x}, {y}). Grid coordinates: ({row}, {column})")
-#
-#     # Make sure we are on-grid. It is possible to click in the upper right
-#     # corner in the margin and go to a grid location that doesn't exist
-#     if row >= self.grid.row_count or column >= self.grid.col_count:
-#         # Simply return from this method since nothing needs updating
-#         return
-#
-#     # Flip the color of the sprite
-#     if self.grid_sprites[row][column].color == arcade.color.WHITE:
-#         self.grid_sprites[row][column].color = arcade.color.GREEN
-#     else:
-#         self.grid_sprites[row][column].color = arcade.color.WHITE
-
-
-# def main():
-
-
 if __name__ == "__main__":
+    
     # Parse config file
     config_path = xc.crosscosmos_root / "gui" / "gui_config.ini"
     config = ConfigParser()
     config.read(config_path)
-
+    
+    # Create grid backend
     size = 6, 6
-    # size = 14, 14
-    lc = xc.corpus.Corpus.from_test()
-    grid = xc.grid.Grid(size, lc)
+    corpus_backend = xc.corpus.Corpus.from_test()
+    xc_grid = xc.grid.Grid(size, corpus_backend)
 
-    CrossCosmosGame(config, grid)
+    # Create/run gui window
+    CrossCosmosGame(config, xc_grid)
     arcade.run()
-    # main()
