@@ -12,8 +12,8 @@ import crosscosmos as xc
 from crosscosmos.grid import CellStatus, WordDirection, Cell, MoveDirection
 
 logger = logging.getLogger("gui")
-# logger.setLevel(logging.INFO)
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
+# logger.setLevel(logging.DEBUG)
 
 UPDATES_PER_FRAME = 100
 A_TO_Z = list(range(arcade.key.A, arcade.key.Z + 1))
@@ -226,15 +226,16 @@ class CrossCosmosGame(arcade.Window):
         
         mod_indices = [i for i, v in enumerate(ALL_MODS_VALS) if modifiers & v]
         mod_names = [ALL_KEYS[i] for i in mod_indices]
-        logger.info(f"Modifiers: {', '.join(mod_names)}")
+        logger.info(f"Modifiers: {mod_names}")
 
         # Currently undefined if modifiers are present (except shift/caps)
-        if modifiers and not ((modifiers & arcade.key.MOD_SHIFT) or (modifiers & arcade.key.MOD_CAPSLOCK)):
+        if mod_indices and not ("MOD_SHIFT" in mod_names or 'MOD_CAPSLOCK' in mod_names):
+            logger.info(f"Ignoring input: modifiers are: {mod_names}")
             return
 
         # Tab: rotate between vertical and horizontal editing
         if key == arcade.key.TAB and self.curser_visible:
-            logger.info("Switching between horizontal/vertical editing")
+            logger.debug("Switching between horizontal/vertical editing")
 
             # Switch horizontal <-> vertical editing
             if self.edit_direction == WordDirection.HORIZONTAL:
@@ -247,7 +248,8 @@ class CrossCosmosGame(arcade.Window):
 
         new_val = None
         move_dir = None
-        
+
+
         match key:
             case key if key in A_TO_Z:
                 if self.selected_grid_cell.status == CellStatus.EMPTY:
@@ -261,7 +263,6 @@ class CrossCosmosGame(arcade.Window):
                     else MoveDirection.BACK_VERTICAL
 
                 if self.selected_grid_cell.status == CellStatus.SET:
-                    logger.info("Backspace pressed")
                     new_val = ""
                     move_dir = MoveDirection.BACK_HORIZONTAL if self.edit_direction == WordDirection.HORIZONTAL \
                         else MoveDirection.BACK_VERTICAL
@@ -269,13 +270,15 @@ class CrossCosmosGame(arcade.Window):
             case arcade.key.SPACE:
                 move_dir = MoveDirection.FORWARD_HORIZONTAL if self.edit_direction == WordDirection.HORIZONTAL \
                     else MoveDirection.FORWARD_VERTICAL
-            case key if key in [arcade.key.NUM_LEFT, arcade.key.LCOMMAND]:
+            case key if key in [arcade.key.MOTION_LEFT, arcade.key.LEFT]:
+                logger.info("LEFT")
                 move_dir = MoveDirection.BACK_HORIZONTAL
-            case key if key in [arcade.key.NUM_LEFT, arcade.key.RCOMMAND]:
+            case key if key in [arcade.key.MOTION_RIGHT, arcade.key.RIGHT]:
+                logger.info("RIGHT")
                 move_dir = MoveDirection.FORWARD_HORIZONTAL
-            case arcade.key.UP:
+            case key if key in [arcade.key.MOTION_UP, arcade.key.UP]:
                 move_dir = MoveDirection.BACK_VERTICAL
-            case arcade.key.DOWN:
+            case key if key in [arcade.key.MOTION_DOWN, arcade.key.DOWN]:
                 move_dir = MoveDirection.FORWARD_VERTICAL
 
         if new_val is not None:
@@ -345,7 +348,6 @@ class CrossCosmosGame(arcade.Window):
 
         # Hide the cursor if the cell is locked
         if self.selected_grid_cell.status == CellStatus.LOCKED:
-            logger.info("Locked cell: hiding cursor")
             hide_cursor = True
 
         # Update the grid colors/numbers
@@ -441,14 +443,12 @@ class CrossCosmosGame(arcade.Window):
         Args:
             show_cursor: True if the update should display the text cursor
         """
-        logger.info("Updating grid")
+        logger.debug("Updating grid")
         selected_gui_x, selected_gui_y = self.selected_grid_cell.gui_coordinates
 
         if self.selected_grid_cell.status == CellStatus.SET:
-            logger.info("Cursor on right")
             self.text_curser.center_x = selected_gui_x + self.square_size / 4
         else:
-            logger.info("Cursor on left")
             self.text_curser.center_x = selected_gui_x - self.square_size / 4
 
         self.text_curser.center_y = selected_gui_y
@@ -520,12 +520,12 @@ class CrossCosmosGame(arcade.Window):
         return True, row, col
 
     def hide_curser(self):
-        logger.info("Hiding curser")
+        logger.debug("Hiding curser")
         self.curser_visible = False
         self.text_curser.color = self.selected_gui_cell.color
 
     def show_curser(self):
-        logger.info("Showing curser")
+        logger.debug("Showing curser")
         self.curser_visible = True
         self.text_curser.color = CURSER_COLOR_1
 

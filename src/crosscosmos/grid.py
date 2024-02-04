@@ -552,12 +552,14 @@ class Grid(object):
 
             case MoveDirection.BACK_VERTICAL:
 
-                if on_top_row:
-                    # Cannot move up further
-                    return i, j
-                else:
+                if not on_top_row:
                     # Move one square up the left
                     i -= 1
+                elif not on_left_column:
+                    # Cannot move up further
+                    return self.row_count - 1, j - 1
+                else:
+                    return i, j
 
         if self[i, j].status == CellStatus.BLACK:
             return self.get_next_square(i, j, move_dir)
