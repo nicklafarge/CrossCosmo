@@ -11,6 +11,7 @@ from . import (
     digraph,
     grid,
     gui,
+    io_utils,
     letter_utils,
     log_config,
     standards,
