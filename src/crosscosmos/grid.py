@@ -9,6 +9,7 @@ from enum import Enum
 import random
 import string
 from typing import Tuple, Union
+from pathlib import Path
 
 # Third-party
 from matplotlib import pyplot as plt
@@ -58,8 +59,8 @@ class Cell(object):
                  x: int, y: int,
                  status: CellStatus = CellStatus.EMPTY,
                  value: str = "",
-                 gui_coordinates: Union[Tuple[float, float], None] = None
-                 ):
+                 gui_coordinates: Union[Tuple[float, float], None] = None,
+                 shuffle=True):
         self.status = status
         self.value = value
         self.matrix_index = (x, y)
@@ -78,15 +79,64 @@ class Cell(object):
         self.hlen = 0
         self.vlen = 0
 
-        # Kep track of any word that have been removed from consideration due to this cell
+        # Keep track of any word that have been removed from consideration due to this cell
         self.removed_words = []
+        self.excluded = []
 
         self.queue_order = list(reversed(string.ascii_uppercase))
         # self.queue = list(string.ascii_uppercase)
-        # random.shuffle(self.queue)
 
         self.queue = copy.deepcopy(self.queue_order)
-        self.excluded = []
+        if shuffle:
+            random.shuffle(self.queue)
+
+    def __repr__(self):
+        return f"Cell(val='{self.value}', loc={self.matrix_index})"
+
+    def to_json(self):
+        return {
+            'status': self.status.value,
+            'value': self.value,
+            'matrix_index': self.matrix_index,
+            'x': self.x,
+            'y': self.y,
+            'gui_coordinates': self.gui_coordinates,
+            'gui_row': self.gui_row,
+            'gui_col': self.gui_col,
+            'is_h_start': self.is_h_start,
+            'is_h_end': self.is_h_end,
+            'is_v_start': self.is_v_start,
+            'is_v_end': self.is_v_end,
+            'answer_number': self.answer_number,
+            'hlen': self.hlen,
+            'vlen': self.vlen,
+        }
+
+    @classmethod
+    def from_dict(cls, json_cell: dict):
+        cell = cls(x=json_cell['x'],
+                   y=json_cell['y'],
+                   status=CellStatus(json_cell['status']),
+                   value=json_cell['value'],
+                   gui_coordinates=json_cell['gui_coordinates'])
+        cell.matrix_index = json_cell['matrix_index']
+        cell.gui_row = json_cell['gui_row']
+        cell.gui_col = json_cell['gui_col']
+        cell.is_h_start = json_cell['is_h_start']
+        cell.is_h_end = json_cell['is_h_end']
+        cell.is_v_start = json_cell['is_v_start']
+        cell.is_v_end = json_cell['is_v_end']
+        cell.answer_number = json_cell['answer_number']
+        cell.hlen = json_cell['hlen']
+        cell.vlen = json_cell['vlen']
+        return cell
+
+    @classmethod
+    def load(cls, filename: Path, **kwargs):
+        return cls.from_dict(xc.io_utils.load_json(filename), **kwargs)
+
+    def save(self, filename: Path):
+        xc.io_utils.save_json_dict(filename, self.to_json())
 
     def update(self, value: str):
         if value == " " or value == "":
@@ -119,14 +169,11 @@ class Cell(object):
     def remove_word(self, word: str, direction: WordDirection):
         self.removed_words.append((word, direction))
 
-    def __repr__(self):
-        return f"Cell(val='{self.value}', loc={self.matrix_index})"
-
 
 class Grid(object):
 
-    def __init__(self, grid_size: Tuple[int, int], corpus: xc.corpus.Corpus, shuffle=True,
-                 symmetry: Symmetry = Symmetry.ROTATIONAL, auto_symmetry=False):
+    def __init__(self, grid_size: Tuple[int, int], corpus: xc.corpus.Corpus = None, shuffle: bool = True,
+                 symmetry: Symmetry = Symmetry.ROTATIONAL, auto_symmetry: bool = False):
 
         # if grid_size[0] % 2 != 0 or grid_size[1] % 2 != 0:
         #     raise ValueError("Currently only even numbers are supported for grids")
@@ -143,12 +190,10 @@ class Grid(object):
 
         self.corpus = corpus
 
-        self.grid = np.full(self.grid_size, None, dtype=object)
+        self.grid = np.empty(self.grid_size, dtype=Cell)
         for i in range(self.row_count):
             for j in range(self.col_count):
-                self.grid[i, j] = Cell(x=i, y=j)
-                if shuffle:
-                    random.shuffle(self[i, j].queue)
+                self.grid[i, j] = Cell(x=i, y=j, shuffle=shuffle)
         self.center = [((self.grid_size[0] - 1) / 2), ((self.grid_size[1] - 1) / 2)]
 
         # Update the heads for horizontal and vertical clues
@@ -169,6 +214,37 @@ class Grid(object):
 
     def __setitem__(self, x: Tuple[int, int], value: str):
         self.set_grid(x[0], x[1], value)
+
+    def to_json(self):
+        grid_letters = []
+        for i in range(self.row_count):
+            row = [self.grid[i, j].to_json() for j in range(self.col_count)]
+            grid_letters.append(row)
+
+        return dict(
+            grid_size=self.grid_size,
+            grid_letters=grid_letters,
+            symmetry=self.symmetry.value,
+            auto_symmetry=self.auto_symmetry
+        )
+
+    def save(self, filename: Path):
+        xc.io_utils.save_json_dict(filename, self.to_json())
+
+    @classmethod
+    def from_dict(cls, json_grid: dict):
+        grid = cls(json_grid['grid_size'])
+        grid.symmetry = Symmetry(json_grid['symmetry'])
+        grid.auto_symmetry = json_grid['auto_symmetry']
+        grid_letters = json_grid['grid_letters']
+        for i in range(grid.row_count):
+            for j in range(grid.col_count):
+                grid.grid[i, j] = Cell.from_dict(grid_letters[i][j])
+        return grid
+
+    @classmethod
+    def load(cls, filename: Path, **kwargs):
+        return cls.from_dict(xc.io_utils.load_json(filename), **kwargs)
 
     def set_grid(self, x: int, y: int, value: Union[str, None]):
         # Check index
@@ -570,18 +646,18 @@ class Grid(object):
 if __name__ == '__main__':
     lc = xc.corpus.Corpus.from_test()
     g = Grid((5, 5), lc)
+    g.set_grid(1, 1, 'B')
+    g.set_grid(2, 2, 'F')
+    g[2, 2].status = CellStatus.LOCKED
+    g[4, 4].status = CellStatus.BLACK
 
     x1, x2 = 0, 2
     c1, c2 = g.corner2center(x1, x2)
 
     g.to_console()
 
-    plt.figure()
-    plt.scatter(*g.corner2center(0, 0), c="k")
-    plt.scatter(*g.corner2center(0, 4), c="k")
-    plt.scatter(*g.corner2center(4, 0), c="k")
-    plt.scatter(*g.corner2center(4, 4), c="k")
-    plt.scatter(*g.corner2center(0, 2), c="tab:red")
-    plt.scatter(-c1, -c2, c="tab:orange")
-    plt.grid()
-    plt.show(block=False)
+    test_file = Path("/Users/nlafarge/Desktop/text_grid.xc")
+    g.save(test_file)
+    g2 = Grid.load(test_file)
+    print()
+    g2.to_console()
