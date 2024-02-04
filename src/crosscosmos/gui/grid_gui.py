@@ -9,7 +9,7 @@ import numpy as np
 
 # Local
 import crosscosmos as xc
-from crosscosmos.grid import CellStatus, WordDirection, Cell
+from crosscosmos.grid import CellStatus, WordDirection, Cell, MoveDirection
 
 logger = logging.getLogger("gui")
 # logger.setLevel(logging.INFO)
@@ -231,19 +231,36 @@ class CrossCosmosGame(arcade.Window):
             self.update_gui_colors()
 
         new_val = None
+        move_dir = None
+
         if arcade.key.A <= key <= arcade.key.Z and self.selected_grid_cell.status == CellStatus.EMPTY:
             key_value = chr(key).upper()
             logger.info(f"Key pressed: {key_value}")
             new_val = key_value
+            move_dir = MoveDirection.FORWARD_HORIZONTAL if self.edit_direction == WordDirection.HORIZONTAL \
+                else MoveDirection.FORWARD_VERTICAL
 
-        elif ((key == arcade.key.DELETE or key == arcade.key.BACKSPACE) and
-              self.selected_grid_cell.status == CellStatus.SET):
-            logger.info("Backspace pressed")
-            new_val = ""
+        elif key == arcade.key.DELETE or key == arcade.key.BACKSPACE:
+            move_dir = MoveDirection.BACK_HORIZONTAL if self.edit_direction == WordDirection.HORIZONTAL \
+                else MoveDirection.BACK_VERTICAL
 
+            if self.selected_grid_cell.status == CellStatus.SET:
+                logger.info("Backspace pressed")
+                new_val = ""
+                move_dir = MoveDirection.BACK_HORIZONTAL if self.edit_direction == WordDirection.HORIZONTAL \
+                    else MoveDirection.BACK_VERTICAL
+        
+        elif key == arcade.key.SPACE:
+            move_dir = MoveDirection.FORWARD_HORIZONTAL if self.edit_direction == WordDirection.HORIZONTAL \
+                else MoveDirection.FORWARD_VERTICAL
+        
         if new_val is not None:
             self.update_selected_cell(new_val)
             self.cell_letters[self.selected_grid_cell.gui_row, self.selected_grid_cell.gui_col].text = new_val
+            self.update_gui_colors()
+
+        if move_dir is not None:
+            self.selected_x, self.selected_y = self.grid.get_next_square(self.selected_x, self.selected_y, move_dir)
             self.update_gui_colors()
 
     def on_mouse_press(self, x_grid: float, y_grid: float, button, modifiers):
@@ -398,17 +415,13 @@ class CrossCosmosGame(arcade.Window):
         logger.info("Updating grid")
         selected_gui_x, selected_gui_y = self.selected_grid_cell.gui_coordinates
 
-        # Move the curser
-        # if self.selected_grid_cell.status in [CellStatus.EMPTY, CellStatus.LOCKED]:
-        #     logger.info("Cursor on left")
-        #     self.text_curser.center_x = selected_gui_x - self.square_size / 4
         if self.selected_grid_cell.status == CellStatus.SET:
             logger.info("Cursor on right")
             self.text_curser.center_x = selected_gui_x + self.square_size / 4
         else:
             logger.info("Cursor on left")
             self.text_curser.center_x = selected_gui_x - self.square_size / 4
-            
+
         self.text_curser.center_y = selected_gui_y
 
         # Optionally display the text cursor
