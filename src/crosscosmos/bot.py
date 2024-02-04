@@ -4,13 +4,11 @@ from typing import List
 
 # Third-party
 import logging
-from tqdm import tqdm
 import pygtrie
-import numpy as np
 
 # CrossCosmos
 import crosscosmos as xc
-from crosscosmos.grid import CellStatus, WordDirection
+from crosscosmos.grid import CellStatus, WordDirection, MoveDirection
 
 logger = logging.getLogger(__name__)
 
@@ -19,12 +17,6 @@ class GridStatus(Enum):
     COMPLETE = 1
     INCOMPLETE = 2
     INVALID = 3
-
-
-class MoveDirection(Enum):
-    FORWARD = 1
-    BACK_HORIZONTAL = 2
-    BACK_VERTICAL = 2
 
 
 class LetterStatus(Enum):
@@ -155,12 +147,11 @@ if __name__ == '__main__':
             grid.print()
             print()
 
-
         # Get the current grid value
         c = grid[i, j]
 
         # Initialize variables
-        move_dir = MoveDirection.FORWARD
+        move_dir = MoveDirection.FORWARD_HORIZONTAL
         letter_status = LetterStatus.INVALID
 
         # Continue on if this square is black (automatically considered valid)
@@ -245,7 +236,7 @@ if __name__ == '__main__':
         # If an invalid configuration is encountered, move back to the previous cell and reset the current one
 
         match move_dir:
-            case MoveDirection.FORWARD:
+            case MoveDirection.FORWARD_HORIZONTAL:
                 if on_bottom_row and on_right_column:  # COMPLETE!
                     grid_status = GridStatus.COMPLETE
                 if j < grid.col_count - 1:

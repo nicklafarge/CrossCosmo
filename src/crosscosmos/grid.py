@@ -46,6 +46,13 @@ class Symmetry(Enum):
     REFLECTION = 2
 
 
+class MoveDirection(Enum):
+    FORWARD_HORIZONTAL = 1
+    FORWARD_VERTICAL = 2
+    BACK_HORIZONTAL = 3
+    BACK_VERTICAL = 4
+
+
 class Cell(object):
     def __init__(self,
                  x: int, y: int,
@@ -499,6 +506,59 @@ class Grid(object):
             if i < self.grid_size[0] - 1:
                 out_str += "\n"
         print(out_str)
+
+    def get_next_square(self, x: int, y: int, move_dir: MoveDirection) -> Tuple[int, int]:
+        # Next square index
+        i = x
+        j = y
+
+        # Save for readability
+        on_left_column = j == 0
+        on_right_column = j == (self.col_count - 1)
+        on_top_row = i == 0
+        on_bottom_row = i == (self.row_count - 1)
+
+        match move_dir:
+            case MoveDirection.FORWARD_HORIZONTAL:
+                if on_bottom_row and on_right_column:
+                    # Can't proceed forward
+                    return i, j
+                if j < self.col_count - 1:
+                    j += 1
+                elif j == self.col_count - 1 and i < self.row_count - 1:
+                    j = 0
+                    i += 1
+
+            case MoveDirection.FORWARD_VERTICAL:
+                if not on_bottom_row:
+                    i += 1
+                elif not on_right_column:
+                    i = 0
+                    j += 1
+                else:
+                    # Can't proceed forward
+                    return i, j
+
+            case MoveDirection.BACK_HORIZONTAL:
+                
+                if not on_left_column:
+                    j -= 1
+                elif not on_top_row:
+                    i -= 1
+                    j = self.col_count - 1
+                else:
+                    # Can't proceed forward
+                    return i, j
+
+            case MoveDirection.BACK_VERTICAL:
+
+                if on_top_row:
+                    # Cannot move up further
+                    return i, j
+                else:
+                    # Move one square up the left
+                    i -= 1
+        return i, j
 
 
 if __name__ == '__main__':
