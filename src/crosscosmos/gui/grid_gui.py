@@ -16,6 +16,7 @@ logger = logging.getLogger("gui")
 logger.setLevel(logging.DEBUG)
 
 UPDATES_PER_FRAME = 100
+A_TO_Z = list(range(arcade.key.A, arcade.key.Z + 1))
 
 # Background colors
 BACKGROUND_COLOR = arcade.color.BLACK
@@ -35,6 +36,12 @@ BLACKED_CELL_COLOR = arcade.color.BLACK
 SELECTED_CELL_COLOR = arcade.color.LIGHT_GRAY
 ACTIVE_WORD_CELL_COLOR = arcade.color.GRAY
 
+# Key values
+ALL_KEYS = [k for k in dir(arcade.key) if k.isupper() and "MOD_" not in k]
+ALL_KEY_VALS = [getattr(arcade.key, k) for k in ALL_KEYS]
+
+ALL_MODS = [k for k in dir(arcade.key) if k.isupper() and "MOD_" in k]
+ALL_MODS_VALS = [getattr(arcade.key, k) for k in ALL_MODS]
 
 class CrossCosmosGame(arcade.Window):
     def __init__(self, config_in: ConfigParser, grid_in: xc.grid.Grid):
@@ -213,6 +220,14 @@ class CrossCosmosGame(arcade.Window):
     def on_key_release(self, key, modifiers):
         """Called when the user releases a key. """
 
+        pressed_key_indices = [i for i, k in enumerate(ALL_KEY_VALS) if k == key]
+        pressed_key_names = [ALL_KEYS[i] for i in pressed_key_indices]
+        logger.info(f"Keys pressed: {', '.join(pressed_key_names)}")
+        
+        mod_indices = [i for i, v in enumerate(ALL_MODS_VALS) if modifiers & v]
+        mod_names = [ALL_KEYS[i] for i in mod_indices]
+        logger.info(f"Modifiers: {', '.join(mod_names)}")
+
         # Currently undefined if modifiers are present (except shift/caps)
         if modifiers and not ((modifiers & arcade.key.MOD_SHIFT) or (modifiers & arcade.key.MOD_CAPSLOCK)):
             return
@@ -232,35 +247,49 @@ class CrossCosmosGame(arcade.Window):
 
         new_val = None
         move_dir = None
+        
+        match key:
+            case key if key in A_TO_Z:
+                if self.selected_grid_cell.status == CellStatus.EMPTY:
+                    key_value = chr(key).upper()
+                    new_val = key_value
+                    move_dir = MoveDirection.FORWARD_HORIZONTAL if self.edit_direction == WordDirection.HORIZONTAL \
+                        else MoveDirection.FORWARD_VERTICAL
 
-        if arcade.key.A <= key <= arcade.key.Z and self.selected_grid_cell.status == CellStatus.EMPTY:
-            key_value = chr(key).upper()
-            logger.info(f"Key pressed: {key_value}")
-            new_val = key_value
-            move_dir = MoveDirection.FORWARD_HORIZONTAL if self.edit_direction == WordDirection.HORIZONTAL \
-                else MoveDirection.FORWARD_VERTICAL
-
-        elif key == arcade.key.DELETE or key == arcade.key.BACKSPACE:
-            move_dir = MoveDirection.BACK_HORIZONTAL if self.edit_direction == WordDirection.HORIZONTAL \
-                else MoveDirection.BACK_VERTICAL
-
-            if self.selected_grid_cell.status == CellStatus.SET:
-                logger.info("Backspace pressed")
-                new_val = ""
+            case key if key in [arcade.key.DELETE, arcade.key.BACKSPACE]:
                 move_dir = MoveDirection.BACK_HORIZONTAL if self.edit_direction == WordDirection.HORIZONTAL \
                     else MoveDirection.BACK_VERTICAL
-        
-        elif key == arcade.key.SPACE:
-            move_dir = MoveDirection.FORWARD_HORIZONTAL if self.edit_direction == WordDirection.HORIZONTAL \
-                else MoveDirection.FORWARD_VERTICAL
-        
+
+                if self.selected_grid_cell.status == CellStatus.SET:
+                    logger.info("Backspace pressed")
+                    new_val = ""
+                    move_dir = MoveDirection.BACK_HORIZONTAL if self.edit_direction == WordDirection.HORIZONTAL \
+                        else MoveDirection.BACK_VERTICAL
+
+            case arcade.key.SPACE:
+                move_dir = MoveDirection.FORWARD_HORIZONTAL if self.edit_direction == WordDirection.HORIZONTAL \
+                    else MoveDirection.FORWARD_VERTICAL
+            case key if key in [arcade.key.NUM_LEFT, arcade.key.LCOMMAND]:
+                move_dir = MoveDirection.BACK_HORIZONTAL
+            case key if key in [arcade.key.NUM_LEFT, arcade.key.RCOMMAND]:
+                move_dir = MoveDirection.FORWARD_HORIZONTAL
+            case arcade.key.UP:
+                move_dir = MoveDirection.BACK_VERTICAL
+            case arcade.key.DOWN:
+                move_dir = MoveDirection.FORWARD_VERTICAL
+
         if new_val is not None:
             self.update_selected_cell(new_val)
             self.cell_letters[self.selected_grid_cell.gui_row, self.selected_grid_cell.gui_col].text = new_val
             self.update_gui_colors()
 
         if move_dir is not None:
-            self.selected_x, self.selected_y = self.grid.get_next_square(self.selected_x, self.selected_y, move_dir)
+            new_x, new_y = self.grid.get_next_square(self.selected_x, self.selected_y, move_dir)
+
+            # Only update if new_x, new_y are not BLACK (i.e. in the corner black)
+            if self.grid[new_x, new_y].status != CellStatus.BLACK:
+                self.selected_x = new_x
+                self.selected_y = new_y
             self.update_gui_colors()
 
     def on_mouse_press(self, x_grid: float, y_grid: float, button, modifiers):

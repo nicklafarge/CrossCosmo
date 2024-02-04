@@ -540,7 +540,7 @@ class Grid(object):
                     return i, j
 
             case MoveDirection.BACK_HORIZONTAL:
-                
+
                 if not on_left_column:
                     j -= 1
                 elif not on_top_row:
@@ -558,7 +558,11 @@ class Grid(object):
                 else:
                     # Move one square up the left
                     i -= 1
-        return i, j
+
+        if self[i, j].status == CellStatus.BLACK:
+            return self.get_next_square(i, j, move_dir)
+        else:
+            return i, j
 
 
 if __name__ == '__main__':
