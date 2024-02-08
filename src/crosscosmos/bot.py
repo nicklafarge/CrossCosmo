@@ -47,6 +47,7 @@ def check_letter_sequence(cell, the_grid, trie_list, direction: WordDirection):
 def reset_cell_with_trie(the_grid, x: int, y: int, trie_list: List[pygtrie]):
     # Reset the cell's status
     removed_words = the_grid[x, y].reset_cell()
+    c = the_grid[x, y]
 
     # If the cell had previously removed a word from the trie put it back in
     if removed_words:
@@ -58,14 +59,14 @@ def reset_cell_with_trie(the_grid, x: int, y: int, trie_list: List[pygtrie]):
                     trie_list[c.vlen][rem_word] = True
 
 
-def move_back_horizontal(the_grid, x: int, y: int, trie_list):
+def move_back_horizontal(grid, x: int, y: int, trie_list):
     # Save for readability
     on_left_column = y == 0
-    on_right_column = y == (the_grid.col_count - 1)
+    on_right_column = y == (grid.col_count - 1)
     on_top_row = x == 0
-    on_bottom_row = x == (the_grid.row_count - 1)
+    on_bottom_row = x == (grid.row_count - 1)
 
-    reset_cell_with_trie(the_grid, x, y, trie_list)
+    reset_cell_with_trie(grid, x, y, trie_list)
     new_x = x
     new_y = y
     status = GridStatus.INCOMPLETE
@@ -90,48 +91,12 @@ def validate_grid_letter_sequence(grid_trie: pygtrie, letter_sequence: str, is_e
         return LetterSequenceStatus.INVALID
 
 
-if __name__ == '__main__':
-    # corpus = xc.corpus.Corpus.from_test()
-    # corpus = xc.corpus.Corpus.from_diehl()
-    corpus = xc.corpus.Corpus.from_lafarge_db()
-    # lc4 = lc.to_n_letter_corpus(4)
-    # lc5 = lc.to_subcorpus(4, 5)
-    # lc6 = lc.to_subcorpus(4, 6)
-    tries = corpus.to_n_tries(8, padded=True)
-    # lc4.build_trie()
-    # trie = lc4.trie
-    # lc.build_trie()
-    # trie = lc.trie
+def solve(grid: xc.grid.Grid):
+    
+    # Build tries
+    tries = grid.corpus.to_n_tries(8, padded=True)
 
-    # corpus = lc
-    # corpus.build_trie()
-    # trie = corpus.trie
-
-    grid = xc.grid.Grid((3, 5), corpus, shuffle=True)
-    # grid.set_grid(0, 5, None)
-    # grid.set_grid(0, 4, None)
-    # grid.set_grid(3, 0, None)
-    # grid.set_grid(3, 1, None)
-
-    grid.lock_section("LIENE", 2, 0, WordDirection.HORIZONTAL)
-    # grid.lock_section("SAD", 0, 0, WordDirection.VERTICAL)
-    # grid.lock_section("PRO", 0, 1, WordDirection.VERTICAL)
-
-    # grid[0, 0].status = CellStatus.BLACK
-    # grid.lock_section("ACER", 0, 0, direction=WordDirection.HORIZONTAL)
-    # grid.lock_section("", 0, 0, direction=WordDirection.VERTICAL)
-    # grid.lock_section("PAT", 0, 1, direction=WordDirection.HORIZONTAL)
-    # grid.lock_section("TOOTHY", 0, 3, direction=WordDirection.VERTICAL)
     grid_status = GridStatus.INCOMPLETE
-    grid.update_grid_data()
-    grid.print()
-    print()
-    grid.print_lens(direction=WordDirection.HORIZONTAL)
-    print()
-    grid.print_lens(direction=WordDirection.VERTICAL)
-    print()
-    grid.print_boundaries()
-
     # Start in top left (0, 0)
     i = 0
     j = 0
@@ -274,3 +239,46 @@ if __name__ == '__main__':
         case GridStatus.INVALID:
             print("No valid solution found for grid")
     grid.print()
+
+
+if __name__ == '__main__':
+    # corpus = xc.corpus.Corpus.from_test()
+    # corpus = xc.corpus.Corpus.from_diehl()
+    test_corpus = xc.corpus.Corpus.from_lafarge_db()
+    # lc4 = lc.to_n_letter_corpus(4)
+    # lc5 = lc.to_subcorpus(4, 5)
+    # lc6 = lc.to_subcorpus(4, 6)
+    # tries = corpus.to_n_tries(8, padded=True)
+    # lc4.build_trie()
+    # trie = lc4.trie
+    # lc.build_trie()
+    # trie = lc.trie
+
+    # corpus = lc
+    # corpus.build_trie()
+    # trie = corpus.trie
+
+    test_grid = xc.grid.Grid((3, 5), test_corpus, shuffle=True)
+    # grid.set_grid(0, 5, None)
+    # grid.set_grid(0, 4, None)
+    # grid.set_grid(3, 0, None)
+    # grid.set_grid(3, 1, None)
+
+    # grid.lock_section("LIENE", 2, 0, WordDirection.HORIZONTAL)
+    # grid.lock_section("SAD", 0, 0, WordDirection.VERTICAL)
+    # grid.lock_section("PRO", 0, 1, WordDirection.VERTICAL)
+
+    # grid[0, 0].status = CellStatus.BLACK
+    # grid.lock_section("ACER", 0, 0, direction=WordDirection.HORIZONTAL)
+    # grid.lock_section("", 0, 0, direction=WordDirection.VERTICAL)
+    # grid.lock_section("PAT", 0, 1, direction=WordDirection.HORIZONTAL)
+    # grid.lock_section("TOOTHY", 0, 3, direction=WordDirection.VERTICAL)
+    test_grid.update_grid_data()
+    test_grid.print()
+    print()
+    test_grid.print_lens(direction=WordDirection.HORIZONTAL)
+    print()
+    test_grid.print_lens(direction=WordDirection.VERTICAL)
+    print()
+    test_grid.print_boundaries()
+    solve(test_grid)

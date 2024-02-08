@@ -205,6 +205,11 @@ class Grid(object):
         self.auto_symmetry = auto_symmetry
         self.symmetry = symmetry
         self.save_path = save_path
+        self.tries = []
+        
+    def build_tries(self, n: int):
+        if self.corpus:
+            self.tries = self.corpus.to_n_tries(n, padded=True)
 
     def __repr__(self):
         return f"Grid(dim=({self.grid_size[0]}, {self.grid_size[1]})"

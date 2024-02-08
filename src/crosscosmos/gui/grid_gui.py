@@ -11,6 +11,7 @@ import numpy as np
 
 # Local
 import crosscosmos as xc
+from crosscosmos import bot
 from crosscosmos.grid import CellStatus, WordDirection, Cell, MoveDirection
 from image_transform import RGBTransform
 
@@ -27,7 +28,7 @@ CELL_BACKGROUND_COLOR = arcade.color.WHITE
 
 # Text colors
 TEXT_COLOR = arcade.color.BLACK
-LOCK_TEXT_COLOR = (0, 153, 255)  # cyan
+LOCKED_TEXT_COLOR = (0, 153, 255)  # cyan
 
 # Curser colors
 CURSER_COLOR_1 = arcade.color.BLACK
@@ -173,40 +174,42 @@ class CrossCosmosGame(arcade.Window):
         # Create a vertical BoxGroup to align buttons
         self.menu_box = arcade.gui.UIBoxLayout()
 
-        save_dim = self.right_outer_margin / 2
-        save_x = self.outer_margin + self.grid_edge_dimension + self.right_outer_margin / 2 - save_dim / 2
-        # save_y = self.grid_edge_dimension - 3 * save_dim / 2
-        save_y = save_dim / 2
+        bot_dim = self.right_outer_margin / 2.5
+        bot_x = self.outer_margin + self.grid_edge_dimension + self.right_outer_margin / 2 - bot_dim / 2
+        # bot_y = self.grid_edge_dimension - 3 * bot_dim / 2
+        bot_y = bot_dim / 2
         bot_texture = arcade.load_texture(":resources:images/space_shooter/playerShip1_orange.png")
 
-        save_hover_image = RGBTransform().mix_with([220] * 3, factor=.40).applied_to(bot_texture.image)
-        save_texture_hovered = arcade.Texture("save_hover_texture", save_hover_image)
+        bot_hover_image = RGBTransform().mix_with([220] * 3, factor=.40).applied_to(bot_texture.image)
+        bot_texture_hover = arcade.Texture("bot_hover_texture", bot_hover_image)
 
-        save_click_image = RGBTransform().mix_with([220] * 3, factor=.90).applied_to(bot_texture.image)
-        save_texture_pressed = arcade.Texture("save_click_texture", save_click_image)
+        bot_click_image = RGBTransform().mix_with([220] * 3, factor=.90).applied_to(bot_texture.image)
+        bot_texture_pressed = arcade.Texture("bot_click_texture", bot_click_image)
 
-        save_button = arcade.gui.UITextureButton(texture=bot_texture,
-                                                 width=save_dim,
-                                                 height=save_dim,
-                                                 texture_hovered=save_texture_hovered,
-                                                 texture_pressed=save_texture_pressed)
+        bot_button = arcade.gui.UITextureButton(texture=bot_texture,
+                                                width=bot_dim,
+                                                height=bot_dim,
+                                                texture_hovered=bot_texture_hover,
+                                                texture_pressed=bot_texture_pressed)
 
-        @save_button.event("on_click")
-        def on_click_save_button(event):
-            logger.info("Save event")
+        @bot_button.event("on_click")
+        def on_click_bot_button(event):
+            bot.solve(self.grid)
+            self.sync_gui_grid()
 
-        self.menu_box.add(save_button.with_space_around(bottom=20))
+        self.menu_box.add(bot_button.with_space_around(bottom=20))
 
         # Create a widget to hold the menu bar, that will center the buttons
         self.manager.add(
             arcade.gui.UIAnchorWidget(
                 anchor_x="left",
                 anchor_y="bottom",
-                align_x=save_x,
-                align_y=save_y,
+                align_x=bot_x,
+                align_y=bot_y,
                 child=self.menu_box)
         )
-        bg_tex = arcade.load_texture(":resources:gui_basic_assets/window/grey_panel.png")
+
+        # bg_tex = arcade.load_texture(":resources:gui_basic_assets/window/grey_panel.png")
 
         # self.manager.add(
         #     arcade.gui.UITexturePane(
@@ -214,6 +217,9 @@ class CrossCosmosGame(arcade.Window):
         #         tex=bg_tex,
         #         padding=(10, 10, 10, 10)
         #     ))
+
+        # Sync with grid 
+        self.sync_gui_grid()
 
     @property
     def selected_grid_cell(self) -> Cell:
@@ -265,6 +271,25 @@ class CrossCosmosGame(arcade.Window):
                 self.text_curser.color = CURSER_COLOR_2
             else:
                 self.text_curser.color = CURSER_COLOR_1
+
+    def sync_gui_grid(self):
+        for gui_row in range(self.grid.row_count):
+            for gui_col in range(self.grid.col_count):
+                grid_row, grid_col = self.gui_row_col_to_grid_row_col(gui_row, gui_col)
+                grid_cell = self.grid[grid_row, grid_col]
+
+                # Default
+                self.grid_sprites[gui_row, gui_col].color = DEFAULT_CELL_COLOR
+
+                if grid_cell.status in [CellStatus.SET, CellStatus.LOCKED]:
+                    self.cell_letters[gui_row, gui_col].text = grid_cell.value
+                elif grid_cell.status == CellStatus.LOCKED:
+                    self.cell_letters[gui_row, gui_col].text = grid_cell.value
+                    self.cell_letters[gui_row, gui_col].color = LOCKED_TEXT_COLOR
+                elif grid_cell.status == CellStatus.BLACK:
+                    self.grid_sprites[gui_row, gui_col].color = BLACKED_CELL_COLOR
+
+        self.update_gui_colors()
 
     def on_key_release(self, key, modifiers):
         """Called when the user releases a key. """
@@ -342,7 +367,7 @@ class CrossCosmosGame(arcade.Window):
                 self.selected_x = new_x
                 self.selected_y = new_y
             self.update_gui_colors()
-            
+
         self.grid.save()
 
     def on_mouse_press(self, x_grid: float, y_grid: float, button, modifiers):
@@ -406,7 +431,7 @@ class CrossCosmosGame(arcade.Window):
             self.hide_curser()
         else:
             self.update_gui_colors(show_cursor=True)
-            
+
         self.grid.save()
 
     def update_selected_cell(self, new_value: str):
@@ -429,7 +454,7 @@ class CrossCosmosGame(arcade.Window):
             logger.debug(f"Setting gui [{gui_row},{gui_col}], grid [{grid_row},{grid_col}] to locked")
             # gui_text_label.color = arcade.color.SAE
             # gui_text_label.color = (255, 0, 153)
-            gui_text_label.color = (0, 153, 255)
+            gui_text_label.color = LOCKED_TEXT_COLOR
         else:
             gui_text_label.color = TEXT_COLOR
 
@@ -596,13 +621,14 @@ if __name__ == "__main__":
     config_path = xc.crosscosmos_root / "gui" / "gui_config.ini"
     config = ConfigParser()
     config.read(config_path)
-    
+
     # Load grid
 
     # Create grid backend
     test_file = Path(xc.crosscosmos_project_root / "test_grid.json")
     xc_grid = xc.grid.Grid.load(test_file)
     xc_grid.corpus = xc.corpus.Corpus.from_test()
+    xc_grid.build_tries(6)
     # xc_grid = xc.grid.Grid(size, corpus_backend)
 
     # Create/run gui window
