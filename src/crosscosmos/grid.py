@@ -12,7 +12,6 @@ from typing import Tuple, Union
 from pathlib import Path
 
 # Third-party
-from matplotlib import pyplot as plt
 import logging
 import numpy as np
 
@@ -173,7 +172,8 @@ class Cell(object):
 class Grid(object):
 
     def __init__(self, grid_size: Tuple[int, int], corpus: xc.corpus.Corpus = None, shuffle: bool = True,
-                 symmetry: Symmetry = Symmetry.ROTATIONAL, auto_symmetry: bool = False):
+                 symmetry: Symmetry = Symmetry.ROTATIONAL, auto_symmetry: bool = False,
+                 save_path: Union[None, Path] = None):
 
         # if grid_size[0] % 2 != 0 or grid_size[1] % 2 != 0:
         #     raise ValueError("Currently only even numbers are supported for grids")
@@ -190,17 +190,21 @@ class Grid(object):
 
         self.corpus = corpus
 
+        # Fill out grid/center
         self.grid = np.empty(self.grid_size, dtype=Cell)
+        self.center = [((self.grid_size[0] - 1) / 2), ((self.grid_size[1] - 1) / 2)]
+
+        # Fill out grid
         for i in range(self.row_count):
             for j in range(self.col_count):
                 self.grid[i, j] = Cell(x=i, y=j, shuffle=shuffle)
-        self.center = [((self.grid_size[0] - 1) / 2), ((self.grid_size[1] - 1) / 2)]
 
         # Update the heads for horizontal and vertical clues
         self.update_grid_data()
 
         self.auto_symmetry = auto_symmetry
         self.symmetry = symmetry
+        self.save_path = save_path
 
     def __repr__(self):
         return f"Grid(dim=({self.grid_size[0]}, {self.grid_size[1]})"
@@ -228,23 +232,33 @@ class Grid(object):
             auto_symmetry=self.auto_symmetry
         )
 
-    def save(self, filename: Path):
-        xc.io_utils.save_json_dict(filename, self.to_json())
+    def save(self, file_path: Union[None, Path] = None):
+        if file_path:
+            save_path = file_path
+        elif self.save_path:
+            save_path = self.save_path
+        else:
+            raise RuntimeError("Save path undefined")
+
+        xc.io_utils.save_json_dict(save_path, self.to_json())
 
     @classmethod
     def from_dict(cls, json_grid: dict):
         grid = cls(json_grid['grid_size'])
         grid.symmetry = Symmetry(json_grid['symmetry'])
         grid.auto_symmetry = json_grid['auto_symmetry']
-        grid_letters = json_grid['grid_letters']
-        for i in range(grid.row_count):
-            for j in range(grid.col_count):
-                grid.grid[i, j] = Cell.from_dict(grid_letters[i][j])
+        if 'grid_letters' in json_grid:
+            grid_letters = json_grid['grid_letters']
+            for i in range(grid.row_count):
+                for j in range(grid.col_count):
+                    grid.grid[i, j] = Cell.from_dict(grid_letters[i][j])
         return grid
 
     @classmethod
-    def load(cls, filename: Path, **kwargs):
-        return cls.from_dict(xc.io_utils.load_json(filename), **kwargs)
+    def load(cls, filepath: Path, **kwargs):
+        new_grid = cls.from_dict(xc.io_utils.load_json(filepath), **kwargs)
+        new_grid.save_path = filepath
+        return new_grid
 
     def set_grid(self, x: int, y: int, value: Union[str, None]):
         # Check index
@@ -656,8 +670,8 @@ if __name__ == '__main__':
 
     g.to_console()
 
-    test_file = Path("/Users/nlafarge/Desktop/text_grid.xc")
-    g.save(test_file)
+    test_file = Path(xc.crosscosmos_project_root / "test_grid.xc")
+    # g.save(test_file)
     g2 = Grid.load(test_file)
     print()
     g2.to_console()

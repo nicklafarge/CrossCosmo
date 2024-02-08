@@ -1,14 +1,13 @@
 # Standard
 from configparser import ConfigParser
-from pathlib import Path
 from typing import Tuple
+from pathlib import Path
 
 # Third-party
 import arcade
 import arcade.gui
 import logging
 import numpy as np
-import PIL
 
 # Local
 import crosscosmos as xc
@@ -174,20 +173,19 @@ class CrossCosmosGame(arcade.Window):
         # Create a vertical BoxGroup to align buttons
         self.menu_box = arcade.gui.UIBoxLayout()
 
-        save_image_path = xc.crosscosmos_project_root / 'assets' / 'save.png'
         save_dim = self.right_outer_margin / 2
         save_x = self.outer_margin + self.grid_edge_dimension + self.right_outer_margin / 2 - save_dim / 2
-        save_y = self.grid_edge_dimension - 3 * save_dim / 2
+        # save_y = self.grid_edge_dimension - 3 * save_dim / 2
+        save_y = save_dim / 2
+        bot_texture = arcade.load_texture(":resources:images/space_shooter/playerShip1_orange.png")
 
-        save_texture = arcade.load_texture(str(save_image_path))
-
-        save_hover_image = RGBTransform().mix_with([220] * 3, factor=.40).applied_to(save_texture.image)
+        save_hover_image = RGBTransform().mix_with([220] * 3, factor=.40).applied_to(bot_texture.image)
         save_texture_hovered = arcade.Texture("save_hover_texture", save_hover_image)
 
-        save_click_image = RGBTransform().mix_with([220] * 3, factor=.90).applied_to(save_texture.image)
+        save_click_image = RGBTransform().mix_with([220] * 3, factor=.90).applied_to(bot_texture.image)
         save_texture_pressed = arcade.Texture("save_click_texture", save_click_image)
 
-        save_button = arcade.gui.UITextureButton(texture=save_texture,
+        save_button = arcade.gui.UITextureButton(texture=bot_texture,
                                                  width=save_dim,
                                                  height=save_dim,
                                                  texture_hovered=save_texture_hovered,
@@ -210,12 +208,12 @@ class CrossCosmosGame(arcade.Window):
         )
         bg_tex = arcade.load_texture(":resources:gui_basic_assets/window/grey_panel.png")
 
-        self.manager.add(
-            arcade.gui.UITexturePane(
-                arcade.gui.UIInputText(x=340, y=200, width=200, height=50, text="Hello"),
-                tex=bg_tex,
-                padding=(10, 10, 10, 10)
-            ))
+        # self.manager.add(
+        #     arcade.gui.UITexturePane(
+        #         arcade.gui.UIInputText(x=340, y=200, width=200, height=50, text="Hello"),
+        #         tex=bg_tex,
+        #         padding=(10, 10, 10, 10)
+        #     ))
 
     @property
     def selected_grid_cell(self) -> Cell:
@@ -344,6 +342,8 @@ class CrossCosmosGame(arcade.Window):
                 self.selected_x = new_x
                 self.selected_y = new_y
             self.update_gui_colors()
+            
+        self.grid.save()
 
     def on_mouse_press(self, x_grid: float, y_grid: float, button, modifiers):
         """ Called when the user presses a mouse button.
@@ -406,6 +406,8 @@ class CrossCosmosGame(arcade.Window):
             self.hide_curser()
         else:
             self.update_gui_colors(show_cursor=True)
+            
+        self.grid.save()
 
     def update_selected_cell(self, new_value: str):
         """ Update the currently selected cell with a new string
@@ -594,11 +596,14 @@ if __name__ == "__main__":
     config_path = xc.crosscosmos_root / "gui" / "gui_config.ini"
     config = ConfigParser()
     config.read(config_path)
+    
+    # Load grid
 
     # Create grid backend
-    size = 6, 6
-    corpus_backend = xc.corpus.Corpus.from_test()
-    xc_grid = xc.grid.Grid(size, corpus_backend)
+    test_file = Path(xc.crosscosmos_project_root / "test_grid.json")
+    xc_grid = xc.grid.Grid.load(test_file)
+    xc_grid.corpus = xc.corpus.Corpus.from_test()
+    # xc_grid = xc.grid.Grid(size, corpus_backend)
 
     # Create/run gui window
     CrossCosmosGame(config, xc_grid)
