@@ -92,9 +92,9 @@ def validate_grid_letter_sequence(grid_trie: pygtrie, letter_sequence: str, is_e
 
 
 def solve(grid: xc.grid.Grid):
-    
     # Build tries
-    tries = grid.corpus.to_n_tries(8, padded=True)
+    # tries = grid.corpus.to_n_tries(8, padded=True)
+    tries = grid.tries
 
     grid_status = GridStatus.INCOMPLETE
     # Start in top left (0, 0)
@@ -151,6 +151,13 @@ def solve(grid: xc.grid.Grid):
             #     2) we've reached a vertical barrier and don't have a valid word
             if c.is_v_end and trie_has_v_word == pygtrie.Trie.HAS_SUBTRIE:
                 move_dir = MoveDirection.BACK_VERTICAL
+        
+        # TODO: for longer words, maybe skip the letter looping but instead just look for 8(or whatever) letter 
+        #  words starting with what is currently in the grid
+        
+        # TODO: need for some longer DB-style checking
+        #   queryL length(word)==7 AND SUBSTRING(word,3,1)=='E' AND SUBSTRING(word,8,1)=='A'
+        #   if no results, then return. If 1 result, then fill.
 
         # Choose the next letter by proceeding through the grid entry's letter list and selecting the
         # first letter than yields a valid subtrie
@@ -244,7 +251,7 @@ def solve(grid: xc.grid.Grid):
 if __name__ == '__main__':
     # corpus = xc.corpus.Corpus.from_test()
     # corpus = xc.corpus.Corpus.from_diehl()
-    test_corpus = xc.corpus.Corpus.from_lafarge_db()
+    test_corpus = xc.corpus.Corpus.from_lafarge()
     # lc4 = lc.to_n_letter_corpus(4)
     # lc5 = lc.to_subcorpus(4, 5)
     # lc6 = lc.to_subcorpus(4, 6)

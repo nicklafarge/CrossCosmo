@@ -1,7 +1,8 @@
 # Standard library imports
 import logging
-from typing import List
+from typing import List, Tuple
 import re
+from enum import Enum
 
 # Third-party imports
 import pygtrie
@@ -9,6 +10,7 @@ import pygtrie
 # Local imports
 from crosscosmos.data_models.lafarge_model import LaFargeWord
 from crosscosmos.data_models.diehl_model import DiehlWord, TestWord
+# from crosscosmos.data_models.xword_tracker_model import 
 from crosscosmos import letter_utils
 
 logger = logging.getLogger(__name__)
@@ -16,11 +18,25 @@ logger = logging.getLogger(__name__)
 AZRE_PATTERN = "[a-zA-Z]"
 
 
+class ModelSource(Enum):
+    Test = 1
+    Diehl = 2
+    LaFarge = 3
+
+
+score = {
+    ModelSource.Test: lambda w: w.score,
+    ModelSource.Diehl: lambda w: w.score,
+    ModelSource.LaFarge: lambda w: w.collab_score
+}
+
+
 class Corpus(object):
 
-    def __init__(self, word_list: List[LaFargeWord]):
+    def __init__(self, word_list, model: ModelSource):
         self.word_list = word_list
         self.trie = None
+        self.model = model
 
     def __getitem__(self, position):
         return self.word_list[position]
@@ -29,20 +45,20 @@ class Corpus(object):
         return f"CrossCosmos.Corpus(n={len(self.word_list)})"
 
     @classmethod
-    def from_lafarge_db(cls):
+    def from_lafarge(cls):
         words = [w for w in LaFargeWord.select() if
                  not letter_utils.has_numbers(w.word)
                  and len(w.word) >= 3
                  ]
-        return cls(words)
+        return cls(words, ModelSource.LaFarge)
 
     @classmethod
     def from_test(cls):
-        return cls([w for w in TestWord.select()])
+        return cls([w for w in TestWord.select()], ModelSource.Test)
 
     @classmethod
     def from_diehl(cls):
-        return cls([w for w in DiehlWord.select()])
+        return cls([w for w in DiehlWord.select()], ModelSource.Diehl)
 
     def to_n_letter_corpus(self, n: int):
         return self.to_subcorpus(n, n)
@@ -52,21 +68,21 @@ class Corpus(object):
         assert 3 <= m <= 22
         assert m >= n
 
-        return Corpus([w for w in self.word_list if n <= len(w.word) <= m])
+        return Corpus([w for w in self.word_list if n <= len(w.word) <= m], self.model)
 
     def to_n_tries(self, n, padded=False):
         assert n >= 3
-        tries = [self.to_n_letter_corpus(i).to_trie() for i in range(3, n+1)]
+        tries = [self.to_n_letter_corpus(i).to_trie() for i in range(3, n + 1)]
         if padded:
             return [None] * 3 + tries
         else:
             return tries
 
     def query(self, query_str: str) -> List[LaFargeWord]:
-        query_pattern = fr"\b{query_str.replace('?', AZRE_PATTERN)}\b"
+        query_pattern = fr"\b{query_str.replace('?', AZRE_PATTERN).replace('-', AZRE_PATTERN)}\b"
         compiled_pattern = re.compile(query_pattern, re.IGNORECASE)
         matching = [w for w in self.word_list if compiled_pattern.search(w.word)]
-        return sorted(matching, key=lambda w: w.collab_score or 0, reverse=True)
+        return sorted(matching, key=lambda w: score[self.model](w) or 0, reverse=True)
 
     def build_trie(self):
         self.trie = self.to_trie()
@@ -93,6 +109,14 @@ class Corpus(object):
 
     def str2laf(self, word: str):
         return LaFargeWord.select(lambda w: w.word == word)
+
+    def match(self, word_len: int, letters_with_idxs: List[Tuple[int, str]]):
+        word_list = []
+        for w in self.word_list:
+            if len(w.word) == word_len and all([w.word[i] == c for i, c in letters_with_idxs]):
+                word_list.append(w)
+
+        return word_list
 
 
 if __name__ == '__main__':
