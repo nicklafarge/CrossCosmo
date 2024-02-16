@@ -33,6 +33,9 @@ test_word_db.bind(
 class DiehlWord(diehl_word_db.Entity):
     word = orm.PrimaryKey(str)
     score = orm.Required(int)
+    
+    def __repr__(cls):
+        return f"DiehlWord[\'{cls.word}\', {cls.score}]"
 
 
 diehl_word_db.generate_mapping(create_tables=True)
@@ -41,6 +44,9 @@ diehl_word_db.generate_mapping(create_tables=True)
 class TestWord(test_word_db.Entity):
     word = orm.PrimaryKey(str)
     score = orm.Required(int)
+    
+    def __repr__(cls):
+        return f"TestWord[\'{cls.word}\', {cls.score}]"
 
 
 test_word_db.generate_mapping(create_tables=True)

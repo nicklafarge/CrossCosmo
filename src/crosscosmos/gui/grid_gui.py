@@ -130,7 +130,7 @@ class CrossCosmosGame(arcade.Window):
                                           color=TEXT_COLOR,
                                           anchor_x='center',
                                           anchor_y='center',
-                                          font_size=36)
+                                          font_size=18)
                 self.cell_letters[row, column] = cell_letter
 
                 # Cell number labels
@@ -493,12 +493,13 @@ class CrossCosmosGame(arcade.Window):
         if grid_cell_is_black:
             # Convert Black -> Default
             self.grid.set_grid(grid_row, grid_col, "")
-            self.grid_sprites[gui_row][gui_column].color = DEFAULT_CELL_COLOR
+            # self.grid_sprites[gui_row][gui_column].color = DEFAULT_CELL_COLOR
         else:
             # Convert Default -> Black
             self.grid.set_grid(grid_row, grid_col, None)
-            self.grid_sprites[gui_row][gui_column].color = BLACKED_CELL_COLOR
+            # self.grid_sprites[gui_row][gui_column].color = BLACKED_CELL_COLOR
 
+        self.sync_gui_grid()
         # Set the text to empty whenever BLACK status is changed
         self.cell_letters[gui_row][gui_column].text = ""
 
@@ -625,10 +626,12 @@ if __name__ == "__main__":
     # Load grid
 
     # Create grid backend
-    test_file = Path(xc.crosscosmos_project_root / "test_grid.json")
+    # test_file = Path(xc.crosscosmos_project_root / "grids" / "famous_last_words.json")
+    test_file = Path(xc.crosscosmos_project_root / "test_grid_88.json")
+    # test_file = Path(xc.crosscosmos_project_root / "test_grid_55.json")
     xc_grid = xc.grid.Grid.load(test_file)
     xc_grid.corpus = xc.corpus.Corpus.from_test()
-    xc_grid.build_tries(6)
+    xc_grid.build_tries(max(xc_grid.row_count, xc_grid.col_count) + 1)
     # xc_grid = xc.grid.Grid(size, corpus_backend)
 
     # Create/run gui window
