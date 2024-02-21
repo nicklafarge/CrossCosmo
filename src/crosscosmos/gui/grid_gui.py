@@ -13,11 +13,11 @@ import numpy as np
 import crosscosmos as xc
 from crosscosmos import bot
 from crosscosmos.grid import CellStatus, WordDirection, Cell, MoveDirection
-from image_transform import RGBTransform
+from crosscosmos.gui.image_transform import RGBTransform
 
 logger = logging.getLogger("gui")
-logger.setLevel(logging.INFO)
-# logger.setLevel(logging.DEBUG)
+# logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
 
 UPDATES_PER_FRAME = 100
 A_TO_Z = list(range(arcade.key.A, arcade.key.Z + 1))
@@ -37,6 +37,7 @@ CURSER_COLOR_2 = arcade.color.DARK_GRAY
 # Cell colors
 DEFAULT_CELL_COLOR = (80, 80, 80)  # Dark-ish Gray
 BLACKED_CELL_COLOR = arcade.color.BLACK
+BLACK_HIGHLIGHT_COLOR = arcade.color.ARMY_GREEN
 SELECTED_CELL_COLOR = arcade.color.LIGHT_GRAY
 ACTIVE_WORD_CELL_COLOR = arcade.color.GRAY
 
@@ -58,6 +59,9 @@ class CrossCosmosGame(arcade.Window):
 
         # Frame counter to keep track of blinking curser
         self.frame_update_count = 0
+
+        # For hovering over
+        self.toggle_black_mode_active = False
 
         # Size computations -------------------------------------------------------------------------------------------#
 
@@ -272,6 +276,7 @@ class CrossCosmosGame(arcade.Window):
             else:
                 self.text_curser.color = CURSER_COLOR_1
 
+
     def sync_gui_grid(self):
         for gui_row in range(self.grid.row_count):
             for gui_col in range(self.grid.col_count):
@@ -291,6 +296,10 @@ class CrossCosmosGame(arcade.Window):
 
         self.update_gui_colors()
 
+    def on_key_press(self, key, modifiers):
+        if self.with_black_toggle_modifiers(modifiers):
+            self.toggle_black_mode_active = True
+
     def on_key_release(self, key, modifiers):
         """Called when the user releases a key. """
 
@@ -301,6 +310,8 @@ class CrossCosmosGame(arcade.Window):
         mod_indices = [i for i, v in enumerate(ALL_MODS_VALS) if modifiers & v]
         mod_names = [ALL_KEYS[i] for i in mod_indices]
         logger.info(f"Modifiers: {mod_names}")
+
+        self.toggle_black_mode_active = False
 
         # Currently undefined if modifiers are present (except shift/caps)
         if mod_indices and not ("MOD_SHIFT" in mod_names or 'MOD_CAPSLOCK' in mod_names):
@@ -369,28 +380,53 @@ class CrossCosmosGame(arcade.Window):
             self.update_gui_colors()
 
         self.grid.save()
+        self.sync_gui_grid()
+
+    def with_black_toggle_modifiers(self, modifiers: int):
+        with_shift = modifiers & arcade.key.MOD_SHIFT
+        with_cmd = modifiers & arcade.key.MOD_COMMAND
+        with_win = modifiers & arcade.key.MOD_WINDOWS
+        return with_shift and (with_cmd or with_win)
+
+    def on_mouse_motion(self, x_grid: int, y_grid: int, dx: int, dy: int):
+
+        if not self.toggle_black_mode_active:
+            return
+
+        logger.info("Toggle black highlight active")
+        on_gui_grid, gui_row, gui_col = self.gui_xy_to_gui_row_col(x_grid, y_grid)
+        grid_row, grid_col = self.gui_row_col_to_grid_row_col(gui_row, gui_col)
+        cell = self.grid[grid_row, grid_col]
+        sprite = self.grid_sprites[gui_row, gui_col]
+
+        if not on_gui_grid or cell.status == CellStatus.BLACK:
+            self.sync_gui_grid()
+            return
+
+        symm_grid_row, symm_grid_col = self.grid.get_symmetric_index(grid_row, grid_col, self.grid.symmetry)
+        symm_cell = self.grid[symm_grid_row, symm_grid_col]
+        symm_sprite = self.grid_sprites[symm_cell.gui_row][symm_cell.gui_col]
+        current_color = symm_sprite.color
+        if current_color != BLACK_HIGHLIGHT_COLOR:
+            self.sync_gui_grid()
+            sprite.color = BLACK_HIGHLIGHT_COLOR
+            symm_sprite.color = BLACK_HIGHLIGHT_COLOR
 
     def on_mouse_press(self, x_grid: float, y_grid: float, button, modifiers):
         """ Called when the user presses a mouse button.
         """
-
-        # Keep track of modifiers
-        with_shift = modifiers & arcade.key.MOD_SHIFT
-        with_cmd = modifiers & arcade.key.MOD_COMMAND
-        with_win = modifiers & arcade.key.MOD_WINDOWS
-
         # See which row/col was clicked
-        success, gui_row, gui_col = self.gui_xy_to_gui_row_col(x_grid, y_grid)
+        on_gui_grid, gui_row, gui_col = self.gui_xy_to_gui_row_col(x_grid, y_grid)
         grid_row, grid_col = self.gui_row_col_to_grid_row_col(gui_row, gui_col)
         logger.info(f"Clicked [{x_grid},{y_grid}]: gui row/col: [{grid_row},{grid_col}]")
 
-        if not success:
+        if not on_gui_grid:
             return
 
         hide_cursor = False
 
         # Toggle black square
-        if with_shift and (with_cmd or with_win):
+        if self.with_black_toggle_modifiers(modifiers):
             logger.info("Shift+Command+Click")
 
             # Switch the selected square default -> black (or vice versa)
@@ -433,6 +469,7 @@ class CrossCosmosGame(arcade.Window):
             self.update_gui_colors(show_cursor=True)
 
         self.grid.save()
+        self.sync_gui_grid()
 
     def update_selected_cell(self, new_value: str):
         """ Update the currently selected cell with a new string
@@ -615,6 +652,23 @@ class CrossCosmosGame(arcade.Window):
         logger.debug("Showing curser")
         self.curser_visible = True
         self.text_curser.color = CURSER_COLOR_1
+
+
+def run_default(grid: xc.grid.Grid, override_config_path=None):
+    config = ConfigParser()
+
+    config_path = xc.crosscosmos_root / "gui" / "gui_config.ini"
+
+    if override_config_path:
+        config_path = override_config_path
+
+    config.read(config_path)
+
+    grid.build_tries(max(grid.row_count, grid.col_count) + 1)
+
+    # Create/run gui window
+    CrossCosmosGame(config, grid)
+    arcade.run()
 
 
 if __name__ == "__main__":
