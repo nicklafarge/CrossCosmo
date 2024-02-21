@@ -169,6 +169,7 @@ class Cell(object):
         self.removed_words.append((word, direction))
 
 
+
 class Grid(object):
 
     def __init__(self, grid_size: Tuple[int, int], corpus: xc.corpus.Corpus = None, shuffle: bool = True,
@@ -206,10 +207,6 @@ class Grid(object):
         self.symmetry = symmetry
         self.save_path = save_path
         self.tries = []
-        
-    def build_tries(self, n: int):
-        if self.corpus:
-            self.tries = self.corpus.to_n_tries(n, padded=True)
 
     def __repr__(self):
         return f"Grid(dim=({self.grid_size[0]}, {self.grid_size[1]})"
@@ -265,6 +262,12 @@ class Grid(object):
         new_grid.save_path = filepath
         return new_grid
 
+    def get_symmetric_index(self, x: int, y: int, symmetry: Symmetry):
+        if symmetry == Symmetry.ROTATIONAL:
+            coord_center = self.corner2center(x, y)
+            coord_rot_center = -coord_center[0], -coord_center[1]
+            return self.center2corner(*coord_rot_center)
+
     def set_grid(self, x: int, y: int, value: Union[str, None]):
         # Check index
         if (x < 0 or x > self.grid_size[0]) or (y < 0 or y > self.grid_size[1]):
@@ -274,9 +277,7 @@ class Grid(object):
         self.grid[x][y].update(value)
 
         # Set symmetry
-        coord_center = self.corner2center(x, y)
-        coord_rot_center = -coord_center[0], -coord_center[1]
-        cr1, cr2 = self.center2corner(*coord_rot_center)
+        cr1, cr2 = self.get_symmetric_index(x, y, self.symmetry)
 
         if self.auto_symmetry and self.symmetry == Symmetry.ROTATIONAL:
             if self.grid[x][y].status != CellStatus.BLACK and self.grid[cr1][cr2].status == CellStatus.BLACK:
@@ -288,6 +289,10 @@ class Grid(object):
 
         # Update heads
         self.update_grid_data()
+
+    def build_tries(self, n: int):
+        if self.corpus:
+            self.tries = self.corpus.to_n_tries(n, padded=True)
 
     def corner2center(self, x: int, y: int) -> Tuple[float, float]:
         """ Convert coordinate measured form corner, to coordinate measured from center of grid
