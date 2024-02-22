@@ -21,6 +21,7 @@ logger.setLevel(logging.DEBUG)
 
 UPDATES_PER_FRAME = 100
 A_TO_Z = list(range(arcade.key.A, arcade.key.Z + 1))
+ONE_TO_TEN = list(range(arcade.key.KEY_0, arcade.key.KEY_9 + 1))
 
 # Background colors
 BACKGROUND_COLOR = arcade.color.BLACK
@@ -42,6 +43,7 @@ BLACK_VALID_HIGHLIGHT_COLOR = arcade.color.ARMY_GREEN
 BLACK_INVALID_HIGHLIGHT_COLOR = arcade.color.OLD_BURGUNDY
 SELECTED_CELL_COLOR = arcade.color.LIGHT_GRAY
 ACTIVE_WORD_CELL_COLOR = arcade.color.GRAY
+SEARCH_LEN_COLOR = arcade.color.DARK_ELECTRIC_BLUE
 
 # Key values
 ALL_KEYS = [k for k in dir(arcade.key) if k.isupper() and "MOD_" not in k]
@@ -64,6 +66,9 @@ class CrossCosmosGame(arcade.Window):
 
         # For hovering over
         self.toggle_black_mode_active = False
+
+        # For using grave as a modifier
+        self.grave_down = False
 
         # Size computations -------------------------------------------------------------------------------------------#
 
@@ -301,6 +306,27 @@ class CrossCosmosGame(arcade.Window):
         if self.with_black_toggle_modifiers(modifiers):
             self.toggle_black_mode_active = True
 
+        if key == arcade.key.GRAVE:
+            self.grave_down = True
+            return
+
+        # Show numbers of some length
+
+        logger.info(f"Key: {key}")
+        logger.info(f"Numbers: {key in ONE_TO_TEN}")
+        logger.info(f"Ctrl: {modifiers & arcade.key.MOD_CTRL}")
+        if key in ONE_TO_TEN and (modifiers & arcade.key.MOD_CTRL):
+            value = int(chr(key))
+            if self.grave_down:
+                value += 10
+
+            logger.info(f"Searching for answers with length = {value}")
+            for cell in self.grid.grid.flatten():
+                if cell.hlen == value or cell.vlen == value:
+                    self.grid_sprites[cell.gui_row, cell.gui_col].color = SEARCH_LEN_COLOR
+
+            logger.info(f"Numbers: {key}")
+
     def on_key_release(self, key, modifiers):
         """Called when the user releases a key. """
 
@@ -312,6 +338,10 @@ class CrossCosmosGame(arcade.Window):
         mod_names = [ALL_KEYS[i] for i in mod_indices]
         logger.info(f"Modifiers: {mod_names}")
 
+        if key == arcade.key.GRAVE:
+            self.grave_down = False
+
+        # No key is held down so no more "hover" behavior for black squares
         self.toggle_black_mode_active = False
 
         # Currently undefined if modifiers are present (except shift/caps)
@@ -332,7 +362,10 @@ class CrossCosmosGame(arcade.Window):
             # Update the gui
             self.update_gui_colors()
 
+        # Value typed from the keyboard (if applicable)
         new_val = None
+
+        # Move direction (if applicable)
         move_dir = None
 
         match key:
