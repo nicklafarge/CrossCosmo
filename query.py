@@ -17,10 +17,12 @@ from crosscosmos.corpus import Corpus
 
 logger = logging.getLogger("query")
 
+logger.info("LOADING")
 corpus = {
     1: Corpus.from_test(),
     2: Corpus.from_diehl(),
-    3: Corpus.from_lafarge()
+    3: Corpus.from_lafarge(),
+    4: Corpus.from_collab()
 }
 
 
@@ -36,3 +38,7 @@ if __name__ == "__main__":
     test1 = match(query_str, 1)
     test2 = match(query_str, 2)
     test3 = match(query_str, 3)
+
+
+    # KARANAMOK
+    match('------M-K', 4)

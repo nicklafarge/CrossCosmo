@@ -185,37 +185,51 @@ class CrossCosmosGame(arcade.Window):
         # Create a vertical BoxGroup to align buttons
         self.menu_box = arcade.gui.UIBoxLayout()
 
-        bot_dim = self.right_outer_margin / 2.5
-        bot_x = self.outer_margin + self.grid_edge_dimension + self.right_outer_margin / 2 - bot_dim / 2
-        # bot_y = self.grid_edge_dimension - 3 * bot_dim / 2
-        bot_y = bot_dim / 2
-        bot_texture = arcade.load_texture(":resources:images/space_shooter/playerShip1_orange.png")
+        ui_icon_dim = self.right_outer_margin / 2.5
+        ui_icon_x = self.outer_margin + self.grid_edge_dimension + self.right_outer_margin / 2 - ui_icon_dim / 2
 
-        bot_hover_image = RGBTransform().mix_with([220] * 3, factor=.40).applied_to(bot_texture.image)
-        bot_texture_hover = arcade.Texture("bot_hover_texture", bot_hover_image)
-
-        bot_click_image = RGBTransform().mix_with([220] * 3, factor=.90).applied_to(bot_texture.image)
-        bot_texture_pressed = arcade.Texture("bot_click_texture", bot_click_image)
-
-        bot_button = arcade.gui.UITextureButton(texture=bot_texture,
-                                                width=bot_dim,
-                                                height=bot_dim,
-                                                texture_hovered=bot_texture_hover,
-                                                texture_pressed=bot_texture_pressed)
+        # Bot button
+        bot_y = ui_icon_dim / 2
+        bot_button = self.build_button("bot",
+                                       ":resources:images/space_shooter/playerShip1_orange.png",
+                                       ui_icon_dim)
 
         @bot_button.event("on_click")
         def on_click_bot_button(event):
             bot.solve(self.grid)
             self.sync_gui_grid()
+            self.grid.save()
 
         self.menu_box.add(bot_button.with_space_around(bottom=20))
-
-        # Create a widget to hold the menu bar, that will center the buttons
         self.manager.add(
             arcade.gui.UIAnchorWidget(
                 anchor_x="left",
                 anchor_y="bottom",
-                align_x=bot_x,
+                align_x=ui_icon_x,
+                align_y=bot_y,
+                child=self.menu_box)
+        )
+
+        # Clear button
+        bot_y = ui_icon_dim / 2
+        clear_button = self.build_button("clear",
+                                         ":resources:images/tiles/bomb.png",
+                                         ui_icon_dim)
+
+        @clear_button.event("on_click")
+        def on_click_bot_button(event):
+            for c in self.grid.grid.flatten():
+                if c.status == CellStatus.SET:
+                    c.update("")
+            self.sync_gui_grid()
+            self.grid.save()
+
+        self.menu_box.add(clear_button.with_space_around(bottom=20))
+        self.manager.add(
+            arcade.gui.UIAnchorWidget(
+                anchor_x="left",
+                anchor_y="bottom",
+                align_x=ui_icon_x,
                 align_y=bot_y,
                 child=self.menu_box)
         )
@@ -280,17 +294,23 @@ class CrossCosmosGame(arcade.Window):
                 grid_row, grid_col = self.gui_row_col_to_grid_row_col(gui_row, gui_col)
                 grid_cell = self.grid[grid_row, grid_col]
 
+                cell_letter = self.cell_letters[gui_row, gui_col]
+                grid_sprite = self.grid_sprites[gui_row, gui_col]
+
                 # Default
-                self.grid_sprites[gui_row, gui_col].color = DEFAULT_CELL_COLOR
+                grid_sprite.color = DEFAULT_CELL_COLOR
+                cell_letter.color = TEXT_COLOR
 
                 match grid_cell.status:
                     case CellStatus.SET:
-                        self.cell_letters[gui_row, gui_col].text = grid_cell.value
+                        cell_letter.text = grid_cell.value
                     case CellStatus.LOCKED:
-                        self.cell_letters[gui_row, gui_col].text = grid_cell.value
-                        self.cell_letters[gui_row, gui_col].color = LOCKED_TEXT_COLOR
+                        cell_letter.text = grid_cell.value
+                        cell_letter.color = LOCKED_TEXT_COLOR
                     case CellStatus.BLACK:
-                        self.grid_sprites[gui_row, gui_col].color = BLACKED_CELL_COLOR
+                        grid_sprite.color = BLACKED_CELL_COLOR
+                    case CellStatus.EMPTY:
+                        cell_letter.text = ""
                     case _:
                         pass
 
@@ -497,7 +517,7 @@ class CrossCosmosGame(arcade.Window):
             logger.debug(f"Toggling locked status of [{grid_row},{grid_col}]")
 
             # Only toggle if it is SET or LOCKED
-            if self.grid[grid_row, grid_row].status in [CellStatus.LOCKED, CellStatus.SET]:
+            if self.grid[grid_row, grid_col].status in [CellStatus.LOCKED, CellStatus.SET]:
                 self.grid.toggle_locked(grid_row, grid_col)
                 self.update_locked_color(gui_row, gui_col)
 
@@ -701,6 +721,21 @@ class CrossCosmosGame(arcade.Window):
         logger.debug("Showing curser")
         self.curser_visible = True
         self.text_curser.color = CURSER_COLOR_1
+
+    def build_button(self, name: str, texture_str: str, dim: float) -> arcade.gui.UITextureButton:
+        texture = arcade.load_texture(texture_str)
+
+        hover_image = RGBTransform().mix_with([220] * 3, factor=.40).applied_to(texture.image)
+        texture_hover = arcade.Texture(f"{name}_hover_texture", hover_image)
+
+        click_image = RGBTransform().mix_with([220] * 3, factor=.90).applied_to(texture.image)
+        texture_pressed = arcade.Texture("{name}_click_texture", click_image)
+
+        return arcade.gui.UITextureButton(texture=texture,
+                                          width=dim,
+                                          height=dim,
+                                          texture_hovered=texture_hover,
+                                          texture_pressed=texture_pressed)
 
 
 def run_default(grid: xc.grid.Grid, override_config_path=None):
