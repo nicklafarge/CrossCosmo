@@ -36,6 +36,7 @@ CURSER_COLOR_2 = arcade.color.DARK_GRAY
 
 # Cell colors
 DEFAULT_CELL_COLOR = (80, 80, 80)  # Dark-ish Gray
+INVALID_CELL_COLOR = arcade.color.OLD_BURGUNDY
 BLACKED_CELL_COLOR = arcade.color.BLACK
 BLACK_HIGHLIGHT_COLOR = arcade.color.ARMY_GREEN
 SELECTED_CELL_COLOR = arcade.color.LIGHT_GRAY
@@ -275,7 +276,6 @@ class CrossCosmosGame(arcade.Window):
                 self.text_curser.color = CURSER_COLOR_2
             else:
                 self.text_curser.color = CURSER_COLOR_1
-
 
     def sync_gui_grid(self):
         for gui_row in range(self.grid.row_count):
@@ -530,11 +530,9 @@ class CrossCosmosGame(arcade.Window):
         if grid_cell_is_black:
             # Convert Black -> Default
             self.grid.set_grid(grid_row, grid_col, "")
-            # self.grid_sprites[gui_row][gui_column].color = DEFAULT_CELL_COLOR
         else:
             # Convert Default -> Black
             self.grid.set_grid(grid_row, grid_col, None)
-            # self.grid_sprites[gui_row][gui_column].color = BLACKED_CELL_COLOR
 
         self.sync_gui_grid()
         # Set the text to empty whenever BLACK status is changed
@@ -552,6 +550,8 @@ class CrossCosmosGame(arcade.Window):
                 # Do nothing if black
                 if cell.status == CellStatus.BLACK:
                     continue
+                elif not cell.is_valid:
+                    self.grid_sprites[gui_x][gui_y].color = INVALID_CELL_COLOR
                 else:
                     self.grid_sprites[gui_x][gui_y].color = DEFAULT_CELL_COLOR
 
@@ -591,7 +591,7 @@ class CrossCosmosGame(arcade.Window):
 
         # Update the cell based on its status, and whether it is selected
         for cell in active_word_cells:
-            if cell.status == CellStatus.BLACK:
+            if cell.status == CellStatus.BLACK or not cell.is_valid:
                 continue
             elif cell.x == self.selected_grid_cell.x and cell.y == self.selected_grid_cell.y:
                 self.grid_sprites[cell.gui_row][cell.gui_col].color = SELECTED_CELL_COLOR

@@ -134,6 +134,10 @@ class Cell(object):
     def load(cls, filename: Path, **kwargs):
         return cls.from_dict(xc.io_utils.load_json(filename), **kwargs)
 
+    @property
+    def is_valid(self):
+        return self.hlen >=3 and self.vlen >=3
+
     def save(self, filename: Path):
         xc.io_utils.save_json_dict(filename, self.to_json())
 
