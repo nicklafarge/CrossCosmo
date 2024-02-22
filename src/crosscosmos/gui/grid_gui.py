@@ -12,7 +12,7 @@ import numpy as np
 # Local
 import crosscosmos as xc
 from crosscosmos import bot
-from crosscosmos.grid import CellStatus, WordDirection, Cell, MoveDirection
+from crosscosmos.grid import CellStatus, WordDirection, Cell, MoveDirection, Symmetry
 from crosscosmos.gui.image_transform import RGBTransform
 
 logger = logging.getLogger("gui")
@@ -38,7 +38,8 @@ CURSER_COLOR_2 = arcade.color.DARK_GRAY
 DEFAULT_CELL_COLOR = (80, 80, 80)  # Dark-ish Gray
 INVALID_CELL_COLOR = arcade.color.OLD_BURGUNDY
 BLACKED_CELL_COLOR = arcade.color.BLACK
-BLACK_HIGHLIGHT_COLOR = arcade.color.ARMY_GREEN
+BLACK_VALID_HIGHLIGHT_COLOR = arcade.color.ARMY_GREEN
+BLACK_INVALID_HIGHLIGHT_COLOR = arcade.color.OLD_BURGUNDY
 SELECTED_CELL_COLOR = arcade.color.LIGHT_GRAY
 ACTIVE_WORD_CELL_COLOR = arcade.color.GRAY
 
@@ -390,27 +391,42 @@ class CrossCosmosGame(arcade.Window):
 
     def on_mouse_motion(self, x_grid: int, y_grid: int, dx: int, dy: int):
 
+        # Only defined currently for when the toggle mode is active
         if not self.toggle_black_mode_active:
             return
 
-        logger.info("Toggle black highlight active")
+        # Get the selected cell/sprite
         on_gui_grid, gui_row, gui_col = self.gui_xy_to_gui_row_col(x_grid, y_grid)
         grid_row, grid_col = self.gui_row_col_to_grid_row_col(gui_row, gui_col)
         cell = self.grid[grid_row, grid_col]
         sprite = self.grid_sprites[gui_row, gui_col]
+        is_highlighted = sprite.color in [BLACK_VALID_HIGHLIGHT_COLOR, BLACK_INVALID_HIGHLIGHT_COLOR]
 
+        # Continue if off the grid or on a black cell
         if not on_gui_grid or cell.status == CellStatus.BLACK:
             self.sync_gui_grid()
             return
 
+        # Set the color
+        temp_grid = xc.grid.Grid.from_dict(self.grid.to_json())
+        temp_grid.set_grid(grid_row, grid_col, None)
+        highlight_color = BLACK_VALID_HIGHLIGHT_COLOR if temp_grid.is_valid else BLACK_INVALID_HIGHLIGHT_COLOR
+        if not is_highlighted:
+            self.sync_gui_grid()
+            sprite.color = highlight_color
+
+        # Done here if no symmetry is defined
+        if self.grid.symmetry == Symmetry.NONE:
+            return
+
+        # Get the symmetric cell/sprite
         symm_grid_row, symm_grid_col = self.grid.get_symmetric_index(grid_row, grid_col, self.grid.symmetry)
         symm_cell = self.grid[symm_grid_row, symm_grid_col]
         symm_sprite = self.grid_sprites[symm_cell.gui_row][symm_cell.gui_col]
-        current_color = symm_sprite.color
-        if current_color != BLACK_HIGHLIGHT_COLOR:
-            self.sync_gui_grid()
-            sprite.color = BLACK_HIGHLIGHT_COLOR
-            symm_sprite.color = BLACK_HIGHLIGHT_COLOR
+
+        # Set the symmetric colr
+        if not is_highlighted:
+            symm_sprite.color = highlight_color
 
     def on_mouse_press(self, x_grid: float, y_grid: float, button, modifiers):
         """ Called when the user presses a mouse button.

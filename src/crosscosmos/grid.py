@@ -136,7 +136,7 @@ class Cell(object):
 
     @property
     def is_valid(self):
-        return self.hlen >=3 and self.vlen >=3
+        return self.status == CellStatus.BLACK or (self.hlen >=3 and self.vlen >=3)
 
     def save(self, filename: Path):
         xc.io_utils.save_json_dict(filename, self.to_json())
@@ -171,7 +171,6 @@ class Cell(object):
 
     def remove_word(self, word: str, direction: WordDirection):
         self.removed_words.append((word, direction))
-
 
 
 class Grid(object):
@@ -225,6 +224,10 @@ class Grid(object):
     def __setitem__(self, x: Tuple[int, int], value: str):
         self.set_grid(x[0], x[1], value)
 
+    @property
+    def is_valid(self):
+        return all([c.is_valid for c in self.grid.flatten()])
+
     def to_json(self):
         grid_letters = []
         for i in range(self.row_count):
@@ -258,6 +261,8 @@ class Grid(object):
             for i in range(grid.row_count):
                 for j in range(grid.col_count):
                     grid.grid[i, j] = Cell.from_dict(grid_letters[i][j])
+
+        grid.update_grid_data()
         return grid
 
     @classmethod
