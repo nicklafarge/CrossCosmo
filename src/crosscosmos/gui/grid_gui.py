@@ -460,17 +460,23 @@ class CrossCosmosGame(arcade.Window):
         """
         # See which row/col was clicked
         on_gui_grid, gui_row, gui_col = self.gui_xy_to_gui_row_col(x_grid, y_grid)
-        grid_row, grid_col = self.gui_row_col_to_grid_row_col(gui_row, gui_col)
-        logger.info(f"Clicked [{x_grid},{y_grid}]: gui row/col: [{grid_row},{grid_col}]")
 
         if not on_gui_grid:
             return
+
+        grid_row, grid_col = self.gui_row_col_to_grid_row_col(gui_row, gui_col)
+        logger.info(f"Clicked [{x_grid},{y_grid}]: gui row/col: [{grid_row},{grid_col}]")
+        cell = self.grid[grid_row, grid_col]
 
         hide_cursor = False
 
         # Toggle black square
         if self.with_black_toggle_modifiers(modifiers):
             logger.info("Shift+Command+Click")
+
+            # Aren't allowed to black out locked squares
+            if cell.status == CellStatus.LOCKED:
+                return
 
             # Switch the selected square default -> black (or vice versa)
             self.toggle_black_square(gui_row, gui_col)
