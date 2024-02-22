@@ -426,8 +426,8 @@
         "vlen": 5
       },
       {
-        "status": 0,
-        "value": "",
+        "status": 1,
+        "value": "W",
         "matrix_index": [
           3,
           3
