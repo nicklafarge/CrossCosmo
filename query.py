@@ -30,7 +30,7 @@ def match(query: str, lvl: int = 1):
     if lvl not in corpus.keys():
         return ValueError(f"Invalid corpus index: {lvl}")
 
-    return corpus[lvl].query(query)
+    return corpus[lvl].query(query.replace(" ", ''))
 
 
 if __name__ == "__main__":
@@ -41,4 +41,6 @@ if __name__ == "__main__":
 
 
     # KARANAMOK
+    match('------R', 1)
+
     match('------M-K', 4)

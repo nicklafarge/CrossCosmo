@@ -8,7 +8,7 @@ import copy
 from enum import Enum
 import random
 import string
-from typing import Tuple, Union
+from typing import Tuple, Union, List
 from pathlib import Path
 
 # Third-party
@@ -136,7 +136,7 @@ class Cell(object):
 
     @property
     def is_valid(self):
-        return self.status == CellStatus.BLACK or (self.hlen >=3 and self.vlen >=3)
+        return self.status == CellStatus.BLACK or (self.hlen >= 3 and self.vlen >= 3)
 
     def save(self, filename: Path):
         xc.io_utils.save_json_dict(filename, self.to_json())
@@ -286,15 +286,16 @@ class Grid(object):
         self.grid[x][y].update(value)
 
         # Set symmetry
-        cr1, cr2 = self.get_symmetric_index(x, y, self.symmetry)
+        if self.symmetry != Symmetry.NONE:
+            cr1, cr2 = self.get_symmetric_index(x, y, self.symmetry)
 
-        if self.auto_symmetry and self.symmetry == Symmetry.ROTATIONAL:
-            if self.grid[x][y].status != CellStatus.BLACK and self.grid[cr1][cr2].status == CellStatus.BLACK:
-                # If the rotated state is black, then reset that black square to default
-                self.grid[cr1][cr2].update("")
-            elif self.grid[x][y].status == CellStatus.BLACK:
-                # Set the rotated state to black
-                self.grid[cr1][cr2].update(None)
+            if self.auto_symmetry and self.symmetry == Symmetry.ROTATIONAL:
+                if self.grid[x][y].status != CellStatus.BLACK and self.grid[cr1][cr2].status == CellStatus.BLACK:
+                    # If the rotated state is black, then reset that black square to default
+                    self.grid[cr1][cr2].update("")
+                elif self.grid[x][y].status == CellStatus.BLACK:
+                    # Set the rotated state to black
+                    self.grid[cr1][cr2].update(None)
 
         # Update heads
         self.update_grid_data()
@@ -302,6 +303,8 @@ class Grid(object):
     def build_tries(self, n: int):
         if self.corpus:
             self.tries = self.corpus.to_n_tries(n, padded=True)
+        else:
+            logger.warning("Could not build tries (no corpus loaded)")
 
     def corner2center(self, x: int, y: int) -> Tuple[float, float]:
         """ Convert coordinate measured form corner, to coordinate measured from center of grid
@@ -412,7 +415,7 @@ class Grid(object):
             case _:
                 raise ValueError("Invalid word directin")
 
-    def full_word_from_cell(self, i: int, j: int, direction: WordDirection):
+    def full_word_from_cell(self, i: int, j: int, direction: WordDirection, terminate_on_empty=False):
 
         start_cell = self[i, j]
 
@@ -421,42 +424,45 @@ class Grid(object):
 
         match direction:
             case direction.VERTICAL:
-                up_cells = list(reversed(self.aggregate_cells(i, j, Direction.UP)[1:]))
-                down_cells = self.aggregate_cells(i, j, Direction.DOWN)[1:]
+                up_cells = list(reversed(self.aggregate_cells(i, j, Direction.UP, terminate_on_empty)[1:]))
+                down_cells = self.aggregate_cells(i, j, Direction.DOWN, terminate_on_empty)[1:]
                 return up_cells + [start_cell] + down_cells
             case direction.HORIZONTAL:
-                left = list(reversed(self.aggregate_cells(i, j, Direction.LEFT)[1:]))
-                right = self.aggregate_cells(i, j, Direction.RIGHT)[1:]
+                left = list(reversed(self.aggregate_cells(i, j, Direction.LEFT, terminate_on_empty)[1:]))
+                right = self.aggregate_cells(i, j, Direction.RIGHT, terminate_on_empty)[1:]
                 return left + [start_cell] + right
 
-    def aggregate_cells(self, i: int, j: int, which: Direction) -> int:
+    def aggregate_cells(self, i: int, j: int,
+                        which: Direction,
+                        terminate_on_empty=False) -> List[Cell]:
         cells = [self[i, j]]
 
+        # Nothing to aggregate if we're starting at a black square
         if cells[0].status == CellStatus.BLACK:
-            return 0
+            return []
 
         match which:
             case Direction.UP:
                 def termination_criteria(c):
-                    return c.is_v_start
+                    return c.is_v_start or (terminate_on_empty and c.status == CellStatus.EMPTY)
 
                 def update(c):
                     return self[c.x - 1, c.y]
             case Direction.DOWN:
                 def termination_criteria(c):
-                    return c.is_v_end
+                    return c.is_v_end or (terminate_on_empty and c.status == CellStatus.EMPTY)
 
                 def update(c):
                     return self[c.x + 1, c.y]
             case Direction.LEFT:
                 def termination_criteria(c):
-                    return c.is_h_start
+                    return c.is_h_start or (terminate_on_empty and c.status == CellStatus.EMPTY)
 
                 def update(c):
                     return self[c.x, c.y - 1]
             case Direction.RIGHT:
                 def termination_criteria(c):
-                    return c.is_h_end
+                    return c.is_h_end or (terminate_on_empty and c.status == CellStatus.EMPTY)
 
                 def update(c):
                     return self[c.x, c.y + 1]
@@ -465,47 +471,17 @@ class Grid(object):
 
         while not termination_criteria(cells[-1]):
             cells.append(update(cells[-1]))
+
         return cells
 
+    def word_len(self, i: int, j: int, direction: WordDirection):
+        return len(self.full_word_from_cell(i, j, direction))
+
     def horizontal_word_len(self, i: int, j: int):
-        return len(self.full_word_from_cell(i, j, WordDirection.HORIZONTAL))
+        return self.word_len(i, j, WordDirection.HORIZONTAL)
 
     def vertical_word_len(self, i: int, j: int):
-        return len(self.full_word_from_cell(i, j, WordDirection.VERTICAL))
-
-    def get_h_word_up_to(self, i: int, j: int, as_str=True):
-        cells = []
-
-        # Move right until it's the beginning of the word
-        is_h_start = False
-        while not is_h_start:
-            c = self[i, j]
-            is_h_start = c.is_h_start
-            cells.insert(0, c)
-            j -= 1
-
-        cell_list = list(cells)
-        if as_str:
-            return ''.join([c.value for c in cell_list])
-        else:
-            return cell_list
-
-    def get_v_word_up_to(self, i: int, j: int, as_str: bool = True):
-        cells = []
-
-        # Move up until it's the beginning of the word
-        is_v_start = False
-        while not is_v_start:
-            c = self[i, j]
-            is_v_start = c.is_v_start
-            cells.insert(0, c)
-            i -= 1
-
-        cell_list = list(cells)
-        if as_str:
-            return ''.join([c.value for c in cell_list])
-        else:
-            return cell_list
+        return self.word_len(i, j, WordDirection.VERTICAL)
 
     def is_h_start(self, i: int, j: int) -> bool:
         if j > 0:
@@ -674,6 +650,11 @@ class Grid(object):
             return self.get_next_square(i, j, move_dir)
         else:
             return i, j
+
+    def clear(self):
+        for c in self.grid.flatten():
+            if c.status == CellStatus.SET:
+                c.reset_cell()
 
 
 if __name__ == '__main__':

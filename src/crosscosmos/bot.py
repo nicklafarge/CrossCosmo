@@ -31,16 +31,9 @@ class LetterSequenceStatus(Enum):
 
 
 def check_letter_sequence(cell, the_grid, trie_list, direction: WordDirection):
-    match direction:
-        case WordDirection.HORIZONTAL:
-            letter_sequence = the_grid.get_h_word_up_to(cell.x, cell.y)
-            word_len = the_grid[cell.x, cell.y].hlen
-        case WordDirection.VERTICAL:
-            letter_sequence = the_grid.get_v_word_up_to(cell.x, cell.y)
-            word_len = the_grid[cell.x, cell.y].vlen
-        case _:
-            raise ValueError(f"Unknown direction: {direction}")
-
+    cell_sequence = the_grid.full_word_from_cell(cell.x, cell.y, direction)
+    letter_sequence = ''.join([c.value for c in cell_sequence if c.value])
+    word_len = the_grid.word_len(cell.x, cell.y, direction)
     return trie_list[word_len].has_node(letter_sequence)
 
 
@@ -151,10 +144,10 @@ def solve(grid: xc.grid.Grid):
             #     2) we've reached a vertical barrier and don't have a valid word
             if c.is_v_end and trie_has_v_word == pygtrie.Trie.HAS_SUBTRIE:
                 move_dir = MoveDirection.BACK_VERTICAL
-        
+
         # TODO: for longer words, maybe skip the letter looping but instead just look for 8(or whatever) letter 
         #  words starting with what is currently in the grid
-        
+
         # TODO: need for some longer DB-style checking
         #   queryL length(word)==7 AND SUBSTRING(word,3,1)=='E' AND SUBSTRING(word,8,1)=='A'
         #   if no results, then return. If 1 result, then fill.
@@ -173,13 +166,16 @@ def solve(grid: xc.grid.Grid):
             grid[i, j].status = CellStatus.SET
 
             # Check if the horizontal letter sequence is valid
-            h_word_to_xy = grid.get_h_word_up_to(c.x, c.y)
-            horizontal_word_status = validate_grid_letter_sequence(tries[c.hlen], h_word_to_xy, c.is_h_end)
+
+            h_cell_sequence = grid.full_word_from_cell(c.x, c.y, WordDirection.HORIZONTAL)
+            h_word_fragment = ''.join([c.value for c in h_cell_sequence if c.value])
+            horizontal_word_status = validate_grid_letter_sequence(tries[c.hlen], h_word_fragment, c.is_h_end)
             horizontal_letter_accepted = horizontal_word_status != LetterSequenceStatus.INVALID
 
             # Check if the vertical letter sequence is valid
-            v_word_to_xy = grid.get_v_word_up_to(c.x, c.y)
-            vertical_word_status = validate_grid_letter_sequence(tries[c.vlen], v_word_to_xy, c.is_v_end)
+            v_cell_sequence = grid.full_word_from_cell(c.x, c.y, WordDirection.VERTICAL)
+            v_word_fragment = ''.join([c.value for c in v_cell_sequence if c.value])
+            vertical_word_status = validate_grid_letter_sequence(tries[c.vlen], v_word_fragment, c.is_v_end)
             vertical_letter_accepted = vertical_word_status != LetterSequenceStatus.INVALID
 
             # The selected letter is only accepted if it is valid in both vertical and horizontal directions
@@ -188,13 +184,13 @@ def solve(grid: xc.grid.Grid):
 
                 # If horizontal word is complete, remove it to avoid duplication
                 if horizontal_word_status == LetterSequenceStatus.VALID_WORD:
-                    tries[c.hlen].pop(h_word_to_xy)
-                    grid[i, j].remove_word(h_word_to_xy, WordDirection.HORIZONTAL)
+                    tries[c.hlen].pop(h_word_fragment)
+                    grid[i, j].remove_word(h_word_fragment, WordDirection.HORIZONTAL)
 
                 # If vertical word is complete, remove it to avoid duplication
                 if vertical_word_status == LetterSequenceStatus.VALID_WORD:
-                    tries[c.vlen].pop(v_word_to_xy)
-                    grid[i, j].remove_word(v_word_to_xy, WordDirection.VERTICAL)
+                    tries[c.vlen].pop(v_word_fragment)
+                    grid[i, j].remove_word(v_word_fragment, WordDirection.VERTICAL)
 
         # For debugging
         # grid.print()
