@@ -1,5 +1,6 @@
 # Standard
 from enum import Enum
+import time
 from typing import List
 
 # Third-party
@@ -84,12 +85,13 @@ def validate_grid_letter_sequence(grid_trie: pygtrie, letter_sequence: str, is_e
         return LetterSequenceStatus.INVALID
 
 
-def solve(grid: xc.grid.Grid):
-    # Build tries
-    # tries = grid.corpus.to_n_tries(8, padded=True)
-    tries = grid.tries
+def solve(grid: xc.grid.Grid, max_time=30):
 
+    # Initialize
+    tries = grid.tries
     grid_status = GridStatus.INCOMPLETE
+    start_time = time.time()
+
     # Start in top left (0, 0)
     i = 0
     j = 0
@@ -102,6 +104,10 @@ def solve(grid: xc.grid.Grid):
 
         n_iters += 1
         if n_iters % 1000 == 0:
+            if time.time() - start_time > max_time:
+                print("Max solve time exceeded")
+                return
+
             grid.print()
             print()
 
