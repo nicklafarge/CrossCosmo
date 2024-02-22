@@ -77,7 +77,8 @@ class CrossCosmosGame(arcade.Window):
         self.outer_margin = config_in.getint('grid', 'outer_margin')  # space between grid and edge of GUI
 
         # The sum of all inner margins
-        vertical_inner_margin_sum = (self.grid.row_count - 1) * self.inner_margin
+        larger_dim = max(self.grid.row_count, self.grid.col_count)
+        vertical_inner_margin_sum = (larger_dim - 1) * self.inner_margin
 
         # The total grid height is 
         #   The height of the GUI (from arcade.Window) -
@@ -86,7 +87,7 @@ class CrossCosmosGame(arcade.Window):
         self.grid_edge_dimension = self.height - (2 * self.outer_margin) - vertical_inner_margin_sum
         self.right_outer_margin = self.width - self.outer_margin - self.grid_edge_dimension
         # The size of each square is the height of the total grid divided by the number of rows (as an integer)
-        self.square_size = int(self.grid_edge_dimension // self.grid.row_count)
+        self.square_size = int(self.grid_edge_dimension // larger_dim)
 
         # Data values -------------------------------------------------------------------------------------------------#
 
@@ -196,6 +197,7 @@ class CrossCosmosGame(arcade.Window):
 
         @bot_button.event("on_click")
         def on_click_bot_button(event):
+            self.grid.clear()
             bot.solve(self.grid)
             self.sync_gui_grid()
             self.grid.save()
@@ -218,9 +220,7 @@ class CrossCosmosGame(arcade.Window):
 
         @clear_button.event("on_click")
         def on_click_bot_button(event):
-            for c in self.grid.grid.flatten():
-                if c.status == CellStatus.SET:
-                    c.update("")
+            self.grid.clear()
             self.sync_gui_grid()
             self.grid.save()
 
