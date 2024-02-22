@@ -220,15 +220,6 @@ class CrossCosmosGame(arcade.Window):
                 child=self.menu_box)
         )
 
-        # bg_tex = arcade.load_texture(":resources:gui_basic_assets/window/grey_panel.png")
-
-        # self.manager.add(
-        #     arcade.gui.UITexturePane(
-        #         arcade.gui.UIInputText(x=340, y=200, width=200, height=50, text="Hello"),
-        #         tex=bg_tex,
-        #         padding=(10, 10, 10, 10)
-        #     ))
-
         # Sync with grid 
         self.sync_gui_grid()
 
@@ -292,13 +283,16 @@ class CrossCosmosGame(arcade.Window):
                 # Default
                 self.grid_sprites[gui_row, gui_col].color = DEFAULT_CELL_COLOR
 
-                if grid_cell.status in [CellStatus.SET, CellStatus.LOCKED]:
-                    self.cell_letters[gui_row, gui_col].text = grid_cell.value
-                elif grid_cell.status == CellStatus.LOCKED:
-                    self.cell_letters[gui_row, gui_col].text = grid_cell.value
-                    self.cell_letters[gui_row, gui_col].color = LOCKED_TEXT_COLOR
-                elif grid_cell.status == CellStatus.BLACK:
-                    self.grid_sprites[gui_row, gui_col].color = BLACKED_CELL_COLOR
+                match grid_cell.status:
+                    case CellStatus.SET:
+                        self.cell_letters[gui_row, gui_col].text = grid_cell.value
+                    case CellStatus.LOCKED:
+                        self.cell_letters[gui_row, gui_col].text = grid_cell.value
+                        self.cell_letters[gui_row, gui_col].color = LOCKED_TEXT_COLOR
+                    case CellStatus.BLACK:
+                        self.grid_sprites[gui_row, gui_col].color = BLACKED_CELL_COLOR
+                    case _:
+                        pass
 
         self.update_gui_colors()
 

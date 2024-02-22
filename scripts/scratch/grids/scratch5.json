@@ -6,8 +6,8 @@
   "grid_letters": [
     [
       {
-        "status": 1,
-        "value": "W",
+        "status": 0,
+        "value": "",
         "matrix_index": [
           0,
           0
