@@ -12,7 +12,7 @@ import numpy as np
 # Local
 import crosscosmos as xc
 from crosscosmos import bot
-from crosscosmos.grid import CellStatus, WordDirection, Cell, MoveDirection, Symmetry
+from crosscosmos.grid import CellStatus, WordDirection, Cell, MoveDirection, GridSymmetry
 from crosscosmos.gui.image_transform import RGBTransform
 
 logger = logging.getLogger("gui")
@@ -419,12 +419,12 @@ class CrossCosmosGame(arcade.Window):
             self.update_gui_colors()
 
         if move_dir is not None:
-            new_x, new_y = self.grid.get_next_square(self.selected_x, self.selected_y, move_dir)
+            new_cell = self.grid.get_next_cell(self.selected_x, self.selected_y, move_dir)
 
             # Only update if new_x, new_y are not BLACK (i.e. in the corner black)
-            if self.grid[new_x, new_y].status != CellStatus.BLACK:
-                self.selected_x = new_x
-                self.selected_y = new_y
+            if new_cell.status != CellStatus.BLACK:
+                self.selected_x = new_cell.x
+                self.selected_y = new_cell.y
             self.update_gui_colors()
 
         self.grid.save()
@@ -463,7 +463,7 @@ class CrossCosmosGame(arcade.Window):
             sprite.color = highlight_color
 
         # Done here if no symmetry is defined
-        if self.grid.symmetry == Symmetry.NONE:
+        if self.grid.symmetry == GridSymmetry.NONE:
             return
 
         # Get the symmetric cell/sprite
@@ -748,7 +748,7 @@ def run_default(grid: xc.grid.Grid, override_config_path=None):
 
     config.read(config_path)
 
-    grid.build_tries(max(grid.row_count, grid.col_count) + 1)
+    grid.build_tries()
 
     # Create/run gui window
     CrossCosmosGame(config, grid)
@@ -769,7 +769,7 @@ if __name__ == "__main__":
     # test_file = Path(xc.crosscosmos_project_root / "test_grid_55.json")
     xc_grid = xc.grid.Grid.load(test_file)
     xc_grid.corpus = xc.corpus.Corpus.from_test()
-    xc_grid.build_tries(max(xc_grid.row_count, xc_grid.col_count) + 1)
+    xc_grid.build_tries()
     # xc_grid = xc.grid.Grid(size, corpus_backend)
 
     # Create/run gui window
