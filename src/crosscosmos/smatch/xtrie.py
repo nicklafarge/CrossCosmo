@@ -13,7 +13,7 @@ import pygtrie
 # Local
 import crosscosmos as xc
 
-logger = logging.getLogger("smatch")
+logger = logging.getLogger(__file__)
 logger.setLevel(logging.INFO)
 
 

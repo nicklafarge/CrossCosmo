@@ -14,9 +14,24 @@ from . import (
     io_utils,
     letter_utils,
     log_config,
+    query,
     standards,
     smatch,
     wordlists
+)
+
+# Enums
+from .bot import (
+    LetterStatus,
+    LetterSequenceStatus
+)
+from .grid import (
+    CellStatus,
+    GridDirection,
+    GridStatus,
+    WordDirection,
+    GridSymmetry,
+    MoveDirection
 )
 
 # Setup logging

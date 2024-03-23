@@ -1,6 +1,6 @@
 # Standard library imports
 import logging
-from typing import List, Tuple
+from typing import List, Tuple, Union
 import re
 from enum import Enum
 
@@ -18,6 +18,7 @@ from crosscosmos import letter_utils
 logger = logging.getLogger(__name__)
 
 AZRE_PATTERN = "[a-zA-Z]"
+PLACEHOLDERS = [r"?", r"-", r" "]
 
 
 class ModelSource(Enum):
@@ -105,9 +106,18 @@ class Corpus(object):
             return tries
 
     def query(self, query_str: str) -> List[LaFargeWord]:
-        query_pattern = fr"\b{query_str.replace('?', AZRE_PATTERN).replace('-', AZRE_PATTERN)}\b"
+        # Replace placeholder {"?", "-", " "} with regular expression
+        for p in PLACEHOLDERS:
+            query_str = query_str.replace(p, AZRE_PATTERN)
+
+        # Construct/compile query
+        query_pattern = fr"\b{query_str}\b"
         compiled_pattern = re.compile(query_pattern, re.IGNORECASE)
+
+        # Get all matching entries from corpus
         matching = [w for w in self.word_list if compiled_pattern.search(w.word)]
+
+        # Return the list sorted alphebetically
         return sorted(matching, key=lambda w: score[self.model](w) or 0, reverse=True)
 
     def build_trie(self):

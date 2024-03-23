@@ -14,12 +14,6 @@ from crosscosmos.grid import CellStatus, WordDirection, MoveDirection
 logger = logging.getLogger(__name__)
 
 
-class GridStatus(Enum):
-    COMPLETE = 1
-    INCOMPLETE = 2
-    INVALID = 3
-
-
 class LetterStatus(Enum):
     VALID = 1
     INVALID = 2
@@ -33,9 +27,8 @@ class LetterSequenceStatus(Enum):
 
 def check_letter_sequence(cell, the_grid, trie_list, direction: WordDirection):
     cell_sequence = the_grid.full_word_from_cell(cell.x, cell.y, direction)
-    letter_sequence = ''.join([c.value for c in cell_sequence if c.value])
     word_len = the_grid.word_len(cell.x, cell.y, direction)
-    return trie_list[word_len].has_node(letter_sequence)
+    return trie_list[word_len].has_node(str(cell_sequence))
 
 
 def reset_cell_with_trie(the_grid, x: int, y: int, trie_list: List[pygtrie]):
@@ -63,9 +56,9 @@ def move_back_horizontal(grid, x: int, y: int, trie_list):
     reset_cell_with_trie(grid, x, y, trie_list)
     new_x = x
     new_y = y
-    status = GridStatus.INCOMPLETE
+    status = xc.GridStatus.INCOMPLETE
     if on_left_column and on_top_row:  # We are at square one and out of options!
-        status = GridStatus.INVALID
+        status = xc.GridStatus.INVALID
     elif on_left_column:  # Move one row up to the right-most column
         new_y = grid.col_count - 1
         new_x -= 1
@@ -89,7 +82,7 @@ def solve(grid: xc.grid.Grid, max_time=30):
 
     # Initialize
     tries = grid.tries
-    grid_status = GridStatus.INCOMPLETE
+    grid_status = xc.GridStatus.INCOMPLETE
     start_time = time.time()
 
     # Start in top left (0, 0)
@@ -103,7 +96,8 @@ def solve(grid: xc.grid.Grid, max_time=30):
     while grid_status == grid_status.INCOMPLETE:
 
         n_iters += 1
-        if n_iters % 1000 == 0:
+        # if n_iters % 1000 == 0:
+        if n_iters % 10 == 0:
             if time.time() - start_time > max_time:
                 print("Max solve time exceeded")
                 return
@@ -174,14 +168,16 @@ def solve(grid: xc.grid.Grid, max_time=30):
             # Check if the horizontal letter sequence is valid
 
             h_cell_sequence = grid.full_word_from_cell(c.x, c.y, WordDirection.HORIZONTAL)
-            h_word_fragment = ''.join([c.value for c in h_cell_sequence if c.value])
-            horizontal_word_status = validate_grid_letter_sequence(tries[c.hlen], h_word_fragment, c.is_h_end)
+            horizontal_word_status = validate_grid_letter_sequence(tries[c.hlen],
+                                                                   str(h_cell_sequence),
+                                                                   c.is_h_end)
             horizontal_letter_accepted = horizontal_word_status != LetterSequenceStatus.INVALID
 
             # Check if the vertical letter sequence is valid
             v_cell_sequence = grid.full_word_from_cell(c.x, c.y, WordDirection.VERTICAL)
-            v_word_fragment = ''.join([c.value for c in v_cell_sequence if c.value])
-            vertical_word_status = validate_grid_letter_sequence(tries[c.vlen], v_word_fragment, c.is_v_end)
+            vertical_word_status = validate_grid_letter_sequence(tries[c.vlen],
+                                                                 str(v_cell_sequence),
+                                                                 c.is_v_end)
             vertical_letter_accepted = vertical_word_status != LetterSequenceStatus.INVALID
 
             # The selected letter is only accepted if it is valid in both vertical and horizontal directions
@@ -190,13 +186,13 @@ def solve(grid: xc.grid.Grid, max_time=30):
 
                 # If horizontal word is complete, remove it to avoid duplication
                 if horizontal_word_status == LetterSequenceStatus.VALID_WORD:
-                    tries[c.hlen].pop(h_word_fragment)
-                    grid[i, j].remove_word(h_word_fragment, WordDirection.HORIZONTAL)
+                    tries[c.hlen].pop(str(h_cell_sequence))
+                    grid[i, j].remove_word(str(h_cell_sequence), WordDirection.HORIZONTAL)
 
                 # If vertical word is complete, remove it to avoid duplication
                 if vertical_word_status == LetterSequenceStatus.VALID_WORD:
-                    tries[c.vlen].pop(v_word_fragment)
-                    grid[i, j].remove_word(v_word_fragment, WordDirection.VERTICAL)
+                    tries[c.vlen].pop(str(v_cell_sequence))
+                    grid[i, j].remove_word(str(v_cell_sequence), WordDirection.VERTICAL)
 
         # For debugging
         # grid.print()
@@ -212,7 +208,7 @@ def solve(grid: xc.grid.Grid, max_time=30):
         match move_dir:
             case MoveDirection.FORWARD_HORIZONTAL:
                 if on_bottom_row and on_right_column:  # COMPLETE!
-                    grid_status = GridStatus.COMPLETE
+                    grid_status = xc.GridStatus.COMPLETE
                 if j < grid.col_count - 1:
                     j += 1
                 elif j == grid.col_count - 1 and i < grid.row_count - 1:
@@ -224,7 +220,7 @@ def solve(grid: xc.grid.Grid, max_time=30):
                 continue_moving = True
                 while continue_moving:
                     i, j, grid_status = move_back_horizontal(grid, i, j, tries)
-                    if grid_status == GridStatus.INVALID:
+                    if grid_status == xc.GridStatus.INVALID:
                         continue_moving = False
                     elif grid[i, j].status == CellStatus.BLACK or grid[i, j].status == CellStatus.LOCKED:
                         continue_moving = True
@@ -239,21 +235,21 @@ def solve(grid: xc.grid.Grid, max_time=30):
                     reset_cell_with_trie(grid, i - 1, right_of_above, tries)
 
                 if on_top_row:  # Undefined behavior
-                    grid_status = GridStatus.INVALID
+                    grid_status = xc.GridStatus.INVALID
                 else:  # Move one square up the left
                     i -= 1
     match grid_status:
-        case GridStatus.COMPLETE:
+        case xc.GridStatus.COMPLETE:
             print("Grid complete!")
-        case GridStatus.INVALID:
+        case xc.GridStatus.INVALID:
             print("No valid solution found for grid")
     grid.print()
 
 
 if __name__ == '__main__':
-    # corpus = xc.corpus.Corpus.from_test()
-    # corpus = xc.corpus.Corpus.from_diehl()
-    test_corpus = xc.corpus.Corpus.from_lafarge()
+    test_corpus = xc.corpus.Corpus.from_test()
+    # test_corpus = xc.corpus.Corpus.from_diehl()
+    # test_corpus = xc.corpus.Corpus.from_lafarge()
     # lc4 = lc.to_n_letter_corpus(4)
     # lc5 = lc.to_subcorpus(4, 5)
     # lc6 = lc.to_subcorpus(4, 6)
@@ -268,6 +264,7 @@ if __name__ == '__main__':
     # trie = corpus.trie
 
     test_grid = xc.grid.Grid((3, 5), test_corpus, shuffle=True)
+    test_grid.build_tries()
     # grid.set_grid(0, 5, None)
     # grid.set_grid(0, 4, None)
     # grid.set_grid(3, 0, None)
@@ -282,7 +279,7 @@ if __name__ == '__main__':
     # grid.lock_section("", 0, 0, direction=WordDirection.VERTICAL)
     # grid.lock_section("PAT", 0, 1, direction=WordDirection.HORIZONTAL)
     # grid.lock_section("TOOTHY", 0, 3, direction=WordDirection.VERTICAL)
-    test_grid.update_grid_data()
+    test_grid.update_length_and_head_data()
     test_grid.print()
     print()
     test_grid.print_lens(direction=WordDirection.HORIZONTAL)
@@ -291,3 +288,4 @@ if __name__ == '__main__':
     print()
     test_grid.print_boundaries()
     solve(test_grid)
+
