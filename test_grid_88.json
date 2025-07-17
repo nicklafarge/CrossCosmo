@@ -447,8 +447,8 @@
         "vlen": 3
       },
       {
-        "status": 1,
-        "value": "O",
+        "status": 0,
+        "value": "",
         "matrix_index": [
           2,
           3

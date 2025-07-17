@@ -1,7 +1,6 @@
 # Standard
 from configparser import ConfigParser
 from typing import Tuple
-from pathlib import Path
 
 # Third-party
 import arcade
