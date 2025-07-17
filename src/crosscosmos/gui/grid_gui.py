@@ -11,15 +11,16 @@ import numpy as np
 # Local
 import crosscosmos as xc
 from crosscosmos import bot
-from crosscosmos.grid import CellStatus, WordDirection, Cell, MoveDirection
-from image_transform import RGBTransform
+from crosscosmos.grid import CellStatus, WordDirection, Cell, MoveDirection, GridSymmetry
+from crosscosmos.gui.image_transform import RGBTransform
 
 logger = logging.getLogger("gui")
-logger.setLevel(logging.INFO)
-# logger.setLevel(logging.DEBUG)
+# logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
 
 UPDATES_PER_FRAME = 100
 A_TO_Z = list(range(arcade.key.A, arcade.key.Z + 1))
+ONE_TO_TEN = list(range(arcade.key.KEY_0, arcade.key.KEY_9 + 1))
 
 # Background colors
 BACKGROUND_COLOR = arcade.color.BLACK
@@ -35,9 +36,13 @@ CURSER_COLOR_2 = arcade.color.DARK_GRAY
 
 # Cell colors
 DEFAULT_CELL_COLOR = (80, 80, 80)  # Dark-ish Gray
+INVALID_CELL_COLOR = arcade.color.OLD_BURGUNDY
 BLACKED_CELL_COLOR = arcade.color.BLACK
+BLACK_VALID_HIGHLIGHT_COLOR = arcade.color.ARMY_GREEN
+BLACK_INVALID_HIGHLIGHT_COLOR = arcade.color.OLD_BURGUNDY
 SELECTED_CELL_COLOR = arcade.color.LIGHT_GRAY
 ACTIVE_WORD_CELL_COLOR = arcade.color.GRAY
+SEARCH_LEN_COLOR = arcade.color.DARK_ELECTRIC_BLUE
 
 # Key values
 ALL_KEYS = [k for k in dir(arcade.key) if k.isupper() and "MOD_" not in k]
@@ -58,6 +63,12 @@ class CrossCosmosGame(arcade.Window):
         # Frame counter to keep track of blinking curser
         self.frame_update_count = 0
 
+        # For hovering over
+        self.toggle_black_mode_active = False
+
+        # For using grave as a modifier
+        self.grave_down = False
+
         # Size computations -------------------------------------------------------------------------------------------#
 
         # Set GUI layout parameters based on the inputted configuration
@@ -65,7 +76,8 @@ class CrossCosmosGame(arcade.Window):
         self.outer_margin = config_in.getint('grid', 'outer_margin')  # space between grid and edge of GUI
 
         # The sum of all inner margins
-        vertical_inner_margin_sum = (self.grid.row_count - 1) * self.inner_margin
+        larger_dim = max(self.grid.row_count, self.grid.col_count)
+        vertical_inner_margin_sum = (larger_dim - 1) * self.inner_margin
 
         # The total grid height is 
         #   The height of the GUI (from arcade.Window) -
@@ -74,7 +86,7 @@ class CrossCosmosGame(arcade.Window):
         self.grid_edge_dimension = self.height - (2 * self.outer_margin) - vertical_inner_margin_sum
         self.right_outer_margin = self.width - self.outer_margin - self.grid_edge_dimension
         # The size of each square is the height of the total grid divided by the number of rows (as an integer)
-        self.square_size = int(self.grid_edge_dimension // self.grid.row_count)
+        self.square_size = int(self.grid_edge_dimension // larger_dim)
 
         # Data values -------------------------------------------------------------------------------------------------#
 
@@ -173,49 +185,53 @@ class CrossCosmosGame(arcade.Window):
         # Create a vertical BoxGroup to align buttons
         self.menu_box = arcade.gui.UIBoxLayout()
 
-        bot_dim = self.right_outer_margin / 2.5
-        bot_x = self.outer_margin + self.grid_edge_dimension + self.right_outer_margin / 2 - bot_dim / 2
-        # bot_y = self.grid_edge_dimension - 3 * bot_dim / 2
-        bot_y = bot_dim / 2
-        bot_texture = arcade.load_texture(":resources:images/space_shooter/playerShip1_orange.png")
+        ui_icon_dim = self.right_outer_margin / 2.5
+        ui_icon_x = self.outer_margin + self.grid_edge_dimension + self.right_outer_margin / 2 - ui_icon_dim / 2
 
-        bot_hover_image = RGBTransform().mix_with([220] * 3, factor=.40).applied_to(bot_texture.image)
-        bot_texture_hover = arcade.Texture("bot_hover_texture", bot_hover_image)
-
-        bot_click_image = RGBTransform().mix_with([220] * 3, factor=.90).applied_to(bot_texture.image)
-        bot_texture_pressed = arcade.Texture("bot_click_texture", bot_click_image)
-
-        bot_button = arcade.gui.UITextureButton(texture=bot_texture,
-                                                width=bot_dim,
-                                                height=bot_dim,
-                                                texture_hovered=bot_texture_hover,
-                                                texture_pressed=bot_texture_pressed)
+        # Bot button
+        bot_y = ui_icon_dim / 2
+        bot_button = self.build_button("bot",
+                                       ":resources:images/space_shooter/playerShip1_orange.png",
+                                       ui_icon_dim)
 
         @bot_button.event("on_click")
         def on_click_bot_button(event):
+            self.grid.clear()
             bot.solve(self.grid)
             self.sync_gui_grid()
+            self.grid.save()
 
         self.menu_box.add(bot_button.with_space_around(bottom=20))
-
-        # Create a widget to hold the menu bar, that will center the buttons
         self.manager.add(
             arcade.gui.UIAnchorWidget(
                 anchor_x="left",
                 anchor_y="bottom",
-                align_x=bot_x,
+                align_x=ui_icon_x,
                 align_y=bot_y,
                 child=self.menu_box)
         )
 
-        # bg_tex = arcade.load_texture(":resources:gui_basic_assets/window/grey_panel.png")
+        # Clear button
+        bot_y = ui_icon_dim / 2
+        clear_button = self.build_button("clear",
+                                         ":resources:images/tiles/bomb.png",
+                                         ui_icon_dim)
 
-        # self.manager.add(
-        #     arcade.gui.UITexturePane(
-        #         arcade.gui.UIInputText(x=340, y=200, width=200, height=50, text="Hello"),
-        #         tex=bg_tex,
-        #         padding=(10, 10, 10, 10)
-        #     ))
+        @clear_button.event("on_click")
+        def on_click_bot_button(event):
+            self.grid.clear()
+            self.sync_gui_grid()
+            self.grid.save()
+
+        self.menu_box.add(clear_button.with_space_around(bottom=20))
+        self.manager.add(
+            arcade.gui.UIAnchorWidget(
+                anchor_x="left",
+                anchor_y="bottom",
+                align_x=ui_icon_x,
+                align_y=bot_y,
+                child=self.menu_box)
+        )
 
         # Sync with grid 
         self.sync_gui_grid()
@@ -277,18 +293,52 @@ class CrossCosmosGame(arcade.Window):
                 grid_row, grid_col = self.gui_row_col_to_grid_row_col(gui_row, gui_col)
                 grid_cell = self.grid[grid_row, grid_col]
 
-                # Default
-                self.grid_sprites[gui_row, gui_col].color = DEFAULT_CELL_COLOR
+                cell_letter = self.cell_letters[gui_row, gui_col]
+                grid_sprite = self.grid_sprites[gui_row, gui_col]
 
-                if grid_cell.status in [CellStatus.SET, CellStatus.LOCKED]:
-                    self.cell_letters[gui_row, gui_col].text = grid_cell.value
-                elif grid_cell.status == CellStatus.LOCKED:
-                    self.cell_letters[gui_row, gui_col].text = grid_cell.value
-                    self.cell_letters[gui_row, gui_col].color = LOCKED_TEXT_COLOR
-                elif grid_cell.status == CellStatus.BLACK:
-                    self.grid_sprites[gui_row, gui_col].color = BLACKED_CELL_COLOR
+                # Default
+                grid_sprite.color = DEFAULT_CELL_COLOR
+                cell_letter.color = TEXT_COLOR
+
+                match grid_cell.status:
+                    case CellStatus.SET:
+                        cell_letter.text = grid_cell.value
+                    case CellStatus.LOCKED:
+                        cell_letter.text = grid_cell.value
+                        cell_letter.color = LOCKED_TEXT_COLOR
+                    case CellStatus.BLACK:
+                        grid_sprite.color = BLACKED_CELL_COLOR
+                    case CellStatus.EMPTY:
+                        cell_letter.text = ""
+                    case _:
+                        pass
 
         self.update_gui_colors()
+
+    def on_key_press(self, key, modifiers):
+        if self.with_black_toggle_modifiers(modifiers):
+            self.toggle_black_mode_active = True
+
+        if key == arcade.key.GRAVE:
+            self.grave_down = True
+            return
+
+        # Show numbers of some length
+
+        logger.info(f"Key: {key}")
+        logger.info(f"Numbers: {key in ONE_TO_TEN}")
+        logger.info(f"Ctrl: {modifiers & arcade.key.MOD_CTRL}")
+        if key in ONE_TO_TEN and (modifiers & arcade.key.MOD_CTRL):
+            value = int(chr(key))
+            if self.grave_down:
+                value += 10
+
+            logger.info(f"Searching for answers with length = {value}")
+            for cell in self.grid.grid.flatten():
+                if cell.hlen == value or cell.vlen == value:
+                    self.grid_sprites[cell.gui_row, cell.gui_col].color = SEARCH_LEN_COLOR
+
+            logger.info(f"Numbers: {key}")
 
     def on_key_release(self, key, modifiers):
         """Called when the user releases a key. """
@@ -300,6 +350,12 @@ class CrossCosmosGame(arcade.Window):
         mod_indices = [i for i, v in enumerate(ALL_MODS_VALS) if modifiers & v]
         mod_names = [ALL_KEYS[i] for i in mod_indices]
         logger.info(f"Modifiers: {mod_names}")
+
+        if key == arcade.key.GRAVE:
+            self.grave_down = False
+
+        # No key is held down so no more "hover" behavior for black squares
+        self.toggle_black_mode_active = False
 
         # Currently undefined if modifiers are present (except shift/caps)
         if mod_indices and not ("MOD_SHIFT" in mod_names or 'MOD_CAPSLOCK' in mod_names):
@@ -319,7 +375,10 @@ class CrossCosmosGame(arcade.Window):
             # Update the gui
             self.update_gui_colors()
 
+        # Value typed from the keyboard (if applicable)
         new_val = None
+
+        # Move direction (if applicable)
         move_dir = None
 
         match key:
@@ -359,38 +418,84 @@ class CrossCosmosGame(arcade.Window):
             self.update_gui_colors()
 
         if move_dir is not None:
-            new_x, new_y = self.grid.get_next_square(self.selected_x, self.selected_y, move_dir)
+            new_cell = self.grid.get_next_cell(self.selected_x, self.selected_y, move_dir)
 
             # Only update if new_x, new_y are not BLACK (i.e. in the corner black)
-            if self.grid[new_x, new_y].status != CellStatus.BLACK:
-                self.selected_x = new_x
-                self.selected_y = new_y
+            if new_cell.status != CellStatus.BLACK:
+                self.selected_x = new_cell.x
+                self.selected_y = new_cell.y
             self.update_gui_colors()
 
         self.grid.save()
+        self.sync_gui_grid()
+
+    def with_black_toggle_modifiers(self, modifiers: int):
+        with_shift = modifiers & arcade.key.MOD_SHIFT
+        with_cmd = modifiers & arcade.key.MOD_COMMAND
+        with_win = modifiers & arcade.key.MOD_WINDOWS
+        return with_shift and (with_cmd or with_win)
+
+    def on_mouse_motion(self, x_grid: int, y_grid: int, dx: int, dy: int):
+
+        # Only defined currently for when the toggle mode is active
+        if not self.toggle_black_mode_active:
+            return
+
+        # Get the selected cell/sprite
+        on_gui_grid, gui_row, gui_col = self.gui_xy_to_gui_row_col(x_grid, y_grid)
+        grid_row, grid_col = self.gui_row_col_to_grid_row_col(gui_row, gui_col)
+        cell = self.grid[grid_row, grid_col]
+        sprite = self.grid_sprites[gui_row, gui_col]
+        is_highlighted = sprite.color in [BLACK_VALID_HIGHLIGHT_COLOR, BLACK_INVALID_HIGHLIGHT_COLOR]
+
+        # Continue if off the grid or on a black cell
+        if not on_gui_grid or cell.status == CellStatus.BLACK:
+            self.sync_gui_grid()
+            return
+
+        # Set the color
+        temp_grid = xc.grid.Grid.from_dict(self.grid.to_json())
+        temp_grid.set_grid(grid_row, grid_col, None)
+        highlight_color = BLACK_VALID_HIGHLIGHT_COLOR if temp_grid.is_valid else BLACK_INVALID_HIGHLIGHT_COLOR
+        if not is_highlighted:
+            self.sync_gui_grid()
+            sprite.color = highlight_color
+
+        # Done here if no symmetry is defined
+        if self.grid.symmetry == GridSymmetry.NONE:
+            return
+
+        # Get the symmetric cell/sprite
+        symm_grid_row, symm_grid_col = self.grid.get_symmetric_index(grid_row, grid_col, self.grid.symmetry)
+        symm_cell = self.grid[symm_grid_row, symm_grid_col]
+        symm_sprite = self.grid_sprites[symm_cell.gui_row][symm_cell.gui_col]
+
+        # Set the symmetric colr
+        if not is_highlighted:
+            symm_sprite.color = highlight_color
 
     def on_mouse_press(self, x_grid: float, y_grid: float, button, modifiers):
         """ Called when the user presses a mouse button.
         """
-
-        # Keep track of modifiers
-        with_shift = modifiers & arcade.key.MOD_SHIFT
-        with_cmd = modifiers & arcade.key.MOD_COMMAND
-        with_win = modifiers & arcade.key.MOD_WINDOWS
-
         # See which row/col was clicked
-        success, gui_row, gui_col = self.gui_xy_to_gui_row_col(x_grid, y_grid)
+        on_gui_grid, gui_row, gui_col = self.gui_xy_to_gui_row_col(x_grid, y_grid)
+
+        if not on_gui_grid:
+            return
+
         grid_row, grid_col = self.gui_row_col_to_grid_row_col(gui_row, gui_col)
         logger.info(f"Clicked [{x_grid},{y_grid}]: gui row/col: [{grid_row},{grid_col}]")
-
-        if not success:
-            return
+        cell = self.grid[grid_row, grid_col]
 
         hide_cursor = False
 
         # Toggle black square
-        if with_shift and (with_cmd or with_win):
+        if self.with_black_toggle_modifiers(modifiers):
             logger.info("Shift+Command+Click")
+
+            # Aren't allowed to black out locked squares
+            if cell.status == CellStatus.LOCKED:
+                return
 
             # Switch the selected square default -> black (or vice versa)
             self.toggle_black_square(gui_row, gui_col)
@@ -411,7 +516,7 @@ class CrossCosmosGame(arcade.Window):
             logger.debug(f"Toggling locked status of [{grid_row},{grid_col}]")
 
             # Only toggle if it is SET or LOCKED
-            if self.grid[grid_row, grid_row].status in [CellStatus.LOCKED, CellStatus.SET]:
+            if self.grid[grid_row, grid_col].status in [CellStatus.LOCKED, CellStatus.SET]:
                 self.grid.toggle_locked(grid_row, grid_col)
                 self.update_locked_color(gui_row, gui_col)
 
@@ -432,6 +537,7 @@ class CrossCosmosGame(arcade.Window):
             self.update_gui_colors(show_cursor=True)
 
         self.grid.save()
+        self.sync_gui_grid()
 
     def update_selected_cell(self, new_value: str):
         """ Update the currently selected cell with a new string
@@ -492,11 +598,9 @@ class CrossCosmosGame(arcade.Window):
         if grid_cell_is_black:
             # Convert Black -> Default
             self.grid.set_grid(grid_row, grid_col, "")
-            # self.grid_sprites[gui_row][gui_column].color = DEFAULT_CELL_COLOR
         else:
             # Convert Default -> Black
             self.grid.set_grid(grid_row, grid_col, None)
-            # self.grid_sprites[gui_row][gui_column].color = BLACKED_CELL_COLOR
 
         self.sync_gui_grid()
         # Set the text to empty whenever BLACK status is changed
@@ -514,6 +618,8 @@ class CrossCosmosGame(arcade.Window):
                 # Do nothing if black
                 if cell.status == CellStatus.BLACK:
                     continue
+                elif not cell.is_valid:
+                    self.grid_sprites[gui_x][gui_y].color = INVALID_CELL_COLOR
                 else:
                     self.grid_sprites[gui_x][gui_y].color = DEFAULT_CELL_COLOR
 
@@ -553,7 +659,7 @@ class CrossCosmosGame(arcade.Window):
 
         # Update the cell based on its status, and whether it is selected
         for cell in active_word_cells:
-            if cell.status == CellStatus.BLACK:
+            if cell.status == CellStatus.BLACK or not cell.is_valid:
                 continue
             elif cell.x == self.selected_grid_cell.x and cell.y == self.selected_grid_cell.y:
                 self.grid_sprites[cell.gui_row][cell.gui_col].color = SELECTED_CELL_COLOR
@@ -615,6 +721,38 @@ class CrossCosmosGame(arcade.Window):
         self.curser_visible = True
         self.text_curser.color = CURSER_COLOR_1
 
+    def build_button(self, name: str, texture_str: str, dim: float) -> arcade.gui.UITextureButton:
+        texture = arcade.load_texture(texture_str)
+
+        hover_image = RGBTransform().mix_with([220] * 3, factor=.40).applied_to(texture.image)
+        texture_hover = arcade.Texture(f"{name}_hover_texture", hover_image)
+
+        click_image = RGBTransform().mix_with([220] * 3, factor=.90).applied_to(texture.image)
+        texture_pressed = arcade.Texture("{name}_click_texture", click_image)
+
+        return arcade.gui.UITextureButton(texture=texture,
+                                          width=dim,
+                                          height=dim,
+                                          texture_hovered=texture_hover,
+                                          texture_pressed=texture_pressed)
+
+
+def run_default(grid: xc.grid.Grid, override_config_path=None):
+    config = ConfigParser()
+
+    config_path = xc.crosscosmos_root / "gui" / "gui_config.ini"
+
+    if override_config_path:
+        config_path = override_config_path
+
+    config.read(config_path)
+
+    grid.build_tries()
+
+    # Create/run gui window
+    CrossCosmosGame(config, grid)
+    arcade.run()
+
 
 if __name__ == "__main__":
     # Parse config file
@@ -630,7 +768,7 @@ if __name__ == "__main__":
     # test_file = Path(xc.crosscosmos_project_root / "test_grid_55.json")
     xc_grid = xc.grid.Grid.load(test_file)
     xc_grid.corpus = xc.corpus.Corpus.from_test()
-    xc_grid.build_tries(max(xc_grid.row_count, xc_grid.col_count) + 1)
+    xc_grid.build_tries()
     # xc_grid = xc.grid.Grid(size, corpus_backend)
 
     # Create/run gui window

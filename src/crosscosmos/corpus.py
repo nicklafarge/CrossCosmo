@@ -1,6 +1,6 @@
 # Standard library imports
 import logging
-from typing import List, Tuple
+from typing import List, Tuple, Union
 import re
 from enum import Enum
 
@@ -8,6 +8,8 @@ from enum import Enum
 import pygtrie
 
 # Local imports
+from crosscosmos.data_models.xword_tracker_model import XwordWord
+from crosscosmos.data_models.collab_word_list_model import CollabWordListWord
 from crosscosmos.data_models.lafarge_model import LaFargeWord
 from crosscosmos.data_models.diehl_model import DiehlWord, TestWord
 # from crosscosmos.data_models.xword_tracker_model import 
@@ -16,18 +18,22 @@ from crosscosmos import letter_utils
 logger = logging.getLogger(__name__)
 
 AZRE_PATTERN = "[a-zA-Z]"
+PLACEHOLDERS = [r"?", r"-", r" "]
 
 
 class ModelSource(Enum):
     Test = 1
     Diehl = 2
     LaFarge = 3
+    CrosswordTracker = 4
+    CollabWordList = 5
 
 
 score = {
     ModelSource.Test: lambda w: w.score,
     ModelSource.Diehl: lambda w: w.score,
-    ModelSource.LaFarge: lambda w: w.collab_score
+    ModelSource.LaFarge: lambda w: w.collab_score,
+    ModelSource.CrosswordTracker: lambda w: 0  # Undefined
 }
 
 
@@ -45,7 +51,26 @@ class Corpus(object):
         return f"CrossCosmos.Corpus(n={len(self.word_list)})"
 
     @classmethod
+    def from_crossword_tracker(cls):
+        logger.info("Loading crossword tracker ...")
+        words = [w for w in XwordWord.select() if
+                 not letter_utils.has_numbers(w.word)
+                 and len(w.word) >= 3
+                 ]
+        return cls(words, ModelSource.CrosswordTracker)
+
+    @classmethod
+    def from_collab(cls):
+        logger.info("Loading collab list ...")
+        words = [w for w in CollabWordListWord.select() if
+                 not letter_utils.has_numbers(w.word)
+                 and len(w.word) >= 3
+                 ]
+        return cls(words, ModelSource.CollabWordList)
+
+    @classmethod
     def from_lafarge(cls):
+        logger.info("Loading LaFarge...")
         words = [w for w in LaFargeWord.select() if
                  not letter_utils.has_numbers(w.word)
                  and len(w.word) >= 3
@@ -54,10 +79,12 @@ class Corpus(object):
 
     @classmethod
     def from_test(cls):
+        logger.info("Loading Test...")
         return cls([w for w in TestWord.select()], ModelSource.Test)
 
     @classmethod
     def from_diehl(cls):
+        logger.info("Loading Diehl...")
         return cls([w for w in DiehlWord.select()], ModelSource.Diehl)
 
     def to_n_letter_corpus(self, n: int):
@@ -79,9 +106,18 @@ class Corpus(object):
             return tries
 
     def query(self, query_str: str) -> List[LaFargeWord]:
-        query_pattern = fr"\b{query_str.replace('?', AZRE_PATTERN).replace('-', AZRE_PATTERN)}\b"
+        # Replace placeholder {"?", "-", " "} with regular expression
+        for p in PLACEHOLDERS:
+            query_str = query_str.replace(p, AZRE_PATTERN)
+
+        # Construct/compile query
+        query_pattern = fr"\b{query_str}\b"
         compiled_pattern = re.compile(query_pattern, re.IGNORECASE)
+
+        # Get all matching entries from corpus
         matching = [w for w in self.word_list if compiled_pattern.search(w.word)]
+
+        # Return the list sorted alphebetically
         return sorted(matching, key=lambda w: score[self.model](w) or 0, reverse=True)
 
     def build_trie(self):
