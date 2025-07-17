@@ -70,12 +70,15 @@ class GridStatus(Enum):
 
 
 class Cell(object):
-    def __init__(self,
-                 x: int, y: int,
-                 status: CellStatus = CellStatus.EMPTY,
-                 value: str = "",
-                 gui_coordinates: Union[Tuple[float, float], None] = None,
-                 shuffle=True):
+    def __init__(
+        self,
+        x: int,
+        y: int,
+        status: CellStatus = CellStatus.EMPTY,
+        value: str = "",
+        gui_coordinates: Union[Tuple[float, float], None] = None,
+        shuffle=True,
+    ):
         self.status = status
         self.value = value
         self.matrix_index = (x, y)
@@ -110,40 +113,42 @@ class Cell(object):
 
     def to_json(self):
         return {
-            'status': self.status.value,
-            'value': self.value,
-            'matrix_index': self.matrix_index,
-            'x': self.x,
-            'y': self.y,
-            'gui_coordinates': self.gui_coordinates,
-            'gui_row': self.gui_row,
-            'gui_col': self.gui_col,
-            'is_h_start': self.is_h_start,
-            'is_h_end': self.is_h_end,
-            'is_v_start': self.is_v_start,
-            'is_v_end': self.is_v_end,
-            'answer_number': self.answer_number,
-            'hlen': self.hlen,
-            'vlen': self.vlen,
+            "status": self.status.value,
+            "value": self.value,
+            "matrix_index": self.matrix_index,
+            "x": self.x,
+            "y": self.y,
+            "gui_coordinates": self.gui_coordinates,
+            "gui_row": self.gui_row,
+            "gui_col": self.gui_col,
+            "is_h_start": self.is_h_start,
+            "is_h_end": self.is_h_end,
+            "is_v_start": self.is_v_start,
+            "is_v_end": self.is_v_end,
+            "answer_number": self.answer_number,
+            "hlen": self.hlen,
+            "vlen": self.vlen,
         }
 
     @classmethod
     def from_dict(cls, json_cell: dict):
-        cell = cls(x=json_cell['x'],
-                   y=json_cell['y'],
-                   status=CellStatus(json_cell['status']),
-                   value=json_cell['value'],
-                   gui_coordinates=json_cell['gui_coordinates'])
-        cell.matrix_index = json_cell['matrix_index']
-        cell.gui_row = json_cell['gui_row']
-        cell.gui_col = json_cell['gui_col']
-        cell.is_h_start = json_cell['is_h_start']
-        cell.is_h_end = json_cell['is_h_end']
-        cell.is_v_start = json_cell['is_v_start']
-        cell.is_v_end = json_cell['is_v_end']
-        cell.answer_number = json_cell['answer_number']
-        cell.hlen = json_cell['hlen']
-        cell.vlen = json_cell['vlen']
+        cell = cls(
+            x=json_cell["x"],
+            y=json_cell["y"],
+            status=CellStatus(json_cell["status"]),
+            value=json_cell["value"],
+            gui_coordinates=json_cell["gui_coordinates"],
+        )
+        cell.matrix_index = json_cell["matrix_index"]
+        cell.gui_row = json_cell["gui_row"]
+        cell.gui_col = json_cell["gui_col"]
+        cell.is_h_start = json_cell["is_h_start"]
+        cell.is_h_end = json_cell["is_h_end"]
+        cell.is_v_start = json_cell["is_v_start"]
+        cell.is_v_end = json_cell["is_v_end"]
+        cell.answer_number = json_cell["answer_number"]
+        cell.hlen = json_cell["hlen"]
+        cell.vlen = json_cell["vlen"]
         return cell
 
     @classmethod
@@ -208,7 +213,6 @@ class Cell(object):
 
 
 class CellList(object):
-
     def __init__(self, cells: List[Cell]):
         self.cells = cells
 
@@ -227,11 +231,13 @@ class CellList(object):
         return len(self.cells)
 
     def __str__(self):
-        return ''.join([c.value or "-" for c in self.cells])
+        return "".join([c.value or "-" for c in self.cells])
 
     def __repr__(self):
         origin = self.cells[0]
-        return f"CellList \"{self}\": {{x={origin.x}, y={origin.y}, dir={self.direction}}}"
+        return (
+            f'CellList "{self}": {{x={origin.x}, y={origin.y}, dir={self.direction}}}'
+        )
 
     def __iter__(self):
         return self.cells.__iter__()
@@ -241,11 +247,15 @@ class CellList(object):
 
 
 class Grid(object):
-
-    def __init__(self, grid_size: Tuple[int, int], corpus: xc.corpus.Corpus = None, shuffle: bool = True,
-                 symmetry: GridSymmetry = GridSymmetry.ROTATIONAL, auto_symmetry: bool = False,
-                 save_path: Union[None, Path] = None):
-
+    def __init__(
+        self,
+        grid_size: Tuple[int, int],
+        corpus: xc.corpus.Corpus = None,
+        shuffle: bool = True,
+        symmetry: GridSymmetry = GridSymmetry.ROTATIONAL,
+        auto_symmetry: bool = False,
+        save_path: Union[None, Path] = None,
+    ):
         # if grid_size[0] % 2 != 0 or grid_size[1] % 2 != 0:
         #     raise ValueError("Currently only even numbers are supported for grids")
 
@@ -253,8 +263,8 @@ class Grid(object):
         self.row_count = self.grid_size[0]
         self.col_count = self.grid_size[1]
 
-        assert (self.row_count >= 3)
-        assert (self.col_count >= 3)
+        assert self.row_count >= 3
+        assert self.col_count >= 3
 
         self.h_heads = []
         self.v_heads = []
@@ -283,8 +293,12 @@ class Grid(object):
 
     def __getitem__(self, x: Tuple[int, int]) -> Cell:
         # Check index
-        if (x[0] < 0 or x[0] > self.grid_size[0]) or (x[1] < 0 or x[1] > self.grid_size[1]):
-            raise IndexError(f"Index outside grid bounds:({self.grid_size[0]}, {self.grid_size[1]})")
+        if (x[0] < 0 or x[0] > self.grid_size[0]) or (
+            x[1] < 0 or x[1] > self.grid_size[1]
+        ):
+            raise IndexError(
+                f"Index outside grid bounds:({self.grid_size[0]}, {self.grid_size[1]})"
+            )
 
         return self.grid[*x]
 
@@ -293,11 +307,11 @@ class Grid(object):
 
     @classmethod
     def from_dict(cls, json_grid: dict):
-        grid = cls(json_grid['grid_size'])
-        grid.symmetry = GridSymmetry(json_grid['symmetry'])
-        grid.auto_symmetry = json_grid['auto_symmetry']
-        if 'grid_letters' in json_grid:
-            grid_letters = json_grid['grid_letters']
+        grid = cls(json_grid["grid_size"])
+        grid.symmetry = GridSymmetry(json_grid["symmetry"])
+        grid.auto_symmetry = json_grid["auto_symmetry"]
+        if "grid_letters" in json_grid:
+            grid_letters = json_grid["grid_letters"]
             for i in range(grid.row_count):
                 for j in range(grid.col_count):
                     grid.grid[i, j] = Cell.from_dict(grid_letters[i][j])
@@ -327,15 +341,17 @@ class Grid(object):
             grid_size=self.grid_size,
             grid_letters=grid_letters,
             symmetry=self.symmetry.value,
-            auto_symmetry=self.auto_symmetry
+            auto_symmetry=self.auto_symmetry,
         )
 
-    def count_possible(self,
-                       query_cells: Union[CellList, List[Tuple[Cell, WordDirection]]],
-                       grid_status: GridStatus = GridStatus.INCOMPLETE,
-                       query_level: int = 2,
-                       corpus=None) -> int:
-        """ Count the number of configurations by varying a set of cell
+    def count_possible(
+        self,
+        query_cells: Union[CellList, List[Tuple[Cell, WordDirection]]],
+        grid_status: GridStatus = GridStatus.INCOMPLETE,
+        query_level: int = 2,
+        corpus=None,
+    ) -> int:
+        """Count the number of configurations by varying a set of cell
 
         Args:
             query_cells:
@@ -362,9 +378,8 @@ class Grid(object):
 
         # Check through each of the query cells -----------------------------------------------------------------------#
         for qc in query_cells:
-
             # Get the cell/direction
-            if hasattr(query_cells, 'direction'):
+            if hasattr(query_cells, "direction"):
                 cell = qc
                 original_direction = query_cells.direction
             else:
@@ -372,21 +387,22 @@ class Grid(object):
 
             # Get the cells starting at {cell} in flip({direction})
             query_direction = WordDirection.flip(original_direction)
-            query_cell_list = self.full_word_from_cell(cell.x,
-                                                       cell.y,
-                                                       query_direction,
-                                                       terminate_on_empty=False)
+            query_cell_list = self.full_word_from_cell(
+                cell.x, cell.y, query_direction, terminate_on_empty=False
+            )
 
             # Get the list of cells for the next level
             next_level_cells = []
             for c in query_cell_list:
-                possible_next_cells = self.full_word_from_cell(c.x,
-                                                               c.y,
-                                                               query_direction,
-                                                               terminate_on_empty=False)
+                possible_next_cells = self.full_word_from_cell(
+                    c.x, c.y, query_direction, terminate_on_empty=False
+                )
                 next_level_cells.extend(
-                    [(next_cell, query_direction) for next_cell in possible_next_cells
-                     if next_cell.is_start(query_direction)]
+                    [
+                        (next_cell, query_direction)
+                        for next_cell in possible_next_cells
+                        if next_cell.is_start(query_direction)
+                    ]
                 )
             next_level_cells = list(set(next_level_cells))
 
@@ -401,15 +417,19 @@ class Grid(object):
             head_cell = query_cell_list[0]
             for candidate_word in c_candidate_words:
                 # Set the word (temporary)
-                self.set_word(candidate_word.word, head_cell.x, head_cell.y, query_direction)
+                self.set_word(
+                    candidate_word.word, head_cell.x, head_cell.y, query_direction
+                )
 
                 # Recursive call to increment the number of possible words in next direction
-                n_possible += self.count_possible(next_level_cells,
-                                                  grid_status,
-                                                  query_level - 1)
+                n_possible += self.count_possible(
+                    next_level_cells, grid_status, query_level - 1
+                )
 
                 # Reset values
-                self.set_word(str(query_cell_list), head_cell.x, head_cell.y, query_direction)
+                self.set_word(
+                    str(query_cell_list), head_cell.x, head_cell.y, query_direction
+                )
 
             # Add to the possibilities if we're at the bottom query level
             n_possible += len(c_candidate_words)
@@ -448,13 +468,12 @@ class Grid(object):
 
     # Manipulation ###############################################################
 
-    def set_grid(self,
-                 x: int,
-                 y: int,
-                 value: Union[str, None]):
+    def set_grid(self, x: int, y: int, value: Union[str, None]):
         # Check index
         if (x < 0 or x > self.grid_size[0]) or (y < 0 or y > self.grid_size[1]):
-            raise IndexError(f"Index outside grid bounds:({self.grid_size[0]}, {self.grid_size[1]})")
+            raise IndexError(
+                f"Index outside grid bounds:({self.grid_size[0]}, {self.grid_size[1]})"
+            )
 
         # Set value
         self.grid[x][y].update(value)
@@ -464,8 +483,10 @@ class Grid(object):
             cr1, cr2 = self.get_symmetric_index(x, y, self.symmetry)
 
             if self.auto_symmetry and self.symmetry == GridSymmetry.ROTATIONAL:
-                if self.grid[x][y].status != CellStatus.BLACK and \
-                        self.grid[cr1][cr2].status == CellStatus.BLACK:
+                if (
+                    self.grid[x][y].status != CellStatus.BLACK
+                    and self.grid[cr1][cr2].status == CellStatus.BLACK
+                ):
                     # If the rotated state is black, then reset that black square to default
                     self.grid[cr1][cr2].update("")
 
@@ -477,8 +498,7 @@ class Grid(object):
         self.update_length_and_head_data()
 
     def update_length_and_head_data(self):
-        """ Compute/save word lengths, and which squares are origins
-        """
+        """Compute/save word lengths, and which squares are origins"""
 
         # Update horizontal / vertical heads
         self.h_heads = []
@@ -486,7 +506,6 @@ class Grid(object):
         answer_counter = 1
         for i in range(self.row_count):
             for j in range(self.col_count):
-
                 # Update lists of head nodes
                 is_h_start = self.is_h_start(i, j)
                 is_v_start = self.is_v_start(i, j)
@@ -516,15 +535,13 @@ class Grid(object):
                 self[i, j].vlen = self.vertical_word_len(i, j)
 
     def clear(self):
-        """ Reset all values in the grid, except those that are locked or black
-        """
+        """Reset all values in the grid, except those that are locked or black"""
         for c in self.grid.flatten():
             if c.status == CellStatus.SET:
                 c.reset_cell()
 
     def lock_entry(self, i: int, j: int):
-        """ Lock the cell at [i, j]
-        """
+        """Lock the cell at [i, j]"""
 
         # Change from set -> locked
         if self[i, j].status == CellStatus.SET:
@@ -534,8 +551,7 @@ class Grid(object):
             logger.error(f"Cannot lock entry [{i},{j}]: it is not currently set")
 
     def unlock_entry(self, i: int, j: int):
-        """ Unlock the cell at [i, j]
-        """
+        """Unlock the cell at [i, j]"""
 
         # Change from locked -> set
         if self[i, j].status == CellStatus.LOCKED:
@@ -545,8 +561,7 @@ class Grid(object):
             logger.error(f"Cannot unlock entry [{i},{j}]: it is not currently locked")
 
     def toggle_locked(self, i: int, j: int):
-        """ Flip the locked status of the cell at [i, j]
-        """
+        """Flip the locked status of the cell at [i, j]"""
         # Change from locked -> set
         if self[i, j].status == CellStatus.LOCKED:
             self[i, j].status = CellStatus.SET
@@ -555,9 +570,13 @@ class Grid(object):
             logger.debug(f"Entry [{i},{j}] status changed to LOCKED")
             self[i, j].status = CellStatus.LOCKED
         else:
-            logger.error(f"Cannot toggle locked status for entry [{i},{j}]: it is neither SET nor LOCKED")
+            logger.error(
+                f"Cannot toggle locked status for entry [{i},{j}]: it is neither SET nor LOCKED"
+            )
 
-    def set_word(self, word: str, i: int, j: int, direction: WordDirection, lock: bool = False):
+    def set_word(
+        self, word: str, i: int, j: int, direction: WordDirection, lock: bool = False
+    ):
         """
         Set word (or word fragment) in the grid beginning at index [i,j]
 
@@ -572,7 +591,9 @@ class Grid(object):
         match direction:
             case direction.HORIZONTAL:
                 if self.col_count - j < len(word):
-                    raise ValueError("Dimension Mismatch: Cannot fit word within horizontal section")
+                    raise ValueError(
+                        "Dimension Mismatch: Cannot fit word within horizontal section"
+                    )
 
                 for lix in range(len(word)):
                     self[i, j + lix].update(word[lix])
@@ -580,7 +601,9 @@ class Grid(object):
                         self[i, j + lix].status = CellStatus.LOCKED
             case direction.VERTICAL:
                 if self.row_count - i < len(word):
-                    raise ValueError("Dimension Mismatch: Cannot fit word within vertical section")
+                    raise ValueError(
+                        "Dimension Mismatch: Cannot fit word within vertical section"
+                    )
                 for lix in range(len(word)):
                     self[i + lix, j].update(word[lix])
                     if lock:
@@ -592,8 +615,10 @@ class Grid(object):
 
     def is_h_start(self, i: int, j: int) -> bool:
         if j > 0:
-            is_after_black = (self[i, j - 1].status == xc.grid.CellStatus.BLACK and
-                              self[i, j].status != xc.grid.CellStatus.BLACK)
+            is_after_black = (
+                self[i, j - 1].status == xc.grid.CellStatus.BLACK
+                and self[i, j].status != xc.grid.CellStatus.BLACK
+            )
         else:
             is_after_black = False
 
@@ -601,32 +626,39 @@ class Grid(object):
 
     def is_h_end(self, i: int, j: int) -> bool:
         if j < self.col_count - 1:
-            is_before_black = (self[i, j + 1].status == xc.grid.CellStatus.BLACK and
-                               self[i, j].status != xc.grid.CellStatus.BLACK)
+            is_before_black = (
+                self[i, j + 1].status == xc.grid.CellStatus.BLACK
+                and self[i, j].status != xc.grid.CellStatus.BLACK
+            )
         else:
             is_before_black = False
-        return self[i, j].status != CellStatus.BLACK and (j == (self.col_count - 1) or is_before_black)
+        return self[i, j].status != CellStatus.BLACK and (
+            j == (self.col_count - 1) or is_before_black
+        )
 
     def is_v_start(self, i: int, j: int) -> bool:
         if i > 0:
-            is_after_black = (self[i - 1, j].status == xc.grid.CellStatus.BLACK and
-                              self[i, j].status != xc.grid.CellStatus.BLACK)
+            is_after_black = (
+                self[i - 1, j].status == xc.grid.CellStatus.BLACK
+                and self[i, j].status != xc.grid.CellStatus.BLACK
+            )
         else:
             is_after_black = False
         return self[i, j].status != CellStatus.BLACK and (i == 0 or is_after_black)
 
     def is_v_end(self, i: int, j: int) -> bool:
         if i < self.row_count - 1:
-            is_before_black = (self[i + 1, j].status == xc.grid.CellStatus.BLACK and
-                               self[i, j].status != xc.grid.CellStatus.BLACK)
+            is_before_black = (
+                self[i + 1, j].status == xc.grid.CellStatus.BLACK
+                and self[i, j].status != xc.grid.CellStatus.BLACK
+            )
         else:
             is_before_black = False
-        return self[i, j].status != CellStatus.BLACK and (i == (self.row_count - 1) or is_before_black)
+        return self[i, j].status != CellStatus.BLACK and (
+            i == (self.row_count - 1) or is_before_black
+        )
 
-    def get_next_cell(self,
-                      x: int,
-                      y: int,
-                      move_dir: MoveDirection) -> Cell:
+    def get_next_cell(self, x: int, y: int, move_dir: MoveDirection) -> Cell:
         # Next square index
         i = x
         j = y
@@ -659,7 +691,6 @@ class Grid(object):
                     return self[i, j]
 
             case MoveDirection.BACK_HORIZONTAL:
-
                 if not on_left_column:
                     j -= 1
                 elif not on_top_row:
@@ -670,7 +701,6 @@ class Grid(object):
                     return self[i, j]
 
             case MoveDirection.BACK_VERTICAL:
-
                 if not on_top_row:
                     # Move one square up the left
                     i -= 1
@@ -688,7 +718,7 @@ class Grid(object):
     # Utilities ###############################################################
 
     def corner2center(self, x: int, y: int) -> Tuple[float, float]:
-        """ Convert coordinate measured form corner, to coordinate measured from center of grid
+        """Convert coordinate measured form corner, to coordinate measured from center of grid
 
         a: Corner -> Pt         [x,y]
         b: Corner -> Center     self.center
@@ -700,7 +730,7 @@ class Grid(object):
         return x - self.center[0], y - self.center[1]
 
     def center2corner(self, c1: float, c2: float) -> Tuple[int, int]:
-        """ Convert coordinate measured form center, to coordinate measured from corner
+        """Convert coordinate measured form center, to coordinate measured from corner
 
         A: Corner -> Pt         [x,y]
         B: Corner -> Center     self.center
@@ -711,12 +741,9 @@ class Grid(object):
         """
         return int(self.center[0] + c1), int(self.center[1] + c2)
 
-    def full_word_from_cell(self,
-                            x: int,
-                            y: int,
-                            direction: WordDirection,
-                            terminate_on_empty=False) -> CellList:
-
+    def full_word_from_cell(
+        self, x: int, y: int, direction: WordDirection, terminate_on_empty=False
+    ) -> CellList:
         start_cell = self[x, y]
 
         if start_cell.status == CellStatus.BLACK:
@@ -732,16 +759,18 @@ class Grid(object):
             case _:
                 raise ValueError("Invalid direction")
 
-        start_cells = list(reversed(
-            self.aggregate_cells(x, y, pre_traverse_dir, terminate_on_empty)[1:]
-        ))
+        start_cells = list(
+            reversed(
+                self.aggregate_cells(x, y, pre_traverse_dir, terminate_on_empty)[1:]
+            )
+        )
         end_cells = self.aggregate_cells(x, y, pos_traverse_dir, terminate_on_empty)[1:]
         cells = start_cells + [start_cell] + end_cells
         return CellList(cells)
 
-    def aggregate_cells(self, i: int, j: int,
-                        which: GridDirection,
-                        terminate_on_empty=False) -> List[Cell]:
+    def aggregate_cells(
+        self, i: int, j: int, which: GridDirection, terminate_on_empty=False
+    ) -> List[Cell]:
         cells = [self[i, j]]
 
         # Nothing to aggregate if we're starting at a black square
@@ -750,26 +779,38 @@ class Grid(object):
 
         match which:
             case GridDirection.UP:
+
                 def termination_criteria(c):
-                    return c.is_v_start or (terminate_on_empty and c.status == CellStatus.EMPTY)
+                    return c.is_v_start or (
+                        terminate_on_empty and c.status == CellStatus.EMPTY
+                    )
 
                 def update(c):
                     return self[c.x - 1, c.y]
             case GridDirection.DOWN:
+
                 def termination_criteria(c):
-                    return c.is_v_end or (terminate_on_empty and c.status == CellStatus.EMPTY)
+                    return c.is_v_end or (
+                        terminate_on_empty and c.status == CellStatus.EMPTY
+                    )
 
                 def update(c):
                     return self[c.x + 1, c.y]
             case GridDirection.LEFT:
+
                 def termination_criteria(c):
-                    return c.is_h_start or (terminate_on_empty and c.status == CellStatus.EMPTY)
+                    return c.is_h_start or (
+                        terminate_on_empty and c.status == CellStatus.EMPTY
+                    )
 
                 def update(c):
                     return self[c.x, c.y - 1]
             case GridDirection.RIGHT:
+
                 def termination_criteria(c):
-                    return c.is_h_end or (terminate_on_empty and c.status == CellStatus.EMPTY)
+                    return c.is_h_end or (
+                        terminate_on_empty and c.status == CellStatus.EMPTY
+                    )
 
                 def update(c):
                     return self[c.x, c.y + 1]
@@ -869,11 +910,11 @@ class Grid(object):
         print(out_str)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     lc = xc.corpus.Corpus.from_test()
     g = Grid((5, 5), lc)
-    g.set_grid(1, 1, 'B')
-    g.set_grid(2, 2, 'F')
+    g.set_grid(1, 1, "B")
+    g.set_grid(2, 2, "F")
     g[2, 2].status = CellStatus.LOCKED
     g[4, 4].status = CellStatus.BLACK
 

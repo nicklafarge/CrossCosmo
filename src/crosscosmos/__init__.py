@@ -1,5 +1,4 @@
-""" Root __init__.py for CrossCosmos.
-"""
+"""Root __init__.py for CrossCosmos."""
 
 # Retrieve the explicitly exported variables from crosscosmos.config
 from .config import *
@@ -17,21 +16,18 @@ from . import (
     query,
     standards,
     smatch,
-    wordlists
+    wordlists,
 )
 
 # Enums
-from .bot import (
-    LetterStatus,
-    LetterSequenceStatus
-)
+from .bot import LetterStatus, LetterSequenceStatus
 from .grid import (
     CellStatus,
     GridDirection,
     GridStatus,
     WordDirection,
     GridSymmetry,
-    MoveDirection
+    MoveDirection,
 )
 
 # Setup logging

@@ -1,5 +1,4 @@
-""" Utilities for manipulating letters
-"""
+"""Utilities for manipulating letters"""
 
 # Standard library imports
 import itertools
@@ -31,12 +30,12 @@ def has_numbers(inputString: str):
 
 def generate_permutations(word: str):
     # Create a list of tuples, each containing the character and a placeholder
-    choices = [(char, '?') for char in word]
+    choices = [(char, "?") for char in word]
 
     # Use itertools.product to generate all combinations of characters and placeholders
     for combination in itertools.product(*choices):
         # Join the characters in the combination to form a string
-        yield ''.join(combination)
+        yield "".join(combination)
 
 
 ALPHABET = [int2char(i) for i in range(26)]

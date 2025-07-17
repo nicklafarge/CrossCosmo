@@ -6,7 +6,7 @@ from pathlib import Path
 
 
 def save_json_dict(filename: Path, jdict: dict):
-    with open(filename, 'w') as outfile:
+    with open(filename, "w") as outfile:
         json.dump(jdict, outfile, indent=2)
 
 

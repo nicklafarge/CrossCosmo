@@ -36,7 +36,7 @@ if __name__ == "__main__":
         1: xc.corpus.Corpus.from_test(),
         2: xc.corpus.Corpus.from_diehl(),
         3: xc.corpus.Corpus.from_lafarge(),
-        4: xc.corpus.Corpus.from_collab()
+        4: xc.corpus.Corpus.from_collab(),
     }
 
     def m(query: str, lvl: int = 3):
@@ -48,5 +48,5 @@ if __name__ == "__main__":
     test3 = m(corpus_lvls, query_str, 3)
 
     # KARANAMOK
-    m('------R', 1)
-    m('------M-K', 4)
+    m("------R", 1)
+    m("------M-K", 4)

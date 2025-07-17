@@ -1,4 +1,4 @@
-""" Broda List - Trimmed by Diehl
+"""Broda List - Trimmed by Diehl
 
 Source (Broda):
     https://peterbroda.me/crosswords/wordlist/
@@ -22,11 +22,11 @@ from crosscosmos.wordlists import parse_word_score
 logger = logging.getLogger(__name__)
 
 
-diehl_path = xc.crosscosmos_project_root / 'resources' / 'broda_trimmed_by_diehl_2020.csv'
+diehl_path = (
+    xc.crosscosmos_project_root / "resources" / "broda_trimmed_by_diehl_2020.csv"
+)
 
 
-parse_word_score.parse_word_score(diehl_path,
-                                  diehl_model.CollabWordListWord,
-                                  ";")
+parse_word_score.parse_word_score(diehl_path, diehl_model.CollabWordListWord, ";")
 
 diehl_model.orm.commit()

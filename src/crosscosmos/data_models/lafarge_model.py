@@ -99,8 +99,12 @@ def query_to_polars(query_result) -> pl.DataFrame:
     return df.sort(by="max_score", descending=True)
 
 
-def contains_str_and_removed_str(substr: str, score_threshold = 0, filter_start_end: bool = False):
-    substr_words = LaFargeWord.select(lambda e: substr in e.word and len(e.word) >= 3 + len(substr))
+def contains_str_and_removed_str(
+    substr: str, score_threshold=0, filter_start_end: bool = False
+):
+    substr_words = LaFargeWord.select(
+        lambda e: substr in e.word and len(e.word) >= 3 + len(substr)
+    )
 
     keys = ["word", "collab_score", "diehl_score"]
 
@@ -118,36 +122,44 @@ def contains_str_and_removed_str(substr: str, score_threshold = 0, filter_start_
             for k in keys:
                 entry[f"orig_{k}"] = orig_dict[k]
                 entry[f"mod_{k}"] = mod_dict[k]
-            
+
             valid_pairs.append(entry)
 
     df = pl.DataFrame(valid_pairs)
     df = df.with_columns(
         [
-            (df["orig_collab_score"] + df["mod_collab_score"]).alias("collab_score_sum"),
+            (df["orig_collab_score"] + df["mod_collab_score"]).alias(
+                "collab_score_sum"
+            ),
             (df["orig_diehl_score"] + df["mod_diehl_score"]).alias("diehl_score_sum"),
         ]
     )
-    df = df.with_columns([
-        pl.max_horizontal("collab_score_sum", "diehl_score_sum").alias("max_score_sum")
-    ])
+    df = df.with_columns(
+        [
+            pl.max_horizontal("collab_score_sum", "diehl_score_sum").alias(
+                "max_score_sum"
+            )
+        ]
+    )
     df = df.filter(pl.col("max_score_sum") >= score_threshold)
 
     if filter_start_end:
-        df = df.filter((~pl.col("orig_word").str.starts_with(substr)) & (~pl.col("orig_word").str.ends_with(substr)))
+        df = df.filter(
+            (~pl.col("orig_word").str.starts_with(substr))
+            & (~pl.col("orig_word").str.ends_with(substr))
+        )
     return df.sort(by="max_score_sum", descending=True)
 
 
 if __name__ == "__main__":
     dflib = contains_str_and_removed_str("LIB", 0, filter_start_end=True)
-    
+
     # dfit = contains_str_and_removed_str("IT", 100)
     dfastra = contains_str_and_removed_str("ASTRA", 0)
     dfastra = dfastra.sort(by="orig_collab_score", descending=True)
 
     dfhoc = contains_str_and_removed_str("HOC", 0)
 
-    
     # df_astra = query_to_polars(LaFargeWord.select(lambda w: "ASTRA" in w.word))
     #
     #

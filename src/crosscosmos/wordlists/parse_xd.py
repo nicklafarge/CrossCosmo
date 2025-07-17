@@ -18,7 +18,7 @@ csv.field_size_limit(sys.maxsize)
 
 logger = logging.getLogger(__name__)
 
-xd_path = xc.crosscosmos_project_root / 'resources' / 'word_lists' / 'xd_0_to_2m.tsv'
+xd_path = xc.crosscosmos_project_root / "resources" / "word_lists" / "xd_0_to_2m.tsv"
 # xd_path = xc.crosscosmos_root / 'resources' / 'xd_4m_onward.tsv'
 i = 0
 for row in xc.wordlists.parsing_utils.read_csv_generator(xd_path, "\t"):
@@ -57,13 +57,13 @@ for row in xc.wordlists.parsing_utils.read_csv_generator(xd_path, "\t"):
         pubid_entry = xd_model.XdPubId.get(pubid=pubid)
         if not pubid_entry:
             pubid_entry = xd_model.XdPubId(pubid=pubid)
-        word_usage_info['pubid'] = pubid_entry
+        word_usage_info["pubid"] = pubid_entry
 
     if year:
         year_entry = xd_model.XdYear.get(year=year)
         if not year_entry:
             year_entry = xd_model.XdYear(year=year)
-        word_usage_info['year'] = year_entry
+        word_usage_info["year"] = year_entry
 
     # Create a new word entry if the clue is new
     try:

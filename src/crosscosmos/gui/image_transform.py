@@ -1,4 +1,5 @@
 """A library for describing and applying affine transforms to PIL images."""
+
 import numpy as np
 import PIL.Image
 
@@ -112,17 +113,17 @@ class RGBTransform(object):
         if channel_count < 3:
             raise ValueError("Image must have at least three channels!")
         elif channel_count == 3:
-            return image.convert('RGB', matrix)
+            return image.convert("RGB", matrix)
         else:
             # Probably an RGBA image.
             # Operate on the first three channels (assuming RGB),
             # and tack any others back on at the end.
             channels = list(image.split())
-            rgb = PIL.Image.merge('RGB', channels[:3])
-            transformed = rgb.convert('RGB', matrix)
+            rgb = PIL.Image.merge("RGB", channels[:3])
+            transformed = rgb.convert("RGB", matrix)
             new_channels = transformed.split()
             channels[:3] = new_channels
-            return PIL.Image.merge(''.join(channel_names), channels)
+            return PIL.Image.merge("".join(channel_names), channels)
 
     def applied_to_pixel(self, color):
         """Apply this transformation to a single RGB* pixel.
@@ -183,6 +184,7 @@ def _to_rgb(thing, name="input"):
     """Convert an array-like object to a 1-by-3 numpy array, or fail."""
     thing = np.array(thing)
     assert thing.shape == (3,), (
-            "Expected %r to be a length-3 array-like object, but found shape %s" %
-            (name, thing.shape))
+        "Expected %r to be a length-3 array-like object, but found shape %s"
+        % (name, thing.shape)
+    )
     return thing

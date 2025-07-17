@@ -1,5 +1,4 @@
-""" Helper utilities for parsing databases
-"""
+"""Helper utilities for parsing databases"""
 
 # Standard library imports
 import csv
