@@ -67,9 +67,7 @@ lafarge_word_db.generate_mapping(create_tables=True)
 def augment_df(df_in: pl.DataFrame) -> pl.DataFrame:
     df = df_in.filter(pl.col("word").str.len_chars() > 2)
 
-    df = df.with_columns(
-        pl.max_horizontal("collab_score", "diehl_score").alias("max_score")
-    )
+    df = df.with_columns(pl.max_horizontal("collab_score", "diehl_score").alias("max_score"))
 
     return df
 
@@ -99,12 +97,8 @@ def query_to_polars(query_result) -> pl.DataFrame:
     return df.sort(by="max_score", descending=True)
 
 
-def contains_str_and_removed_str(
-    substr: str, score_threshold=0, filter_start_end: bool = False
-):
-    substr_words = LaFargeWord.select(
-        lambda e: substr in e.word and len(e.word) >= 3 + len(substr)
-    )
+def contains_str_and_removed_str(substr: str, score_threshold=0, filter_start_end: bool = False):
+    substr_words = LaFargeWord.select(lambda e: substr in e.word and len(e.word) >= 3 + len(substr))
 
     keys = ["word", "collab_score", "diehl_score"]
 
@@ -128,26 +122,15 @@ def contains_str_and_removed_str(
     df = pl.DataFrame(valid_pairs)
     df = df.with_columns(
         [
-            (df["orig_collab_score"] + df["mod_collab_score"]).alias(
-                "collab_score_sum"
-            ),
+            (df["orig_collab_score"] + df["mod_collab_score"]).alias("collab_score_sum"),
             (df["orig_diehl_score"] + df["mod_diehl_score"]).alias("diehl_score_sum"),
         ]
     )
-    df = df.with_columns(
-        [
-            pl.max_horizontal("collab_score_sum", "diehl_score_sum").alias(
-                "max_score_sum"
-            )
-        ]
-    )
+    df = df.with_columns([pl.max_horizontal("collab_score_sum", "diehl_score_sum").alias("max_score_sum")])
     df = df.filter(pl.col("max_score_sum") >= score_threshold)
 
     if filter_start_end:
-        df = df.filter(
-            (~pl.col("orig_word").str.starts_with(substr))
-            & (~pl.col("orig_word").str.ends_with(substr))
-        )
+        df = df.filter((~pl.col("orig_word").str.starts_with(substr)) & (~pl.col("orig_word").str.ends_with(substr)))
     return df.sort(by="max_score_sum", descending=True)
 
 

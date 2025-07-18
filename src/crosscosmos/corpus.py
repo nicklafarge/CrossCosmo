@@ -53,31 +53,19 @@ class Corpus(object):
     @classmethod
     def from_crossword_tracker(cls):
         logger.info("Loading crossword tracker ...")
-        words = [
-            w
-            for w in XwordWord.select()
-            if not letter_utils.has_numbers(w.word) and len(w.word) >= 3
-        ]
+        words = [w for w in XwordWord.select() if not letter_utils.has_numbers(w.word) and len(w.word) >= 3]
         return cls(words, ModelSource.CrosswordTracker)
 
     @classmethod
     def from_collab(cls):
         logger.info("Loading collab list ...")
-        words = [
-            w
-            for w in CollabWordListWord.select()
-            if not letter_utils.has_numbers(w.word) and len(w.word) >= 3
-        ]
+        words = [w for w in CollabWordListWord.select() if not letter_utils.has_numbers(w.word) and len(w.word) >= 3]
         return cls(words, ModelSource.CollabWordList)
 
     @classmethod
     def from_lafarge(cls):
         logger.info("Loading LaFarge...")
-        words = [
-            w
-            for w in LaFargeWord.select()
-            if not letter_utils.has_numbers(w.word) and len(w.word) >= 3
-        ]
+        words = [w for w in LaFargeWord.select() if not letter_utils.has_numbers(w.word) and len(w.word) >= 3]
         return cls(words, ModelSource.LaFarge)
 
     @classmethod
@@ -152,9 +140,7 @@ class Corpus(object):
     def match(self, word_len: int, letters_with_idxs: List[Tuple[int, str]]):
         word_list = []
         for w in self.word_list:
-            if len(w.word) == word_len and all(
-                [w.word[i] == c for i, c in letters_with_idxs]
-            ):
+            if len(w.word) == word_len and all([w.word[i] == c for i, c in letters_with_idxs]):
                 word_list.append(w)
 
         return word_list

@@ -42,7 +42,5 @@ for i in range(26):
         letter_i_box = letter_i_soup.find("div", class_="browse_box")
         words = letter_i_box.find_all("li")
         for w in words:
-            word = xword_tracker_model.XwordWord(
-                word=w.text, info=BASE_URL + w.a["href"]
-            )
+            word = xword_tracker_model.XwordWord(word=w.text, info=BASE_URL + w.a["href"])
             xword_tracker_model.orm.commit()

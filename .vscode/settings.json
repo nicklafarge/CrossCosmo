@@ -1,0 +1,21 @@
+{
+    // This setting tells VS Code to treat .cclist files as a new language type.
+    "files.associations": {
+        "*.cclist": "cclist"
+    },
+
+    // This block applies specific settings ONLY to the "cclist" language type.
+    "[plaintext]": {
+        "editor.rulers": [
+            { "column": 0,  "color": "#444444" },
+            { "column": 5,  "color": "#666666" },
+            { "column": 10, "color": "#888888" },
+            { "column": 15, "color": "#aaaaaa" },
+            { "column": 16, "color": "#333333" },
+            { "column": 20, "color": "#cccccc" },
+            { "column": 21, "color": "#333333" }
+        ],
+        "editor.fontSize": 26,
+        "editor.lineNumbers": "off",
+    },
+}

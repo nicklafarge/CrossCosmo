@@ -183,8 +183,8 @@ def _embed44(matrix):
 def _to_rgb(thing, name="input"):
     """Convert an array-like object to a 1-by-3 numpy array, or fail."""
     thing = np.array(thing)
-    assert thing.shape == (3,), (
-        "Expected %r to be a length-3 array-like object, but found shape %s"
-        % (name, thing.shape)
+    assert thing.shape == (3,), "Expected %r to be a length-3 array-like object, but found shape %s" % (
+        name,
+        thing.shape,
     )
     return thing

@@ -45,9 +45,7 @@ def update_from(db, src_name: str, update_fn) -> None:
             else:
                 laf_word.sources = [src_name]
         else:
-            laf_word = lafarge_model.LaFargeWord(
-                word=uppercase_word, sources=[src_name]
-            )
+            laf_word = lafarge_model.LaFargeWord(word=uppercase_word, sources=[src_name])
 
         update_fn(laf_word, w)
 
@@ -61,15 +59,11 @@ def collab_word_list_update_fn(
     laf_word.collab_score = db_word.score
 
 
-def diehl_update_fn(
-    laf_word: lafarge_model.LaFargeWord, db_word: diehl_model.DiehlWord
-):
+def diehl_update_fn(laf_word: lafarge_model.LaFargeWord, db_word: diehl_model.DiehlWord):
     laf_word.diehl_score = db_word.score
 
 
-def xword_tracker_update_fn(
-    laf_word: lafarge_model.LaFargeWord, db_word: xword_tracker_model.XwordWord
-):
+def xword_tracker_update_fn(laf_word: lafarge_model.LaFargeWord, db_word: xword_tracker_model.XwordWord):
     laf_word.xword_link = db_word.info
 
 

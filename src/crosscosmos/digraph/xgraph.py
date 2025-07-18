@@ -34,9 +34,7 @@ class LetterSet(object):
         return f"LetterSet(n_max_letters={self.n_max_letters})"
 
     def row_major_idx(self, letter_idx: int, letter: Union[str, int]) -> int:
-        letter_int = (
-            xc.letter_utils.char2int(letter) if isinstance(letter, str) else letter
-        )
+        letter_int = xc.letter_utils.char2int(letter) if isinstance(letter, str) else letter
         return letter_idx * self.n_letters + letter_int
 
     def _create_set(self):

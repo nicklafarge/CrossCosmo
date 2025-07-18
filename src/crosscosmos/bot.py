@@ -68,9 +68,7 @@ def move_back_horizontal(grid, x: int, y: int, trie_list):
     return new_x, new_y, status
 
 
-def validate_grid_letter_sequence(
-    grid_trie: pygtrie, letter_sequence: str, is_end: bool
-) -> LetterSequenceStatus:
+def validate_grid_letter_sequence(grid_trie: pygtrie, letter_sequence: str, is_end: bool) -> LetterSequenceStatus:
     node_in_trie = grid_trie.has_node(letter_sequence)
     if is_end and node_in_trie == pygtrie.Trie.HAS_VALUE:
         return LetterSequenceStatus.VALID_WORD
@@ -125,12 +123,8 @@ def solve(grid: xc.grid.Grid, max_time=30):
             letter_status = LetterStatus.VALID
 
             # Get the cross word up to this point
-            trie_has_h_word = check_letter_sequence(
-                c, grid, tries, WordDirection.HORIZONTAL
-            )
-            trie_has_v_word = check_letter_sequence(
-                c, grid, tries, WordDirection.VERTICAL
-            )
+            trie_has_h_word = check_letter_sequence(c, grid, tries, WordDirection.HORIZONTAL)
+            trie_has_v_word = check_letter_sequence(c, grid, tries, WordDirection.VERTICAL)
 
             # See if the word up to now is valid. If not, move back
             if not trie_has_h_word or not trie_has_v_word:
@@ -169,24 +163,14 @@ def solve(grid: xc.grid.Grid, max_time=30):
 
             # Check if the horizontal letter sequence is valid
 
-            h_cell_sequence = grid.full_word_from_cell(
-                c.x, c.y, WordDirection.HORIZONTAL
-            )
-            horizontal_word_status = validate_grid_letter_sequence(
-                tries[c.hlen], str(h_cell_sequence), c.is_h_end
-            )
-            horizontal_letter_accepted = (
-                horizontal_word_status != LetterSequenceStatus.INVALID
-            )
+            h_cell_sequence = grid.full_word_from_cell(c.x, c.y, WordDirection.HORIZONTAL)
+            horizontal_word_status = validate_grid_letter_sequence(tries[c.hlen], str(h_cell_sequence), c.is_h_end)
+            horizontal_letter_accepted = horizontal_word_status != LetterSequenceStatus.INVALID
 
             # Check if the vertical letter sequence is valid
             v_cell_sequence = grid.full_word_from_cell(c.x, c.y, WordDirection.VERTICAL)
-            vertical_word_status = validate_grid_letter_sequence(
-                tries[c.vlen], str(v_cell_sequence), c.is_v_end
-            )
-            vertical_letter_accepted = (
-                vertical_word_status != LetterSequenceStatus.INVALID
-            )
+            vertical_word_status = validate_grid_letter_sequence(tries[c.vlen], str(v_cell_sequence), c.is_v_end)
+            vertical_letter_accepted = vertical_word_status != LetterSequenceStatus.INVALID
 
             # The selected letter is only accepted if it is valid in both vertical and horizontal directions
             if horizontal_letter_accepted and vertical_letter_accepted:
@@ -195,9 +179,7 @@ def solve(grid: xc.grid.Grid, max_time=30):
                 # If horizontal word is complete, remove it to avoid duplication
                 if horizontal_word_status == LetterSequenceStatus.VALID_WORD:
                     tries[c.hlen].pop(str(h_cell_sequence))
-                    grid[i, j].remove_word(
-                        str(h_cell_sequence), WordDirection.HORIZONTAL
-                    )
+                    grid[i, j].remove_word(str(h_cell_sequence), WordDirection.HORIZONTAL)
 
                 # If vertical word is complete, remove it to avoid duplication
                 if vertical_word_status == LetterSequenceStatus.VALID_WORD:
@@ -232,10 +214,7 @@ def solve(grid: xc.grid.Grid, max_time=30):
                     i, j, grid_status = move_back_horizontal(grid, i, j, tries)
                     if grid_status == xc.GridStatus.INVALID:
                         continue_moving = False
-                    elif (
-                        grid[i, j].status == CellStatus.BLACK
-                        or grid[i, j].status == CellStatus.LOCKED
-                    ):
+                    elif grid[i, j].status == CellStatus.BLACK or grid[i, j].status == CellStatus.LOCKED:
                         continue_moving = True
                     else:
                         continue_moving = False

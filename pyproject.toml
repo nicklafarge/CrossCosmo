@@ -1,0 +1,46 @@
+[project]
+name = "crosscosmos"
+version = "0.1"
+authors = [
+    {name = "Nick LaFarge", email = "nick.lafarge@gmail.com"},
+]
+description = "Crosswords woo"
+readme = "README.md"
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Python :: 3 :: Only",
+]
+
+[tool.ruff]
+line-length = 120
+lint.select = [
+    "E",  # pycodestyle errors
+    "F",  # pyflakes
+    "B",  # flake8-bugbear
+    "I",  # isort
+    "C4", # flake8-comprehensions
+    "UP", # pyupgrade
+    "N",  # pep8-naming
+    "RUF", # ruff-specific rules
+    "W",  # pycodestyle warnings
+    "I001" # Alphabetical import sorting
+]
+
+# Sort imports
+[tool.ruff.lint.isort]
+known-first-party = ["crosscosmos"]
+section-order = [
+    "future",
+    "standard-library",
+    "third-party",
+    "local-folder",
+    "first-party"
+]
+
+
+# Additional formatting options
+[tool.ruff.format]
+quote-style = "double"  # Use double quotes for strings
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
