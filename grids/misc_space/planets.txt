@@ -1,0 +1,62 @@
+----------
+nasa
+missions
+by
+planet
+----------
+
+mercury:
+            MESSENGER
+
+venus:
+            PIONEER
+            MAGELLAN
+            VENERA
+
+earth
+            SPUTNIK
+            GEMINI
+            ISS
+            ECHO                    first to study passive comms
+            HUBBLE
+
+moon
+            APOLLO
+            ARTEMIS
+            ORION
+            LUNA
+mars
+            VIKING
+            PATHFINDER
+            SOJOURNER
+            INSIGHT
+            ODYSSEY
+            SPIRIT
+            OPPORTUNITY
+            MAVEN
+            CURIOSITY
+            PERSEVERANCE
+            INGENUITY
+
+jupiter
+            GALILEO
+            JUNO
+                                    CLIPPER
+                                    JUICE
+                                    CLIPPER
+
+saturn
+            CASSINI
+                                    DRAGONFLY
+
+uranus
+            VOYAGERTWO
+
+neptune     
+            VOYAGERTWO
+
+pluto
+            NEWHORIZONS
+
+vesta/ceres
+            DAWN
