@@ -3,19 +3,17 @@ Defines a Grid class, interfacing between the data and gui laters
 
 """
 
-# Standard library
 import copy
-from enum import Enum
+import logging
 import random
 import string
-from typing import Tuple, Union, List
+from enum import Enum
 from pathlib import Path
+from typing import List, Tuple, Union
 
-# Third-party
-import logging
 import numpy as np
+import polars as pl
 
-# Local
 import crosscosmos as xc
 
 logger = logging.getLogger(__name__)
@@ -69,7 +67,7 @@ class GridStatus(Enum):
     INVALID = 3
 
 
-class Cell(object):
+class Cell:
     def __init__(
         self,
         x: int,
@@ -212,11 +210,15 @@ class Cell(object):
         self.removed_words.append((word, direction))
 
 
-class CellList(object):
+class CellList:
     def __init__(self, cells: List[Cell]):
         self.cells = cells
 
-        if self.cells[1].y > self.cells[0].y:
+        # Default
+        if not self.cells or len(self.cells) < 1:
+            self.direction = WordDirection.HORIZONTAL
+
+        if not self.cells or self.cells[1].y > self.cells[0].y:
             self.direction = WordDirection.HORIZONTAL
         else:
             self.direction = WordDirection.VERTICAL
@@ -244,7 +246,7 @@ class CellList(object):
         return "-" in str(self)
 
 
-class Grid(object):
+class Grid:
     def __init__(
         self,
         grid_size: Tuple[int, int],
@@ -778,6 +780,41 @@ class Grid(object):
     def vertical_word_len(self, i: int, j: int):
         return self.word_len(i, j, WordDirection.VERTICAL)
 
+    def word_lengths(self) -> pl.DataFrame:
+        """ Builds a dataframe containing word lengths
+
+        Returns
+        -------
+
+        """
+        df = self.to_dataframe()
+
+        cols = ["word_len", "answer_number", "dir"]
+        h_starts = df.filter(pl.col("is_h_start"))
+        h_starts = h_starts.with_columns(
+            [pl.Series(name="dir", values=["A"] * len(h_starts)), pl.Series(name="word_len", values=h_starts["hlen"])]
+        )
+
+        v_starts = df.filter(pl.col("is_v_start"))
+        v_starts = v_starts.with_columns(
+            [pl.Series(name="dir", values=["D"] * len(v_starts)), pl.Series(name="word_len", values=v_starts["vlen"])]
+        )
+
+        starts = pl.concat([h_starts[cols], v_starts[cols]])
+
+        starts = (
+            starts.with_columns(
+                [
+                    pl.concat_str([pl.col("answer_number").cast(pl.Utf8), pl.lit(""), pl.col("dir")]).alias("dir_answer")
+                ]
+            )
+            .group_by("word_len")
+            .agg([pl.len().alias("wcount"), pl.col("dir_answer").alias("dir_answer_list")])
+            .sort("word_len")
+        )
+        return starts
+
+
     # Output ###############################################################
 
     def to_str(self, delimiter="\n"):
@@ -800,6 +837,9 @@ class Grid(object):
             if i < self.grid_size[0] - 1:
                 out_str += delimiter
         return out_str
+
+    def to_dataframe(self):
+        return pl.DataFrame([c.to_json() for c in self.grid.flatten()])
 
     def print(self):
         self.to_console()
