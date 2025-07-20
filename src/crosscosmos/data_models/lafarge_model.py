@@ -1,13 +1,10 @@
 """Data models for xd word list"""
 
-# Standard library imports
 import logging
 
-# Third-party imports
-from pony import orm
 import polars as pl
+from pony import orm
 
-# Local imports
 import crosscosmos as xc
 
 logger = logging.getLogger(__name__)
@@ -35,12 +32,13 @@ class LaFargeWord(lafarge_word_db.Entity):
     sources = orm.Required(orm.Json)
     collab_score = orm.Optional(int)
     diehl_score = orm.Optional(int)
+    score = orm.Required(int, default=0)
     xword_link = orm.Optional(str)
     notes = orm.Optional(str)
     is_word = orm.Optional(bool)
 
     def __repr__(cls):
-        return f"LaFargeWord['{cls.word}', {cls.collab_score}]"
+        return f"LaFargeWord['{cls.word}', {cls.score}]"
 
     def verbose(cls, override_xword=True):
         if override_xword:
@@ -135,13 +133,19 @@ def contains_str_and_removed_str(substr: str, score_threshold=0, filter_start_en
 
 
 if __name__ == "__main__":
-    dflib = contains_str_and_removed_str("LIB", 0, filter_start_end=True)
-
-    # dfit = contains_str_and_removed_str("IT", 100)
-    dfastra = contains_str_and_removed_str("ASTRA", 0)
-    dfastra = dfastra.sort(by="orig_collab_score", descending=True)
-
-    dfhoc = contains_str_and_removed_str("HOC", 0)
+    orm.commit()
+    for row in LaFargeWord.select():
+        ds = row.diehl_score if row.diehl_score is not None else 0
+        cs = row.collab_score if row.collab_score is not None else 0
+        row.score = max(ds, cs)
+    orm.commit()
+    # dflib = contains_str_and_removed_str("LIB", 0, filter_start_end=True)
+    #
+    # # dfit = contains_str_and_removed_str("IT", 100)
+    # dfastra = contains_str_and_removed_str("ASTRA", 0)
+    # dfastra = dfastra.sort(by="orig_collab_score", descending=True)
+    #
+    # dfhoc = contains_str_and_removed_str("HOC", 0)
 
     # df_astra = query_to_polars(LaFargeWord.select(lambda w: "ASTRA" in w.word))
     #
