@@ -463,7 +463,7 @@ def demonstrate_usage():
     optimizer = CrosswordOptimizer()
 
     # Example: Find best words to follow "BED"
-    starting_word = "AGENT"
+    starting_word = "SLOOK"
     down_lengths = [3, 3, 3, 4, 8]  # Constraints for down words
 
     print(f"Starting word: {starting_word}")
@@ -507,9 +507,9 @@ def demonstrate_gap_filling():
     optimizer = CrosswordOptimizer()
 
     # Define the gap problem
-    fixed_words = [(0, "BED"), (2, "RAP")]
+    fixed_words = [(0, "SLOOKS"), (2, "DMYBEE")]
     target_row = 1
-    down_lengths = [3, 4, 6]  # All down words are 3 letters
+    down_lengths = [5, 5, 4, 5, 5, 5]  # All down words are 3 letters
 
     print("Fixed grid pattern:")
     print("Row 0: B E D")
@@ -518,7 +518,7 @@ def demonstrate_gap_filling():
     print(f"\nDown word lengths: {down_lengths}")
 
     # Find words that fit in the gap
-    gap_candidates = optimizer.find_words_for_gap(fixed_words, target_row, down_lengths, top_k=10)
+    gap_candidates = optimizer.find_words_for_gap(fixed_words, target_row, down_lengths, top_k=50)
 
     print(f"\nTop candidates for row {target_row}:")
     for i, candidate in enumerate(gap_candidates, 1):
@@ -536,5 +536,41 @@ if __name__ == "__main__":
     # Run demonstrations
     print("Running Crossword Optimizer with Pony ORM...")
 
-    demonstrate_usage()
-    demonstrate_gap_filling()
+    # demonstrate_usage()
+    # demonstrate_gap_filling()
+
+
+    ####################################################################################
+    # Demonstrate gap-filling functionality.
+    ####################################################################################
+
+    print("\n" + "=" * 50)
+    print("Gap Filling Demonstration")
+    print("=" * 50)
+
+    optimizer = CrosswordOptimizer()
+
+    # Define the gap problem
+    fixed_words = [(0, "SLOOKS"), (2, "DMYBEE")]
+    target_row = 1
+    down_lengths = [5, 5, 4, 5, 5, 5]  # All down words are 3 letters
+
+    print("Fixed grid pattern:")
+    print("Row 0: B E D")
+    print("Row 1: ? ? ?")
+    print("Row 2: R A P")
+    print(f"\nDown word lengths: {down_lengths}")
+
+    # Find words that fit in the gap
+    gap_candidates = optimizer.find_words_for_gap(fixed_words, target_row, down_lengths, top_k=50)
+
+    print(f"\nTop candidates for row {target_row}:")
+    for i, candidate in enumerate(gap_candidates, 1):
+        print(f"{i}. {candidate.word} (score: {candidate.score:.2f}, potential: {candidate.crossing_potential:.2f})")
+
+        # Show the resulting down words
+        print("   Forms down words: ", end="")
+        for col, letter in enumerate(candidate.word):
+            down_word = f"{fixed_words[0][1][col]}{letter}{fixed_words[1][1][col]}"
+            print(f"{down_word}", end=" ")
+        print(f"(valid crossings: {candidate.bigram_counts})")

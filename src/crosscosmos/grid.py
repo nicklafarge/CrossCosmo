@@ -13,6 +13,7 @@ from typing import List, Tuple, Union
 
 import numpy as np
 import polars as pl
+from pony import orm
 
 import crosscosmos as xc
 
@@ -36,6 +37,15 @@ class GridDirection(Enum):
 class WordDirection(Enum):
     HORIZONTAL = 1
     VERTICAL = 2
+
+    @staticmethod
+    def from_char(str_id):
+        if str_id.upper() in ["A", "H"]:
+            return xc.WordDirection.HORIZONTAL
+        elif str_id.upper() in ["D", "V"]:
+            return xc.WordDirection.VERTICAL
+        else:
+            raise ValueError("Expected A or D")
 
     @staticmethod
     def flip(cls):
@@ -780,8 +790,106 @@ class Grid:
     def vertical_word_len(self, i: int, j: int):
         return self.word_len(i, j, WordDirection.VERTICAL)
 
+    def get_word(self, entry_id: str) -> CellList | None:
+        """Returns a given word entry (list of cells)
+
+        Parameters
+        ----------
+        entry_id : str
+            Cell ID, must be a number followed by "A" or "D" (e.g., '1A' or '10D')
+
+        """
+        word_dir = xc.WordDirection.from_char(entry_id[-1])
+        starts = self.h_starts if word_dir == xc.WordDirection.HORIZONTAL else self.v_starts
+
+        entry_num = int(entry_id[:-1])
+        try:
+            start_cell_data = starts.row(by_predicate=(pl.col("answer_number") == entry_num), named=True)
+        except pl.exceptions.NoRowsReturnedError as e:
+            raise ValueError(f"Invalid entry ID: {entry_id}") from e
+        start_cell = Cell.from_dict(start_cell_data)
+        return self.full_word_from_cell(*start_cell.matrix_index, direction=word_dir)
+
+    def get_crossers(self, entry_id: str) -> list[CellList]:
+        """Finds a words the intersect a given entry
+
+        Parameters
+        ----------
+        entry_id : str
+            Cell ID, must be a number followed by "A" or "D" (e.g., '1A' or '10D')
+
+        Returns
+        -------
+        list of CellList
+            Crossing words
+
+        """
+        word = self.get_word(entry_id)
+        return [
+            self.full_word_from_cell(*cell.matrix_index, direction=xc.WordDirection.flip(word.direction))
+            for cell in word
+        ]
+
+    def get_possible_words(
+        self, db, entry_id: str, score_threshold: float = 0, exclude: dict[int, list[str] | str] | None = None
+    ) -> pl.DataFrame:
+        """Get all possible words for a given entry given a data source and minimum score threshold
+
+        Parameters
+        ----------
+        db : Pony database table
+            Database of valid entries
+        entry_id : str
+            Cell ID, must be a number followed by "A" or "D" (e.g., '1A' or '10D')
+        score_threshold : float, optional
+            Threshold for cutting off low-scored values
+        exclude : dict (index -> character list)
+            Dictionary representing indices to exclude letters. For example {1: "A"} will filter all entires that have
+            "A" as the first character
+
+
+        Returns
+        -------
+        pl.DataFrame
+            DataFrame containing all valid words, ordred by their score
+        """
+        exclude = exclude or {}
+
+        current_entry = self.get_word(entry_id)
+        word_len = len(current_entry)
+
+        crossers = self.get_crossers(entry_id)
+
+        possible_letters_map = {}
+        for i, cw in enumerate(crossers):
+            df_i = xc.query.match_words(db, cw)
+            if len(df_i) == 0:
+                return None
+            df_i = df_i.filter(pl.col("score") >= score_threshold)
+            idx_in_crosser = cw.cells.index(current_entry[i])
+            possible_letters = {w[idx_in_crosser] for w in df_i["word"]}
+            possible_letters_map[i] = possible_letters
+
+        words = orm.select(w for w in db if len(w.word) == word_len)
+        for i, exclude_chars in exclude.items():
+            for c in list(exclude_chars):
+                words = orm.select(w for w in words if w.word[i] != c)
+
+        for i, valid_letters in possible_letters_map.items():
+            words = orm.select(w for w in words if w.word[i] in valid_letters)
+
+        return xc.query.query_to_df(words)
+
+    @property
+    def h_starts(self):
+        return self.to_dataframe().filter(pl.col("is_h_start"))
+
+    @property
+    def v_starts(self):
+        return self.to_dataframe().filter(pl.col("is_v_start"))
+
     def word_lengths(self) -> pl.DataFrame:
-        """ Builds a dataframe containing word lengths
+        """Builds a dataframe containing word lengths
 
         Returns
         -------
@@ -804,16 +912,13 @@ class Grid:
 
         starts = (
             starts.with_columns(
-                [
-                    pl.concat_str([pl.col("answer_number").cast(pl.Utf8), pl.lit(""), pl.col("dir")]).alias("dir_answer")
-                ]
+                [pl.concat_str([pl.col("answer_number").cast(pl.Utf8), pl.lit(""), pl.col("dir")]).alias("dir_answer")]
             )
             .group_by("word_len")
             .agg([pl.len().alias("wcount"), pl.col("dir_answer").alias("dir_answer_list")])
             .sort("word_len")
         )
         return starts
-
 
     # Output ###############################################################
 

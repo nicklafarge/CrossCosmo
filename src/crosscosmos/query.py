@@ -11,6 +11,7 @@ import logging
 from typing import Union
 
 import polars as pl
+from pony import orm
 
 import crosscosmos as xc
 
@@ -28,14 +29,34 @@ def match_by_level(corpus_lvl_dict: dict, query: str, lvl: int = 1):
     return match(corpus_lvl_dict[lvl], query)
 
 
+def query_to_df(query):
+    df = pl.DataFrame(w.to_dict() for w in query)
+    if len(df) == 0:
+        return df
+
+    return df.sort(by="score", descending=True)
+
+
+def match_words(db, match_str):
+    match_str = str(match_str)
+    words = orm.select(w for w in db if len(w.word) == len(match_str))
+    for i, c in enumerate(match_str):
+        if c in xc.PLACEHOLDERS:
+            continue
+        words = orm.select(w for w in words if w.word[i] == c)
+    return query_to_df(words)
+
+
+def set_df_letter(df: pl.DataFrame, letter_idx: int, value: str):
+    assert len(value) == 1
+    return df.filter(pl.col("word").str.slice(letter_idx, 1) == value)
+
 
 def contains_str_and_removed_str(db, substr: str, score_threshold=0, filter_start_end: bool = False):
     substr_words = db.select(lambda e: substr in e.word and len(e.word) >= 3 + len(substr))
 
-
     is_lafarge = hasattr(db, "collab_score")
     has_score = hasattr(db, "score")
-
 
     score_keys = []
     sort_score = None
@@ -65,9 +86,7 @@ def contains_str_and_removed_str(db, substr: str, score_threshold=0, filter_star
 
             valid_pairs.append(entry)
 
-
     df = pl.DataFrame(valid_pairs)
-
 
     for k in score_keys:
         df = df.with_columns(

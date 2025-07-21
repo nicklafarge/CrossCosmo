@@ -4,15 +4,12 @@ Source:
     https://crosswordtracker.com
 """
 
-# Standard library imports
 import logging
 
-# Third-party imports
 from bs4 import BeautifulSoup
 import requests
 from tqdm import tqdm
 
-# Local imports
 import crosscosmos as xc
 from crosscosmos.data_models import xword_tracker_model
 

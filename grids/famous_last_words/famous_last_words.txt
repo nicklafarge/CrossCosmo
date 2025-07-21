@@ -1,23 +1,63 @@
--------------------------
+
+--------------------------------------
 Revealer
--------------------------
+--------------------------------------
 (15)
 FAMOUSLASTWORDS
 
--------------------------
-Theme Entries
--------------------------
 
+--------------------------------------
+Using
+--------------------------------------
+
+(10)
+HOLDMYBEER
+TRUSTMEBRO
+
+(13)
+LOOKMANOHANDS
+THISLOOKSSAFE
+
+--------------------------------------
+Favorites (from below)
+--------------------------------------
+
+(10)
+HOLDMYBEER
+TRUSTMEBRO
+
+(11)
+ITSEEMSSAFE
+ITSHARMLESS
+LOOKNOHANDS
+
+(13)
+ITSEEMSSTABLE
+LOOKMANOHANDS
+THISLOOKSSAFE
+
+(14)
+ITSNOTTHATHIGH
+HOWHARDCANITBE
+
+
+--------------------------------------
+Theme Entries
+--------------------------------------
 (7)
 ITSEASY
 NOHANDS
+TRUSTME
 WATCHME
 
 (8)
+IGOTTHIS
 
 (9)
 ICANFIXIT
+ITSSTABLE
 LOOKSEASY
+NOBIGDEAL
 WATCHTHIS
 
 (10)
@@ -26,22 +66,30 @@ HOLDMYBEER
 
 (11)
 ICANFIXTHAT
+ITSHARMLESS
 ITSEEMSSAFE
 JUSTONELEFT
 LOOKNOHANDS
+PIECEOFCAKE
+SEEMSSTABLE
 WECANMAKEIT
 WHATSTHISDO
 
 (12)
+ILLBECAREFUL
 JUSTABITMORE
 
 (13)
+ITSEEMSSTABLE
 LOOKMANOHANDS
 THATLOOKSEASY
 THISLOOKSSAFE
 
+
 (14)
+ITSNOTTHATHIGH
 HOWHARDCANITBE
+THEYREHARMLESS
 WHATDOESTHISDO
 
 -------------------------
@@ -50,6 +98,10 @@ Theme Entries (Sunday)
 
 (16)
 WHATCOULDGOWRONG
+THEMANUALISWRONG
 
 (17)
 CHALLENGEACCEPTED        
+
+(19)
+NOTHINGTOWORRYABOUT

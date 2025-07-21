@@ -1,13 +1,10 @@
 
 
-# Standard library imports
 import itertools
 import logging
 
-# Third-party imports
 import numpy as np
 
-# Local imports
 from crosscosmos.corpus import Corpus
 from crosscosmos import letter_utils
 # from crosscosmos.data_models.lafarge_model import LaFargeWord

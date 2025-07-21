@@ -3,14 +3,11 @@ Source:
     https://xd.saul.pw/data/
 """
 
-# Standard library imports
 import csv
 import logging
 import sys
 
-# Third-party imports
 
-# Local imports
 import crosscosmos as xc
 from crosscosmos.data_models import xd_model
 

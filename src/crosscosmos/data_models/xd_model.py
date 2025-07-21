@@ -1,12 +1,9 @@
 """Data models for xd word list"""
 
-# Standard library imports
 import logging
 
-# Third-party imports
 from pony import orm
 
-# Local imports
 import crosscosmos as xc
 
 logger = logging.getLogger(__name__)

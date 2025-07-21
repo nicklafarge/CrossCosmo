@@ -28,11 +28,11 @@ class LaFargeClue(lafarge_word_db.Entity):
 
 class LaFargeWord(lafarge_word_db.Entity):
     word = orm.PrimaryKey(str)
+    score = orm.Required(int, default=0)
     clues = orm.Set("LaFargeClue")
     sources = orm.Required(orm.Json)
     collab_score = orm.Optional(int)
     diehl_score = orm.Optional(int)
-    score = orm.Required(int, default=0)
     xword_link = orm.Optional(str)
     notes = orm.Optional(str)
     is_word = orm.Optional(bool)

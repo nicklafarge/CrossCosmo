@@ -3,6 +3,8 @@
 # Retrieve the explicitly exported variables from crosscosmos.config
 from .config import *
 
+PLACEHOLDERS = [r"?", r"-", r" "]
+
 # Expose submodules
 from . import (
     corpus,

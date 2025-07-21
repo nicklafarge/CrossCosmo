@@ -4,10 +4,8 @@ from typing import List, Tuple, Union
 import re
 from enum import Enum
 
-# Third-party imports
 import pygtrie
 
-# Local imports
 from crosscosmos.data_models.xword_tracker_model import XwordWord
 from crosscosmos.data_models.collab_word_list_model import CollabWordListWord
 from crosscosmos.data_models.lafarge_model import LaFargeWord
@@ -19,7 +17,6 @@ from crosscosmos import letter_utils
 logger = logging.getLogger(__name__)
 
 AZRE_PATTERN = "[a-zA-Z]"
-PLACEHOLDERS = [r"?", r"-", r" "]
 
 
 class ModelSource(Enum):

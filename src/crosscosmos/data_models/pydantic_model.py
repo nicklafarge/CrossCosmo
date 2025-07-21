@@ -1,14 +1,11 @@
 """Data models for letters and words"""
 
-# Standard library imports
 import logging
 from typing import Union
 
-# Third-party imports
 import networkx as nx
 from pydantic import AnyUrl, BaseModel, ConfigDict
 
-# Local imports
 import crosscosmos as xc
 
 logger = logging.getLogger(__name__)

@@ -2,10 +2,8 @@
 import logging
 from typing import Union
 
-# Third-party imports
 import networkx as nx
 
-# Local imports
 import crosscosmos as xc
 from crosscosmos.data_models.pydantic_model import Letter, Word
 

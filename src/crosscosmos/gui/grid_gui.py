@@ -7,6 +7,7 @@ import arcade
 import arcade.gui
 import arcade.gui.widgets.layout
 import numpy as np
+import pyperclip
 
 import crosscosmos as xc
 from crosscosmos import bot
@@ -349,6 +350,14 @@ class CrossCosmosGame(arcade.Window):
                     self.grid_sprites[cell.gui_row, cell.gui_col].color = SEARCH_LEN_COLOR
 
             logger.info(f"Numbers: {key}")
+
+        if key == arcade.key.C and (modifiers & arcade.key.MOD_CTRL):
+            active_word_cells = self.grid.full_word_from_cell(
+                self.selected_grid_cell.x, self.selected_grid_cell.y, self.edit_direction
+            )
+            copy_str = str(active_word_cells).replace("-", "?")
+            logger.info(f"Copying to clipboard: {copy_str}")
+            pyperclip.copy(copy_str)
 
     def on_key_release(self, key, modifiers):
         """Called when the user releases a key."""

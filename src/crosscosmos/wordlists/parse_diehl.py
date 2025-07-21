@@ -8,13 +8,10 @@ Source (Diehl Trimmed List):
 
 """
 
-# Standard library imports
 import csv
 import logging
 
-# Third-party imports
 
-# Local imports
 import crosscosmos as xc
 from crosscosmos.data_models import diehl_model
 from crosscosmos.wordlists import parse_word_score

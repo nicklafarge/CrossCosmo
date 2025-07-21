@@ -1,12 +1,9 @@
 """Populate the LaFarge wordlist model from existing sources"""
 
-# Standard library imports
 import logging
 
-# Third-party imports
 import pony.orm
 
-# Local imports
 from crosscosmos.data_models import (
     collab_word_list_model,
     diehl_model,

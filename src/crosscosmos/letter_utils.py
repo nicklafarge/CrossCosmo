@@ -1,13 +1,9 @@
 """Utilities for manipulating letters"""
 
-# Standard library imports
 import itertools
 import logging
 import re
 
-# Third-party imports
-
-# Local imports
 
 logger = logging.getLogger(__name__)
 
