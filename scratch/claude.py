@@ -12,7 +12,7 @@ from pony import orm
 from pony.orm import db_session
 
 # from pony.orm import *
-from crosscosmos.data_models.lafarge_model import LaFargeWord
+from crosscosmos.wordlists import LaFargeWord
 
 
 class WordCandidate(NamedTuple):

@@ -1,17 +1,16 @@
-# Standard library imports
 import logging
 import re
 from enum import Enum
-from typing import List, Tuple
 
 import pygtrie
 
-# from crosscosmos.data_models.xword_tracker_model import
 from crosscosmos import letter_utils
-from crosscosmos.data_models.collab_word_list_model import CollabWordListWord
-from crosscosmos.data_models.diehl_model import DiehlWord, TestWord
-from crosscosmos.data_models.lafarge_model import LaFargeWord
-from crosscosmos.data_models.xword_tracker_model import XwordWord
+from crosscosmos.constants import PLACEHOLDERS
+from crosscosmos.wordlists import CollabWordListWord, DiehlWord, LaFargeWord, XwordWord
+
+# from crosscosmos.wordlists.diehl_model import DiehlWord, TestWord
+# from crosscosmos.wordlists import LaFargeWord
+# from crosscosmos.wordlists.xword_tracker_model import XwordWord
 
 logger = logging.getLogger(__name__)
 
@@ -64,10 +63,10 @@ class Corpus:
         words = [w for w in LaFargeWord.select() if not letter_utils.has_numbers(w.word) and len(w.word) >= 3]
         return cls(words, ModelSource.LaFarge)
 
-    @classmethod
-    def from_test(cls):
-        logger.info("Loading Test...")
-        return cls([w for w in TestWord.select()], ModelSource.Test)
+    # @classmethod
+    # def from_test(cls):
+    #     logger.info("Loading Test...")
+    #     return cls([w for w in TestWord.select()], ModelSource.Test)
 
     @classmethod
     def from_diehl(cls):
@@ -92,7 +91,7 @@ class Corpus:
         else:
             return tries
 
-    def query(self, query_str: str) -> List[LaFargeWord]:
+    def query(self, query_str: str) -> list[LaFargeWord]:
         # Replace placeholder {"?", "-", " "} with regular expression
         for p in PLACEHOLDERS:
             query_str = query_str.replace(p, AZRE_PATTERN)
@@ -133,7 +132,7 @@ class Corpus:
     def str2laf(self, word: str):
         return LaFargeWord.select(lambda w: w.word == word)
 
-    def match(self, word_len: int, letters_with_idxs: List[Tuple[int, str]]):
+    def match(self, word_len: int, letters_with_idxs: list[tuple[int, str]]):
         word_list = []
         for w in self.word_list:
             if len(w.word) == word_len and all([w.word[i] == c for i, c in letters_with_idxs]):

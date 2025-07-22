@@ -5,12 +5,12 @@ import logging
 import polars as pl
 from pony import orm
 
-import crosscosmos as xc
+from crosscosmos.config import project_root
 
 logger = logging.getLogger(__name__)
 
-# xd database (see crosscosmos/wordlists/parse_xd.py)
-lafarge_db_path = xc.crosscosmos_project_root / "word_dbs" / "lafarge_words.sqlite"
+# xd database (see crosscosmos/wordlists/saul_xd.py)
+lafarge_db_path = project_root / "word_dbs" / "lafarge_words.sqlite"
 lafarge_word_db = orm.Database()
 lafarge_word_db.bind(
     provider="sqlite",

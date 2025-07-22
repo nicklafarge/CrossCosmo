@@ -5,7 +5,7 @@ from typing import Union
 import networkx as nx
 
 import crosscosmos as xc
-from crosscosmos.data_models.pydantic_model import Letter
+from crosscosmos.wordlists.pydantic_model import Letter
 
 logger = logging.getLogger(__name__)
 

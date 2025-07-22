@@ -5,7 +5,7 @@ from pony.orm import db_session, select
 
 # Per your request, the script will use your existing data model.
 # The example block below will define a dummy version for demonstration.
-from crosscosmos.data_models.lafarge_model import LaFargeWord
+from crosscosmos.wordlists import LaFargeWord
 
 
 class CrosswordHelper:

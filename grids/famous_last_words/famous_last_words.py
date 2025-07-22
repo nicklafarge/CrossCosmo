@@ -1,7 +1,7 @@
 from pathlib import Path
 
 import crosscosmos as xc
-from crosscosmos.data_models.lafarge_model import LaFargeWord
+from crosscosmos.wordlists import LaFargeWord
 
 grid_path = Path(__file__).parent / "famous_last_words.json"
 xc_grid = xc.grid.Grid.load(grid_path)

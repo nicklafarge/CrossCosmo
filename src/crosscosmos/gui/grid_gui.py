@@ -700,7 +700,7 @@ class CrossCosmosGame(arcade.Window):
             else:
                 self.grid_sprites[cell.gui_row][cell.gui_col].color = ACTIVE_WORD_CELL_COLOR
 
-    def gui_row_col_to_grid_row_col(self, gui_row: int, gui_col: int) -> Tuple[int, int]:
+    def gui_row_col_to_grid_row_col(self, gui_row: int, gui_col: int) -> tuple[int, int]:
         """Convert gui row/col to underlying grid row/col
 
         Args:
@@ -708,11 +708,11 @@ class CrossCosmosGame(arcade.Window):
             gui_col: column index in the gui grid (int)
 
         Returns:
-            Tuple[int, int]: row/column index in the underlying grid data object
+            tuple[int, int]: row/column index in the underlying grid data object
         """
         return self.grid.row_count - gui_row - 1, gui_col
 
-    def gui_xy_to_gui_row_col(self, x_grid: float, y_grid: float) -> Tuple[bool, int, int]:
+    def gui_xy_to_gui_row_col(self, x_grid: float, y_grid: float) -> tuple[bool, int, int]:
         """Determine which gui cell corresponds to an (x,y) location in the gui
 
         Args:
@@ -720,7 +720,7 @@ class CrossCosmosGame(arcade.Window):
             y_grid: y coordinate in the arcade.Window gui (float)
 
         Returns:
-            Tuple[bool, int, int]:
+            tuple[bool, int, int]:
                 1) True if (x,y) is within the grid portion of the gui
                 2) row index in the gui grid (int)
                 3) column index in the gui grid (int)
@@ -800,7 +800,7 @@ if __name__ == "__main__":
 
     # Create grid backend
     # test_file = Path(xc.crosscosmos_project_root / "grids" / "famous_last_words.json")
-    test_file = Path(xc.crosscosmos_project_root / "test_grid_88.json")
+    test_file = Path(xc.project_root / "test_grid_88.json")
     # test_file = Path(xc.crosscosmos_project_root / "test_grid_55.json")
     xc_grid = xc.grid.Grid.load(test_file)
     xc_grid.corpus = xc.corpus.Corpus.from_test()

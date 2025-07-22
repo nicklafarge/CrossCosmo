@@ -4,12 +4,12 @@ import logging
 
 from pony import orm
 
-import crosscosmos as xc
+from crosscosmos.config import project_root
 
 logger = logging.getLogger(__name__)
 
-# diehl database (see crosscosmos/wordlists/parse_diehl.py)
-diehl_db_path = xc.crosscosmos_project_root / "word_dbs" / "diehl_words.sqlite"
+# diehl database (see crosscosmos/wordlists/diehl.py)
+diehl_db_path = project_root / "word_dbs" / "diehl_words.sqlite"
 diehl_word_db = orm.Database()
 diehl_word_db.bind(
     provider="sqlite",
@@ -17,7 +17,7 @@ diehl_word_db.bind(
     create_db=True,
 )
 # test database
-test_db_path = xc.crosscosmos_project_root / "word_dbs" / "test_words.sqlite"
+test_db_path = project_root / "word_dbs" / "test_words.sqlite"
 test_word_db = orm.Database()
 test_word_db.bind(
     provider="sqlite",
@@ -30,7 +30,7 @@ class DiehlWord(diehl_word_db.Entity):
     word = orm.PrimaryKey(str)
     score = orm.Required(int)
 
-    def __repr__(cls):
+    def __repr__(cls):  # noqa: N805
         return f"DiehlWord['{cls.word}', {cls.score}]"
 
 
@@ -46,3 +46,6 @@ class TestWord(test_word_db.Entity):
 
 
 test_word_db.generate_mapping(create_tables=True)
+
+if __name__ == "__main__":
+    pass

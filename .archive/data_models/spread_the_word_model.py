@@ -7,12 +7,12 @@ import logging
 
 from pony import orm
 
-import crosscosmos as xc
+from crosscosmos.config import project_root
 
 logger = logging.getLogger(__name__)
 
-# spread the word database (see crosscosmos/wordlists/parse_spread_the_word_list.py)
-spread_the_word_list_db_path = xc.crosscosmos_project_root / "word_dbs" / "spread_the_word_list_words.sqlite"
+# spread the word database (see crosscosmos/wordlists/spread_the_word.py)
+spread_the_word_list_db_path = project_root / "word_dbs" / "spread_the_word_list_words.sqlite"
 spread_the_word_list_word_db = orm.Database()
 spread_the_word_list_word_db.bind(
     provider="sqlite",

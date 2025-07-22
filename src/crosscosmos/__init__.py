@@ -3,13 +3,12 @@
 # Retrieve the explicitly exported variables from crosscosmos.config
 from .config import *
 
-PLACEHOLDERS = [r"?", r"-", r" "]
+from . import wordlists
 
 # Expose submodules
 from . import (
     corpus,
-    data_models,
-    digraph,
+    constants,
     grid,
     gui,
     io_utils,
@@ -18,7 +17,6 @@ from . import (
     query,
     smatch,
     standards,
-    wordlists,
 )
 
 # Enums
@@ -33,5 +31,4 @@ from .grid import (
 )
 
 # Setup logging
-
-log_config.setup_logging(crosscosmos_project_root)
+log_config.setup_logging(project_root)

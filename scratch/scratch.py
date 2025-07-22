@@ -7,7 +7,7 @@ import numpy as np
 
 from crosscosmos.corpus import Corpus
 from crosscosmos import letter_utils
-# from crosscosmos.data_models.lafarge_model import LaFargeWord
+# from crosscosmos.wordlists import LaFargeWord
 
 logger = logging.getLogger(__name__)
 

@@ -1,4 +1,3 @@
-# Standard libaray
 import json
 from pathlib import Path
 

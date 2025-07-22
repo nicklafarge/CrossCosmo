@@ -84,7 +84,7 @@ class Cell:
         y: int,
         status: CellStatus = CellStatus.EMPTY,
         value: str = "",
-        gui_coordinates: Union[Tuple[float, float], None] = None,
+        gui_coordinates: Union[tuple[float, float], None] = None,
         shuffle=True,
     ):
         self.status = status
@@ -221,7 +221,7 @@ class Cell:
 
 
 class CellList:
-    def __init__(self, cells: List[Cell]):
+    def __init__(self, cells: list[Cell]):
         self.cells = cells
 
         # Default
@@ -259,7 +259,7 @@ class CellList:
 class Grid:
     def __init__(
         self,
-        grid_size: Tuple[int, int],
+        grid_size: tuple[int, int],
         corpus: xc.corpus.Corpus = None,
         shuffle: bool = True,
         symmetry: GridSymmetry = GridSymmetry.ROTATIONAL,
@@ -301,14 +301,14 @@ class Grid:
     def __repr__(self):
         return f"Grid(dim=({self.grid_size[0]}, {self.grid_size[1]})"
 
-    def __getitem__(self, x: Tuple[int, int]) -> Cell:
+    def __getitem__(self, x: tuple[int, int]) -> Cell:
         # Check index
         if (x[0] < 0 or x[0] > self.grid_size[0]) or (x[1] < 0 or x[1] > self.grid_size[1]):
             raise IndexError(f"Index outside grid bounds:({self.grid_size[0]}, {self.grid_size[1]})")
 
         return self.grid[*x]
 
-    def __setitem__(self, x: Tuple[int, int], value: str):
+    def __setitem__(self, x: tuple[int, int], value: str):
         self.set_grid(x[0], x[1], value)
 
     @classmethod
@@ -352,7 +352,7 @@ class Grid:
 
     def count_possible(
         self,
-        query_cells: Union[CellList, List[Tuple[Cell, WordDirection]]],
+        query_cells: Union[CellList, list[tuple[Cell, WordDirection]]],
         grid_status: GridStatus = GridStatus.INCOMPLETE,
         query_level: int = 2,
         corpus=None,
@@ -692,7 +692,7 @@ class Grid:
 
     # Utilities ###############################################################
 
-    def corner2center(self, x: int, y: int) -> Tuple[float, float]:
+    def corner2center(self, x: int, y: int) -> tuple[float, float]:
         """Convert coordinate measured form corner, to coordinate measured from center of grid
 
         a: Corner -> Pt         [x,y]
@@ -704,7 +704,7 @@ class Grid:
         """
         return x - self.center[0], y - self.center[1]
 
-    def center2corner(self, c1: float, c2: float) -> Tuple[int, int]:
+    def center2corner(self, c1: float, c2: float) -> tuple[int, int]:
         """Convert coordinate measured form center, to coordinate measured from corner
 
         A: Corner -> Pt         [x,y]
@@ -737,7 +737,7 @@ class Grid:
         cells = start_cells + [start_cell] + end_cells
         return CellList(cells)
 
-    def aggregate_cells(self, i: int, j: int, which: GridDirection, terminate_on_empty=False) -> List[Cell]:
+    def aggregate_cells(self, i: int, j: int, which: GridDirection, terminate_on_empty=False) -> list[Cell]:
         cells = [self[i, j]]
 
         # Nothing to aggregate if we're starting at a black square
@@ -1015,7 +1015,7 @@ if __name__ == "__main__":
 
     g.to_console()
 
-    test_file = Path(xc.crosscosmos_project_root / "test_grid.xc")
+    test_file = Path(xc.project_root / "test_grid.xc")
     # g.save(test_file)
     g2 = Grid.load(test_file)
     print()

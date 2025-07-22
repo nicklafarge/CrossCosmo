@@ -5,8 +5,8 @@ import logging
 import pony
 
 # Local
-from crosscosmos.data_models.lafarge_model import LaFargeWord
-from crosscosmos.data_models.pydantic_model import Word
+from crosscosmos.wordlists import LaFargeWord
+from crosscosmos.wordlists.pydantic_model import Word
 from crosscosmos.digraph.xgraph import LetterSet
 
 logger = logging.getLogger("create_graph")

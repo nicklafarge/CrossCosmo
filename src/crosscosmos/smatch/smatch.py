@@ -1,5 +1,4 @@
-# # Standard library imports
-# import logging
+# # import logging
 # from typing import List
 # import re
 #
@@ -8,7 +7,7 @@
 #
 # # Local
 # import crosscosmos as xc
-# from crosscosmos.data_models.lafarge_model import lafarge_word_db, LaFargeWord
+# from crosscosmos.wordlists import lafarge_word_db, LaFargeWord
 # from crosscosmos.digraph.xgraph import LetterSet
 #
 # logger = logging.getLogger(__name__)
@@ -32,7 +31,7 @@
 #     return [w for w in word_db.select() if xc.letter_utils.is_only_letters(w.word)]
 #
 #
-# def query(query_str: str, word_list: List[LaFargeWord]):
+# def query(query_str: str, word_list: list[LaFargeWord]):
 #     query_pattern = fr"\b{query_str.replace("?", AZRE_PATTERN)}\b"
 #     compiled_pattern = re.compile(query_pattern, re.IGNORECASE)  # re.IGNORECASE makes it case-insensitive
 #     matching = [w for w in word_list if compiled_pattern.search(w.word)]

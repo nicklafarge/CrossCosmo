@@ -1,13 +1,9 @@
-# Standard
-# Third-party
 import logging
 import time
 from enum import Enum
-from typing import List
 
 import pygtrie
 
-# CrossCosmos
 import crosscosmos as xc
 from crosscosmos.grid import CellStatus, MoveDirection, WordDirection
 
@@ -31,7 +27,7 @@ def check_letter_sequence(cell, the_grid, trie_list, direction: WordDirection):
     return trie_list[word_len].has_node(str(cell_sequence))
 
 
-def reset_cell_with_trie(the_grid, x: int, y: int, trie_list: List[pygtrie]):
+def reset_cell_with_trie(the_grid, x: int, y: int, trie_list: list[pygtrie]):
     # Reset the cell's status
     removed_words = the_grid[x, y].reset_cell()
     c = the_grid[x, y]

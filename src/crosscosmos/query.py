@@ -1,24 +1,15 @@
-"""
-Copyright 2023 The Johns Hopkins University Applied Physics Laboratory LLC (JHU/APL).
-
-All Rights Reserved.
-This material may be only be used, modified, or reproduced by or for the U.S. Government
-pursuant to the license rights granted under the clauses at DFARS 252.227-7013/7014 or
-FAR 52.227-14. For any other permission, please contact the Office of Technology Transfer at JHU/APL.
-"""
 
 import logging
-from typing import Union
 
 import polars as pl
 from pony import orm
 
 import crosscosmos as xc
 
-logger = logging.getLogger("query")
+logger = logging.getLogger(__name__)
 
 
-def match(corpus: xc.corpus.Corpus, query: Union[str, xc.grid.CellList]):
+def match(corpus: xc.corpus.Corpus, query: str | xc.grid.CellList):
     return corpus.query(str(query))
 
 
@@ -41,7 +32,7 @@ def match_words(db, match_str):
     match_str = str(match_str)
     words = orm.select(w for w in db if len(w.word) == len(match_str))
     for i, c in enumerate(match_str):
-        if c in xc.PLACEHOLDERS:
+        if c in xc.constants.PLACEHOLDERS:
             continue
         words = orm.select(w for w in words if w.word[i] == c)
     return query_to_df(words)
