@@ -3,15 +3,15 @@
 import logging
 from typing import Any, Callable
 
+import numpy as np
 from pony import orm
 
+from crosscosmos.config import project_root
 from crosscosmos.wordlists.collaborative_wordlist import CollabWordListWord
 from crosscosmos.wordlists.crossword_tracker import XwordWord
 from crosscosmos.wordlists.diehl import DiehlWord
 from crosscosmos.wordlists.saul_xd import XdWord, XdWordUsage
 from crosscosmos.wordlists.spread_the_word import StwWord
-
-from crosscosmos.config import project_root
 
 logger = logging.getLogger(__file__)
 
@@ -37,7 +37,6 @@ class LaFargeClue(lafarge_word_db.Entity):
 
 class LaFargeWord(lafarge_word_db.Entity):
     word = orm.PrimaryKey(str)
-    score = orm.Required(int, default=0)
     clues = orm.Set("LaFargeClue")
     sources = orm.Required(orm.Json)
     collab_score = orm.Optional(int)
@@ -49,6 +48,10 @@ class LaFargeWord(lafarge_word_db.Entity):
 
     def __repr__(cls):
         return f"LaFargeWord['{cls.word}', {cls.score}]"
+
+    @property
+    def score(self):
+        return np.mean([self.diehl_score or 0, self.collab_score or 0, self.stw_score or 0])
 
     def verbose(cls, override_xword=True):
         if override_xword:
@@ -161,7 +164,7 @@ def populate() -> None:
 
 
 if __name__ == "__main__":
-
+    pass
     # Update from collaborative word list
     # update_from_source(
     #     CollabWordListWord, "collab_word_list", lambda laf, src: setattr(laf, "collab_score", src.score)
