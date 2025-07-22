@@ -7,7 +7,6 @@ Source:
 
 import logging
 
-
 import crosscosmos as xc
 from crosscosmos.data_models import collab_word_list_model
 from crosscosmos.wordlists import parse_word_score

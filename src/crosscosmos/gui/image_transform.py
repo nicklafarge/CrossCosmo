@@ -4,7 +4,7 @@ import numpy as np
 import PIL.Image
 
 
-class RGBTransform(object):
+class RGBTransform:
     """A description of an affine transformation to an RGB image.
 
     This class is immutable.

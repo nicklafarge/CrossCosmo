@@ -2,8 +2,6 @@
 
 import logging
 
-import pony.orm
-
 from crosscosmos.data_models import (
     collab_word_list_model,
     diehl_model,

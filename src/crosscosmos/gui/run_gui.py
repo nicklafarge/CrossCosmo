@@ -3,8 +3,9 @@ Entry point for the CrossCosmos GUI
 """
 
 # Third-party
-import arcade
 from configparser import ConfigParser
+
+import arcade
 
 # Local
 import crosscosmos as xc

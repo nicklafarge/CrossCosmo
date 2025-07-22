@@ -6,7 +6,6 @@ from pony import orm
 
 import crosscosmos as xc
 
-
 logger = logging.getLogger(__name__)
 
 # collaborative-word-list database (see crosscosmos/wordlists/parse_collab_word_list.py)

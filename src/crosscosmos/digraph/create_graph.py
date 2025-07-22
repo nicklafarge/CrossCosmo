@@ -1,17 +1,12 @@
 # Standard library imports
 import logging
-from typing import Union
 
 # Third party
-import networkx as nx
-from matplotlib import pyplot as plt
 import pony
-from pony.orm import select, raw_sql
 
 # Local
-import crosscosmos as xc
-from crosscosmos.data_models.pydantic_model import Letter, Word
-from crosscosmos.data_models.lafarge_model import lafarge_word_db, LaFargeWord
+from crosscosmos.data_models.lafarge_model import LaFargeWord
+from crosscosmos.data_models.pydantic_model import Word
 from crosscosmos.digraph.xgraph import LetterSet
 
 logger = logging.getLogger("create_graph")

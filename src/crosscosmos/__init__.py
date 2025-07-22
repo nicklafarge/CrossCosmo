@@ -16,23 +16,22 @@ from . import (
     letter_utils,
     log_config,
     query,
-    standards,
     smatch,
+    standards,
     wordlists,
 )
 
 # Enums
-from .bot import LetterStatus, LetterSequenceStatus
+from .bot import LetterSequenceStatus, LetterStatus
 from .grid import (
     CellStatus,
     GridDirection,
     GridStatus,
-    WordDirection,
     GridSymmetry,
     MoveDirection,
+    WordDirection,
 )
 
 # Setup logging
-from . import log_config
 
 log_config.setup_logging(crosscosmos_project_root)

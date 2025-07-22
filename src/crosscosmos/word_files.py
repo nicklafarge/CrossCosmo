@@ -5,7 +5,7 @@ path = Path("/Users/nlafarge/Library/CloudStorage/Dropbox/Personal/CrossCosmos/s
 
 WHITESPACE = r"            "
 
-with open(path, "r") as file:
+with open(path) as file:
     reader = csv.reader(file, delimiter="\n")
 
     words = [row[0].strip() for row in reader]

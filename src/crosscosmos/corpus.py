@@ -1,18 +1,17 @@
 # Standard library imports
 import logging
-from typing import List, Tuple, Union
 import re
 from enum import Enum
+from typing import List, Tuple
 
 import pygtrie
 
-from crosscosmos.data_models.xword_tracker_model import XwordWord
-from crosscosmos.data_models.collab_word_list_model import CollabWordListWord
-from crosscosmos.data_models.lafarge_model import LaFargeWord
-from crosscosmos.data_models.diehl_model import DiehlWord, TestWord
-
 # from crosscosmos.data_models.xword_tracker_model import
 from crosscosmos import letter_utils
+from crosscosmos.data_models.collab_word_list_model import CollabWordListWord
+from crosscosmos.data_models.diehl_model import DiehlWord, TestWord
+from crosscosmos.data_models.lafarge_model import LaFargeWord
+from crosscosmos.data_models.xword_tracker_model import XwordWord
 
 logger = logging.getLogger(__name__)
 
@@ -35,7 +34,7 @@ score = {
 }
 
 
-class Corpus(object):
+class Corpus:
     def __init__(self, word_list, model: ModelSource):
         self.word_list = word_list
         self.trie = None

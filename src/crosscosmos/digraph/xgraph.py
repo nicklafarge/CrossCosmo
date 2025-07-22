@@ -5,12 +5,12 @@ from typing import Union
 import networkx as nx
 
 import crosscosmos as xc
-from crosscosmos.data_models.pydantic_model import Letter, Word
+from crosscosmos.data_models.pydantic_model import Letter
 
 logger = logging.getLogger(__name__)
 
 
-class LetterSet(object):
+class LetterSet:
     def __init__(self, n_max_letters: int):
         self.n_max_letters = n_max_letters
         self.n_letters = 26

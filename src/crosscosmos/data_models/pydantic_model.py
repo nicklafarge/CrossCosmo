@@ -1,12 +1,8 @@
 """Data models for letters and words"""
 
 import logging
-from typing import Union
 
-import networkx as nx
 from pydantic import AnyUrl, BaseModel, ConfigDict
-
-import crosscosmos as xc
 
 logger = logging.getLogger(__name__)
 

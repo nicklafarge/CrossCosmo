@@ -1,15 +1,15 @@
 # Standard
-from enum import Enum
-import time
-from typing import List
-
 # Third-party
 import logging
+import time
+from enum import Enum
+from typing import List
+
 import pygtrie
 
 # CrossCosmos
 import crosscosmos as xc
-from crosscosmos.grid import CellStatus, WordDirection, MoveDirection
+from crosscosmos.grid import CellStatus, MoveDirection, WordDirection
 
 logger = logging.getLogger(__name__)
 

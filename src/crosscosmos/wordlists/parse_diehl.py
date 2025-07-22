@@ -8,9 +8,7 @@ Source (Diehl Trimmed List):
 
 """
 
-import csv
 import logging
-
 
 import crosscosmos as xc
 from crosscosmos.data_models import diehl_model

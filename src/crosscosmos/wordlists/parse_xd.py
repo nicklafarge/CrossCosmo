@@ -7,7 +7,6 @@ import csv
 import logging
 import sys
 
-
 import crosscosmos as xc
 from crosscosmos.data_models import xd_model
 
