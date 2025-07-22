@@ -15,7 +15,6 @@ from . import (
     letter_utils,
     log_config,
     query,
-    smatch,
     standards,
 )
 

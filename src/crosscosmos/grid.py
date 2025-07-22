@@ -9,7 +9,7 @@ import random
 import string
 from enum import Enum
 from pathlib import Path
-from typing import List, Tuple, Union
+from typing import Union
 
 import numpy as np
 import polars as pl

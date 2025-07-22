@@ -41,11 +41,13 @@ class DiehlWord(diehl_word_db.Entity):
     def __repr__(self):
         return f"DiehlWord['{self.word}', {self.score}]"
 
+
 diehl_word_db.generate_mapping(create_tables=True)
 
 # ====================================================================================================
 # Database population functions
 # ====================================================================================================
+
 
 def populate():
     parse_word_score(diehl_path, DiehlWord, ";")
