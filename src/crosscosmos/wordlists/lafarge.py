@@ -185,10 +185,4 @@ if __name__ == "__main__":
     #     StwWord, "spread_the_word", lambda laf, src: setattr(laf, "stw_score", src.score)
     # )
 
-    for w in LaFargeWord.select():
-        if w.diehl_score:
-            w.diehl_score = w.diehl_score * 2
-
-    orm.commit()
-
     # orm.commit()
