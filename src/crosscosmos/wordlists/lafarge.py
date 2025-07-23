@@ -1,6 +1,7 @@
 """Populate the LaFarge wordlist model from existing sources"""
 
 import logging
+import re
 from typing import Any, Callable
 
 import numpy as np
@@ -14,6 +15,21 @@ from crosscosmos.wordlists.saul_xd import XdWord, XdWordUsage
 from crosscosmos.wordlists.spread_the_word import StwWord
 
 logger = logging.getLogger(__file__)
+
+def setup_database_regexp(db_object):
+    """
+    Links the python 're' module to the SQLite 'REGEXP' function.
+
+    Call this function ONCE after db.bind() and before you query.
+    """
+    if db_object.provider.dialect != "SQLite":
+        return  # This function is only for SQLite
+
+    @db_object.provider.dbapi_connection.create_function("REGEXP", 2)
+    def regexp(expr, item):
+        if item is None:
+            return False
+        return re.search(expr, item) is not None
 
 # ====================================================================================================
 # Database Model
@@ -37,6 +53,7 @@ class LaFargeClue(lafarge_word_db.Entity):
 
 class LaFargeWord(lafarge_word_db.Entity):
     word = orm.PrimaryKey(str)
+    score = orm.Required(float, default=0)
     clues = orm.Set("LaFargeClue")
     sources = orm.Required(orm.Json)
     collab_score = orm.Optional(int)
@@ -50,17 +67,32 @@ class LaFargeWord(lafarge_word_db.Entity):
         return f"LaFargeWord['{cls.word}', {cls.score}]"
 
     @property
-    def score(self):
-        return np.mean([self.diehl_score or 0, self.collab_score or 0, self.stw_score or 0])
-
-    def verbose(cls, override_xword=True):
-        if override_xword:
-            xword_link = f"https://crosswordtracker.com/answer/{cls.word.lower()}/"
+    def avg_score(self):
+        scores_to_average = [
+            s or 0 for s in [self.diehl_score, self.collab_score, self.stw_score]
+        ]
+        # scores_to_average = [
+        #     s for s in [self.diehl_score, self.collab_score, self.stw_score]
+        #     if s is not None
+        # ]
+        if scores_to_average:
+            return np.mean(scores_to_average)
         else:
-            xword_link = cls.xword_link
-        return f"LaFargeWord['{cls.word}', Collab={cls.collab_score}, Diehl={cls.diehl_score}, xword={xword_link}]"
+            return 0
+
+    def verbose(self, override_xword=True):
+        if override_xword:
+            xword_link = f"https://crosswordtracker.com/answer/{self.word.lower()}/"
+        else:
+            xword_link = self.xword_link
+        return (f"LaFargeWord['{self.word}', "
+                f"Collab={self.collab_score}, "
+                f"Diehl={self.diehl_score}, "
+                f"Stw={self.stw_score}, "
+                f"xword={xword_link}]")
 
 
+# setup_database_regexp(lafarge_word_db)
 lafarge_word_db.generate_mapping(create_tables=True)
 
 # ====================================================================================================
@@ -162,9 +194,15 @@ def populate() -> None:
 
     orm.commit()
 
+def update_score():
+    for w in LaFargeWord.select():
+        w.score = w.avg_score
+    orm.commit()
+
 
 if __name__ == "__main__":
     pass
+    update_score()
     # Update from collaborative word list
     # update_from_source(
     #     CollabWordListWord, "collab_word_list", lambda laf, src: setattr(laf, "collab_score", src.score)

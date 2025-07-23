@@ -29,5 +29,10 @@ from .grid import (
     WordDirection,
 )
 
+from .query import Query, search
+from .filter import Filter
+from .wordlists.lafarge import LaFargeWord
+
 # Setup logging
 log_config.setup_logging(project_root)
+

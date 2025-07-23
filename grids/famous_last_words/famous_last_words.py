@@ -45,3 +45,10 @@ df56d = xc_grid.get_possible_words(LaFargeWord, "56D", score_threshold)
 df57d = xc_grid.get_possible_words(LaFargeWord, "57D", score_threshold)
 
 xc_grid.get_word("60A")
+#
+#
+#
+# from crosscosmos.filter import Filter
+# f = Filter(df55d)
+# dfm = f.fix_letter(0, "M").apply()
+# # grid_gui.run_default(xc_grid)

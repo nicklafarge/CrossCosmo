@@ -19,5 +19,3 @@ for x in word_lengths.iter_rows(named=True):
     print(f"{x['word_len']:02}  |  {x['wcount']:02}")
     print(f"   {', '.join(x['dir_answer_list'])}")
 
-
-grid_gui.run_default(xc_grid)
