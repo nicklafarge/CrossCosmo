@@ -19,8 +19,8 @@ def is_only_letters(input_string: str):
     return bool(re.fullmatch(r"^[a-zA-Z]+$", input_string))
 
 
-def has_numbers(inputString: str):
-    return any(char.isdigit() for char in inputString)
+def has_numbers(input_string: str):
+    return any(char.isdigit() for char in input_string)
 
 
 def generate_permutations(word: str):

@@ -1,24 +1,13 @@
 import logging
 import time
-from enum import Enum
 
 import pygtrie
 
 import crosscosmos as xc
+from crosscosmos.enums import LetterSequenceStatus, LetterStatus
 from crosscosmos.grid import CellStatus, MoveDirection, WordDirection
 
 logger = logging.getLogger(__name__)
-
-
-class LetterStatus(Enum):
-    VALID = 1
-    INVALID = 2
-
-
-class LetterSequenceStatus(Enum):
-    INVALID = 1
-    VALID_SUBTRIE = 2
-    VALID_WORD = 3
 
 
 def check_letter_sequence(cell, the_grid, trie_list, direction: WordDirection):
@@ -234,9 +223,9 @@ def solve(grid: xc.grid.Grid, max_time=30):
 
 
 if __name__ == "__main__":
-    test_corpus = xc.corpus.Corpus.from_test()
+    # test_corpus = xc.corpus.Corpus.from_test()
     # test_corpus = xc.corpus.Corpus.from_diehl()
-    # test_corpus = xc.corpus.Corpus.from_lafarge()
+    test_corpus = xc.corpus.Corpus.from_lafarge()
     # lc4 = lc.to_n_letter_corpus(4)
     # lc5 = lc.to_subcorpus(4, 5)
     # lc6 = lc.to_subcorpus(4, 6)

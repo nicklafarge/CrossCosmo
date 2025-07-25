@@ -6,7 +6,10 @@ import pygtrie
 
 from crosscosmos import letter_utils
 from crosscosmos.constants import PLACEHOLDERS
-from crosscosmos.wordlists import CollabWordListWord, DiehlWord, LaFargeWord, XwordWord
+from crosscosmos.wordlists.collaborative_wordlist import CollabWordListWord
+from crosscosmos.wordlists.crossword_tracker import XwordWord
+from crosscosmos.wordlists.diehl import DiehlWord
+from crosscosmos.wordlists.lafarge import LaFargeWord
 
 # from crosscosmos.wordlists.diehl_model import DiehlWord, TestWord
 # from crosscosmos.wordlists import LaFargeWord
@@ -135,7 +138,7 @@ class Corpus:
     def match(self, word_len: int, letters_with_idxs: list[tuple[int, str]]):
         word_list = []
         for w in self.word_list:
-            if len(w.word) == word_len and all([w.word[i] == c for i, c in letters_with_idxs]):
+            if len(w.word) == word_len and all([w.word[i] == c for i, c in letters_with_idxs]):  # noqa: C419
                 word_list.append(w)
 
         return word_list

@@ -1,14 +1,10 @@
 """Root __init__.py for CrossCosmos."""
 
 # Retrieve the explicitly exported variables from crosscosmos.config
-from .config import *
-
-from . import wordlists
-
 # Expose submodules
 from . import (
-    corpus,
     constants,
+    corpus,
     grid,
     gui,
     io_utils,
@@ -16,10 +12,13 @@ from . import (
     log_config,
     query,
     standards,
+    wordlists,
 )
 
 # Enums
 from .bot import LetterSequenceStatus, LetterStatus
+from .config import *
+from .filter import Filter
 from .grid import (
     CellStatus,
     GridDirection,
@@ -28,11 +27,9 @@ from .grid import (
     MoveDirection,
     WordDirection,
 )
-
+from .gui.grid_gui import run_default as run_gui
 from .query import Query, search
-from .filter import Filter
 from .wordlists.lafarge import LaFargeWord
 
 # Setup logging
 log_config.setup_logging(project_root)
-

@@ -15,7 +15,8 @@ import numpy as np
 import polars as pl
 from pony import orm
 
-import crosscosmos as xc
+from crosscosmos import io_utils, query
+from crosscosmos.corpus import Corpus
 
 logger = logging.getLogger(__name__)
 
@@ -41,9 +42,9 @@ class WordDirection(Enum):
     @staticmethod
     def from_char(str_id):
         if str_id.upper() in ["A", "H"]:
-            return xc.WordDirection.HORIZONTAL
+            return WordDirection.HORIZONTAL
         elif str_id.upper() in ["D", "V"]:
-            return xc.WordDirection.VERTICAL
+            return WordDirection.VERTICAL
         else:
             raise ValueError("Expected A or D")
 
@@ -161,7 +162,7 @@ class Cell:
 
     @classmethod
     def load(cls, filename: Path, **kwargs):
-        return cls.from_dict(xc.io_utils.load_json(filename), **kwargs)
+        return cls.from_dict(io_utils.load_json(filename), **kwargs)
 
     @property
     def is_valid(self):
@@ -186,7 +187,7 @@ class Cell:
                 raise ValueError("Invalid WordDirection")
 
     def save(self, filename: Path):
-        xc.io_utils.save_json_dict(filename, self.to_json())
+        io_utils.save_json_dict(filename, self.to_json())
 
     def update(self, value: str):
         if value == " " or value == "":
@@ -225,10 +226,7 @@ class CellList:
         self.cells = cells
 
         # Default
-        if not self.cells or len(self.cells) < 1:
-            self.direction = WordDirection.HORIZONTAL
-
-        if not self.cells or self.cells[1].y > self.cells[0].y:
+        if not self.cells or len(self.cells) < 1 or self.cells[1].y > self.cells[0].y:
             self.direction = WordDirection.HORIZONTAL
         else:
             self.direction = WordDirection.VERTICAL
@@ -260,7 +258,7 @@ class Grid:
     def __init__(
         self,
         grid_size: tuple[int, int],
-        corpus: xc.corpus.Corpus = None,
+        corpus: Corpus = None,
         shuffle: bool = True,
         symmetry: GridSymmetry = GridSymmetry.ROTATIONAL,
         auto_symmetry: bool = False,
@@ -327,13 +325,13 @@ class Grid:
 
     @classmethod
     def load(cls, filepath: Path, **kwargs):
-        new_grid = cls.from_dict(xc.io_utils.load_json(filepath), **kwargs)
+        new_grid = cls.from_dict(io_utils.load_json(filepath))
         new_grid.save_path = filepath
         return new_grid
 
     @property
     def is_valid(self):
-        return all([c.is_valid for c in self.grid.flatten()])
+        return all(c.is_valid for c in self.grid.flatten())
 
     # Saving ###############################################################
 
@@ -343,12 +341,12 @@ class Grid:
             row = [self.grid[i, j].to_json() for j in range(self.col_count)]
             grid_letters.append(row)
 
-        return dict(
-            grid_size=self.grid_size,
-            grid_letters=grid_letters,
-            symmetry=self.symmetry.value,
-            auto_symmetry=self.auto_symmetry,
-        )
+        return {
+            "grid_size": self.grid_size,
+            "grid_letters": grid_letters,
+            "symmetry": self.symmetry.value,
+            "auto_symmetry": self.auto_symmetry,
+        }
 
     def count_possible(
         self,
@@ -413,7 +411,7 @@ class Grid:
                 continue
 
             # Get the possible words
-            c_candidate_words = xc.query.match(corpus, str(query_cell_list))
+            c_candidate_words = query.match(corpus, str(query_cell_list))
 
             # Recursively check other directions ---------------------------------------#
             head_cell = query_cell_list[0]
@@ -444,7 +442,7 @@ class Grid:
         else:
             raise RuntimeError("Save path undefined")
 
-        xc.io_utils.save_json_dict(save_path, self.to_json())
+        io_utils.save_json_dict(save_path, self.to_json())
 
     def get_symmetric_index(self, x: int, y: int, symmetry: GridSymmetry):
         if symmetry == GridSymmetry.ROTATIONAL:
@@ -452,7 +450,7 @@ class Grid:
             coord_rot_center = -coord_center[0], -coord_center[1]
             return self.center2corner(*coord_rot_center)
 
-    def build_tries(self, n: int = None):
+    def build_tries(self, n: int | None = None):
         if self.corpus:
             if n:
                 trie_len = n
@@ -598,9 +596,7 @@ class Grid:
 
     def is_h_start(self, i: int, j: int) -> bool:
         if j > 0:
-            is_after_black = (
-                self[i, j - 1].status == xc.grid.CellStatus.BLACK and self[i, j].status != xc.grid.CellStatus.BLACK
-            )
+            is_after_black = self[i, j - 1].status == CellStatus.BLACK and self[i, j].status != CellStatus.BLACK
         else:
             is_after_black = False
 
@@ -608,27 +604,21 @@ class Grid:
 
     def is_h_end(self, i: int, j: int) -> bool:
         if j < self.col_count - 1:
-            is_before_black = (
-                self[i, j + 1].status == xc.grid.CellStatus.BLACK and self[i, j].status != xc.grid.CellStatus.BLACK
-            )
+            is_before_black = self[i, j + 1].status == CellStatus.BLACK and self[i, j].status != CellStatus.BLACK
         else:
             is_before_black = False
         return self[i, j].status != CellStatus.BLACK and (j == (self.col_count - 1) or is_before_black)
 
     def is_v_start(self, i: int, j: int) -> bool:
         if i > 0:
-            is_after_black = (
-                self[i - 1, j].status == xc.grid.CellStatus.BLACK and self[i, j].status != xc.grid.CellStatus.BLACK
-            )
+            is_after_black = self[i - 1, j].status == CellStatus.BLACK and self[i, j].status != CellStatus.BLACK
         else:
             is_after_black = False
         return self[i, j].status != CellStatus.BLACK and (i == 0 or is_after_black)
 
     def is_v_end(self, i: int, j: int) -> bool:
         if i < self.row_count - 1:
-            is_before_black = (
-                self[i + 1, j].status == xc.grid.CellStatus.BLACK and self[i, j].status != xc.grid.CellStatus.BLACK
-            )
+            is_before_black = self[i + 1, j].status == CellStatus.BLACK and self[i, j].status != CellStatus.BLACK
         else:
             is_before_black = False
         return self[i, j].status != CellStatus.BLACK and (i == (self.row_count - 1) or is_before_black)
@@ -734,7 +724,7 @@ class Grid:
 
         start_cells = list(reversed(self.aggregate_cells(x, y, pre_traverse_dir, terminate_on_empty)[1:]))
         end_cells = self.aggregate_cells(x, y, pos_traverse_dir, terminate_on_empty)[1:]
-        cells = start_cells + [start_cell] + end_cells
+        cells = [*start_cells, start_cell, *end_cells]
         return CellList(cells)
 
     def aggregate_cells(self, i: int, j: int, which: GridDirection, terminate_on_empty=False) -> list[Cell]:
@@ -799,8 +789,8 @@ class Grid:
             Cell ID, must be a number followed by "A" or "D" (e.g., '1A' or '10D')
 
         """
-        word_dir = xc.WordDirection.from_char(entry_id[-1])
-        starts = self.h_starts if word_dir == xc.WordDirection.HORIZONTAL else self.v_starts
+        word_dir = WordDirection.from_char(entry_id[-1])
+        starts = self.h_starts if word_dir == WordDirection.HORIZONTAL else self.v_starts
 
         entry_num = int(entry_id[:-1])
         try:
@@ -826,12 +816,11 @@ class Grid:
         """
         word = self.get_word(entry_id)
         return [
-            self.full_word_from_cell(*cell.matrix_index, direction=xc.WordDirection.flip(word.direction))
-            for cell in word
+            self.full_word_from_cell(*cell.matrix_index, direction=WordDirection.flip(word.direction)) for cell in word
         ]
 
     def get_possible_words(
-        self, db, entry_id: str, score_threshold: float = 0, exclude: dict[int, list[str] | str] | None = None
+        self, db, entry_id: str, exclude: dict[int, list[str] | str] | None = None, **kwargs
     ) -> pl.DataFrame:
         """Get all possible words for a given entry given a data source and minimum score threshold
 
@@ -841,12 +830,11 @@ class Grid:
             Database of valid entries
         entry_id : str
             Cell ID, must be a number followed by "A" or "D" (e.g., '1A' or '10D')
-        score_threshold : float, optional
-            Threshold for cutting off low-scored values
         exclude : dict (index -> character list)
             Dictionary representing indices to exclude letters. For example {1: "A"} will filter all entires that have
             "A" as the first character
-
+        kwargs : dict
+            passed to Query
 
         Returns
         -------
@@ -862,14 +850,15 @@ class Grid:
 
         possible_letters_map = {}
         for i, cw in enumerate(crossers):
-            df_i = xc.query.match_words(db, cw)
+            df_i = query.Query(db, **kwargs).match(cw).limit(None).df()
+            # df_i = query.match_words(db, cw)
             if len(df_i) == 0:
                 return None
-            df_i = df_i.filter(pl.col("score") >= score_threshold)
             idx_in_crosser = cw.cells.index(current_entry[i])
             possible_letters = {w[idx_in_crosser] for w in df_i["word"]}
             possible_letters_map[i] = possible_letters
 
+        # TODO - to query!
         words = orm.select(w for w in db if len(w.word) == word_len)
         for i, exclude_chars in exclude.items():
             for c in list(exclude_chars):
@@ -878,7 +867,7 @@ class Grid:
         for i, valid_letters in possible_letters_map.items():
             words = orm.select(w for w in words if w.word[i] in valid_letters)
 
-        return xc.query.query_to_df(words)
+        return query.query_to_df(words)
 
     @property
     def h_starts(self):
@@ -1003,7 +992,9 @@ class Grid:
 
 
 if __name__ == "__main__":
-    lc = xc.corpus.Corpus.from_test()
+    from crosscosmos import project_root
+
+    lc = Corpus.from_test()
     g = Grid((5, 5), lc)
     g.set_grid(1, 1, "B")
     g.set_grid(2, 2, "F")
@@ -1015,7 +1006,7 @@ if __name__ == "__main__":
 
     g.to_console()
 
-    test_file = Path(xc.project_root / "test_grid.xc")
+    test_file = Path(project_root / "test_grid.xc")
     # g.save(test_file)
     g2 = Grid.load(test_file)
     print()

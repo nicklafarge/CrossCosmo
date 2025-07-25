@@ -4,4 +4,4 @@ from pathlib import Path
 project_root = Path(__file__).parents[2]
 crosscosmos_root = Path(__file__).parent
 
-__all__ = ["project_root", "crosscosmos_root"]
+__all__ = ["crosscosmos_root", "project_root"]

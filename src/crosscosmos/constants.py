@@ -1,5 +1,5 @@
 """ """
-from enum import Enum
+
 
 PLACEHOLDERS = [r"?", r"-", r" "]
 
@@ -8,7 +8,3 @@ CONSONANTS = "bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ"
 
 NYT_REGULAR_SIZE = 15
 NYT_SUNDAY_SIZE = 21
-
-class GridSize(Enum):
-    NYT_REGULAR = (NYT_REGULAR_SIZE, NYT_REGULAR_SIZE)
-    NYT_SUNDAY = (NYT_SUNDAY_SIZE, NYT_SUNDAY_SIZE)
