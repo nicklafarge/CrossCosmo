@@ -31,6 +31,3 @@ def generate_permutations(word: str):
     for combination in itertools.product(*choices):
         # Join the characters in the combination to form a string
         yield "".join(combination)
-
-
-ALPHABET = [int2char(i) for i in range(26)]

@@ -13,24 +13,39 @@ from crosscosmos.wordlists import LaFargeWord
 logger = logging.getLogger(__name__)
 
 
-def query_to_df(query, filter_fn: Callable | None = None):
-    if not filter_fn:
+def query_to_df(query, filter_fn: Callable | None = None) -> pl.DataFrame:
+    """ Converts the result of a pony ORM database query to a polars dataframe
 
-        def filter_fn(w):
-            return True
+    Parameters
+    ----------
+    query
+        Query to convert
+    filter_fn : Callable, optional
+        User-defined function to filter the results of the query prior to constructing the dataframe
 
-    df = pl.DataFrame(w.to_dict() for w in query if filter_fn(w))
+    Returns
+    -------
+    pl.DataFrame
+        DataFrame containing query results
+    """
+    if filter_fn:
+        df = pl.DataFrame(w.to_dict() for w in query if filter_fn(w))
+    else:
+        df = pl.DataFrame(w.to_dict() for w in query)
+
     if len(df) == 0:
         return df
 
     return df.sort(by="score", descending=True)
 
 
-def _expand_pattern(pattern):
+def expand_match_pattern(pattern: str):
     """
     Expand pattern with repetition syntax into full pattern.
     Examples: ?[4] -> ????, #[3] -> ###
     """
+    pattern = str(pattern).upper().strip()
+
     # Match repetition patterns like ?[4], #[3], @[2]
     repetition_pattern = r"([?#@])(\[(\d+)\])"
 
@@ -42,92 +57,31 @@ def _expand_pattern(pattern):
     return re.sub(repetition_pattern, replacer, pattern)
 
 
-def match_words(db, match_str):
-    """Finds words by matching a custom pattern against the database.
-
-    This function translates a custom pattern string into a regular expression
-    to perform an efficient query against a SQLite database. It requires
-    a user-defined REGEXP function to be registered with the connection.
-
-    Parameters
-    ----------
-    db : pony.orm.Database
-        The Pony ORM database object, which must be connected and
-        contain the `Word` entity.
-    match_str : str
-        The custom pattern string used for matching.
-
-    Returns
-    -------
-    list[str]
-        A list of words from the database that match the provided pattern.
-
-    Notes
-    -----
-    The matching logic supports several custom placeholders and a repetition syntax.
-
-    **Placeholders:**
-    - `?` : any single letter
-    - `*` : any number of characters (zero or more)
-    - `#` : any consonant
-    - `@` : any vowel
-    - `&` : any digit [0-9]
-
-    **Repetition:**
-    The `c[n]` syntax repeats the character `c` exactly `n` times. The character `c`
-    can be a literal letter or any of the placeholders above.
-
-    Examples
-    --------
-    >>> # Assuming a database `db` is set up with relevant words.
-    >>> match_words(db, 'h@?p')
-    ['help', 'hope']
-
-    >>> match_words(db, 'c*t')
-    ['cat', 'cost', 'constitute']
-
-    >>> match_words(db, 'bo[2]k')
-    ['book']
-
-    >>> match_words(db, 'plan&')
-    ['plan9']
-
-    >>> match_words(db, '#[3]le')
-    ['triple']
+def create_match_regex(match_str: str) -> str:
     """
-    # Expand repetition patterns like o[2] -> oo or #[3] -> ###
-    expanded_str = re.sub(r"(.)\[(\d+)\]", lambda m: m.group(1) * int(m.group(2)), str(match_str))
+    Handle patterns with * wildcard using regex.
+    """
+    # Build regex pattern
+    regex_parts = []
+    i = 0
 
-    # Translate the custom pattern into a regex pattern string
-    regex_pattern = ""
-    for char in expanded_str:
-        if char == "?":
-            regex_pattern += "[a-zA-Z]"
-        elif char == "*":
-            regex_pattern += ".*"
-        elif char == "#":
-            regex_pattern += f"[{constants.CONSONANTS}]"
-        elif char == "@":
-            regex_pattern += f"[{constants.VOWELS}]"
-        elif char == "&":
-            regex_pattern += "[0-9]"
-        elif char in ".+^${}()|[]\\":
-            regex_pattern += "\\" + char
+    while i < len(match_str):
+        c = match_str[i]
+
+        if c in xc.constants.PLACEHOLDERS:
+            regex_parts.append(constants.ANY_LETTER_RE_PATTERN)
+        elif c == "*":
+            regex_parts.append(f"{constants.ANY_LETTER_RE_PATTERN}*")
+        elif c == "#":
+            regex_parts.append(f"[{constants.CONSONANTS}]")
+        elif c == "@":
+            regex_parts.append(f"[{constants.VOWELS}]")
         else:
-            regex_pattern += char
+            regex_parts.append(re.escape(c))
 
-    # Anchor the regex and escape it for safe use in an SQL string
-    full_regex = f"^{regex_pattern}$"
-    safe_regex_for_sql = full_regex.replace("'", "''")
-
-    # Build the final SQL query string explicitly
-    sql_query = f"SELECT word FROM Word WHERE word REGEXP '{safe_regex_for_sql}'"
-
-    # Execute the raw SQL query
-    results = db.select(sql_query)
-
-    return list(results)
-
+        i += 1
+    regex_pattern = "^" + "".join(regex_parts) + "$"
+    return regex_pattern
 
 class Query:
     def __init__(
@@ -176,7 +130,6 @@ class Query:
         """Sets default query parameters:
 
         Defaults:
-            - Only alphabet entries
             - 3+ letter words
             - Word length less than puzzle size (default=15)
             - Score > 0
@@ -201,9 +154,9 @@ class Query:
             self.order_by_score()
 
         if self._pattern:
-
+            compiled_pattern = re.compile(self._pattern)
             def filter_fn(w):
-                return self._pattern.match(w.word)
+                return compiled_pattern.match(w.word)
         else:
             filter_fn = None
 
@@ -216,6 +169,14 @@ class Query:
     def df(self, **kwargs) -> pl.DataFrame:
         """Converts the current query result to a polars dataframe"""
         return self.to_df(**kwargs)
+
+    def words(self, alphabetical=True) -> list[str]:
+        """ Return the result of the query as a list of words
+        """
+        words = self.to_df(order_by_score=True)["word"].to_list()
+        if alphabetical:
+            words = sorted(words)
+        return words
 
     def length(self, word_len: int | tuple[int, int]) -> "Query":
         """Filter to only words of a specified length"""
@@ -238,18 +199,6 @@ class Query:
         self._query = orm.select(w for w in self._query if len(w.word) <= word_len)
         return self
 
-    # def match(self, match_str: str) -> "Query":
-    #     """ Find entries in a database given a match string, allowing for optional placeholders for unconstrainted
-    #     characters ('?', '-', and ' ')
-    #     """
-    #     match_str = str(match_str)
-    #     self.length(len(match_str))
-    #     for i, c in enumerate(match_str):
-    #         if c in xc.constants.PLACEHOLDERS:
-    #             continue
-    #         self._query = orm.select(w for w in self._query if w.word[i] == c)
-    #     return self
-
     def min_score(self, min_score: float) -> "Query":
         """Filter results to all be above a minimum score value"""
         self._query = orm.select(w for w in self._query if w.score >= min_score)
@@ -260,12 +209,41 @@ class Query:
         self._limit = limit
         return self
 
+    def fix_letters(self, idx: int, letters:str | list[str]):
+        """ Fix an index to be a specific letter
+        """
+        if idx < 0:
+            raise ValueError(f"Index must be positive: {idx}")
+
+        if isinstance(letters, str):
+            letters = list(letters)
+
+        for letter in letters:
+            if len(letter) != 1:
+                raise ValueError("Can only fix a single character")
+
+        self._query = orm.select(w for w in self._query if w.word[idx] in letters)
+
+    def exclude_letters(self, idx: int, letters: str | list[str]):
+        """ Exclude letter at a given index an index
+        """
+        if idx < 0:
+            raise ValueError(f"Index must be positive: {idx}")
+
+        if isinstance(letters, str):
+            letters = list(letters)
+        for l in letters:
+            if len(l) != 1:
+               raise ValueError("Can only fix a single character")
+
+            self._query = orm.select(w for w in self._query if w.word[idx] != l.upper())
+
     def order_by_score(self) -> "Query":
         """Sort the results by the "score" column"""
         self._query = self._query.order_by(orm.desc(self.db.score))
         return self
 
-    def match(self, match_str) -> "Query":
+    def match(self, match_str: str) -> "Query":
         """
         Match words against a pattern string with wildcards:
         ? - any single letter
@@ -278,11 +256,12 @@ class Query:
         match_str = str(match_str).upper()
 
         # Expand repetition patterns
-        match_str = _expand_pattern(match_str)
+        match_str = expand_match_pattern(match_str)
 
         # Handle * wildcard by converting pattern to regex
         if "*" in match_str:
-            return self.match_words_regex(match_str)
+            self._pattern = create_match_regex(match_str)
+            return self
 
         # For fixed-length patterns (no * wildcard)
         self.length(len(match_str))
@@ -303,38 +282,8 @@ class Query:
 
         return self
 
-    def match_words_regex(self, match_str) -> "Query":
-        """
-        Handle patterns with * wildcard using regex.
-        """
-        # Build regex pattern
-        regex_parts = []
-        i = 0
-
-        while i < len(match_str):
-            c = match_str[i]
-
-            if c == "?":
-                regex_parts.append("[a-zA-Z]")
-            elif c == "*":
-                regex_parts.append("[a-zA-Z]*")
-            elif c == "#":
-                regex_parts.append("[bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ]")
-            elif c == "@":
-                regex_parts.append("[aeiouAEIOU]")
-            elif c in xc.constants.PLACEHOLDERS:
-                regex_parts.append("[a-zA-Z]")  # Treat as any letter
-            else:
-                regex_parts.append(re.escape(c))
-
-            i += 1
-
-        regex_pattern = "^" + "".join(regex_parts) + "$"
-        self._pattern = re.compile(regex_pattern)
-        return self
-
     def _alpha_only_db_query(self) -> "Query":
-        """Restrict to alphabet characters only (no numbers or symbols"""
+        """Restrict to alphabet characters only (no numbers or symbols)"""
         return orm.select(w for w in self.db if orm.raw_sql(f"TRIM(w.word, '{string.ascii_letters}') = ''"))
 
 

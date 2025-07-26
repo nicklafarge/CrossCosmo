@@ -1,124 +1,125 @@
 import logging
-import re
-from enum import Enum
 
+import polars as pl
 import pygtrie
 
-from crosscosmos import letter_utils
-from crosscosmos.constants import PLACEHOLDERS
-from crosscosmos.wordlists.collaborative_wordlist import CollabWordListWord
-from crosscosmos.wordlists.crossword_tracker import XwordWord
-from crosscosmos.wordlists.diehl import DiehlWord
-from crosscosmos.wordlists.lafarge import LaFargeWord
-
-# from crosscosmos.wordlists.diehl_model import DiehlWord, TestWord
-# from crosscosmos.wordlists import LaFargeWord
-# from crosscosmos.wordlists.xword_tracker_model import XwordWord
+from crosscosmos import constants, df_filter, query
+from crosscosmos.enums import ModelSource
 
 logger = logging.getLogger(__name__)
 
-AZRE_PATTERN = "[a-zA-Z]"
-
-
-class ModelSource(Enum):
-    Test = 1
-    Diehl = 2
-    LaFarge = 3
-    CrosswordTracker = 4
-    CollabWordList = 5
-
-
-score = {
-    ModelSource.Test: lambda w: w.score,
-    ModelSource.Diehl: lambda w: w.score,
-    ModelSource.LaFarge: lambda w: w.collab_score,
-    ModelSource.CrosswordTracker: lambda w: 0,  # Undefined
-}
-
 
 class Corpus:
-    def __init__(self, word_list, model: ModelSource):
-        self.word_list = word_list
+    def __init__(self, df: pl.DataFrame, model: ModelSource):
+        self._df = df
         self.trie = None
         self.model = model
 
     def __getitem__(self, position):
-        return self.word_list[position]
+        return self.df[position]
 
     def __repr__(self):
-        return f"CrossCosmos.Corpus(n={len(self.word_list)})"
+        return f"CrossCosmos.Corpus(n={len(self.df)})"
+
+    @property
+    def df(self):
+        return self._df
+
+    @df.setter
+    def df(self, new_df):
+        self._df = new_df
 
     @classmethod
-    def from_crossword_tracker(cls):
+    def from_crossword_tracker(cls, **kwargs):
+        from crosscosmos.wordlists.crossword_tracker import XwordWord
         logger.info("Loading crossword tracker ...")
-        words = [w for w in XwordWord.select() if not letter_utils.has_numbers(w.word) and len(w.word) >= 3]
+        words = query.Query(XwordWord, **kwargs).df()
         return cls(words, ModelSource.CrosswordTracker)
 
     @classmethod
-    def from_collab(cls):
+    def from_collab(cls, **kwargs):
+        from crosscosmos.wordlists.collaborative_wordlist import CollabWordListWord
         logger.info("Loading collab list ...")
-        words = [w for w in CollabWordListWord.select() if not letter_utils.has_numbers(w.word) and len(w.word) >= 3]
+        words = query.Query(CollabWordListWord, **kwargs).df()
         return cls(words, ModelSource.CollabWordList)
 
     @classmethod
-    def from_lafarge(cls):
+    def from_lafarge(cls, **kwargs):
+        kwargs.setdefault("limit", None)
+        from crosscosmos.wordlists.lafarge import LaFargeWord
         logger.info("Loading LaFarge...")
-        words = [w for w in LaFargeWord.select() if not letter_utils.has_numbers(w.word) and len(w.word) >= 3]
+        words = query.Query(LaFargeWord, **kwargs).df()
         return cls(words, ModelSource.LaFarge)
 
-    # @classmethod
-    # def from_test(cls):
-    #     logger.info("Loading Test...")
-    #     return cls([w for w in TestWord.select()], ModelSource.Test)
-
     @classmethod
-    def from_diehl(cls):
+    def from_diehl(cls, **kwargs):
+        from crosscosmos.wordlists.diehl import DiehlWord
         logger.info("Loading Diehl...")
-        return cls([w for w in DiehlWord.select()], ModelSource.Diehl)
+        words = query.Query(DiehlWord, **kwargs).df()
+        return cls(words, ModelSource.Diehl)
 
-    def to_n_letter_corpus(self, n: int):
+    def to_n_letter_corpus(self, n: int) -> "Corpus":
+        """ Creates a new Corpus instance containing only words of a particular length
+        """
         return self.to_subcorpus(n, n)
 
-    def to_subcorpus(self, n: int, m: int):
-        assert 3 <= n <= 22
-        assert 3 <= m <= 22
-        assert m >= n
+    def max_length(self, word_len: int) -> "Corpus":
+        """Filter to words less than or equal to a given length"""
+        self._df = df_filter.DfFilter(self._df).max_length(word_len).df()
+        return self
 
-        return Corpus([w for w in self.word_list if n <= len(w.word) <= m], self.model)
 
-    def to_n_tries(self, n, padded=False):
+    def to_subcorpus(self, min_len: int, max_len: int) -> "Corpus":
+        """ Creates a new Corpus instance containing only words between a min/max length bound
+        """
+        assert 3 <= min_len <= constants.NYT_SUNDAY_SIZE
+        assert 3 <= max_len <= constants.NYT_SUNDAY_SIZE
+        assert max_len >= min_len
+
+        filt = df_filter.DfFilter(self._df)
+        return Corpus(filt.length((min_len, max_len)).df(), self.model)
+
+    def to_n_tries(self, n: int, padded: bool = False) -> list[pygtrie.CharTrie] :
+        """ Constructs 'n' trie instances for sequential word lengths, starting at 3.
+
+        Parameters
+        ----------
+        n : int
+            Number of tries to create, starting at 3
+        padded : bool, optional
+            If true, insert 'None' values at the beginning of the returned list (for indices 0,1,2)
+
+        Returns
+        -------
+        list of pygtrie.CharTrie:
+            List of create trie objects
+        """
         assert n >= 3
+
         tries = [self.to_n_letter_corpus(i).to_trie() for i in range(3, n + 1)]
-        if padded:
-            return [None] * 3 + tries
-        else:
-            return tries
+        return [None, None, None, *tries] if padded else tries
 
-    def query(self, query_str: str) -> list[LaFargeWord]:
-        # Replace placeholder {"?", "-", " "} with regular expression
-        for p in PLACEHOLDERS:
-            query_str = query_str.replace(p, AZRE_PATTERN)
-
-        # Construct/compile query
-        query_pattern = rf"\b{query_str}\b"
-        compiled_pattern = re.compile(query_pattern, re.IGNORECASE)
-
-        # Get all matching entries from corpus
-        matching = [w for w in self.word_list if compiled_pattern.search(w.word)]
-
-        # Return the list sorted alphebetically
-        return sorted(matching, key=lambda w: score[self.model](w) or 0, reverse=True)
+    def query(self, query_str: str) -> pl.DataFrame:
+        """ Queries the current word list
+        """
+        return df_filter.DfFilter(self._df).match(query_str).by_score()
 
     def build_trie(self):
+        """ Updates the 'trie' variable with values from the current word list
+        """
         self.trie = self.to_trie()
 
     def to_trie(self) -> pygtrie.CharTrie:
+        """ Construct a trie from the current word list
+        """
         t = pygtrie.CharTrie()
-        for lw in self.word_list:
-            t[lw.word] = True
+        for row in self.df.iter_rows(named=True):
+            t[row["word"]] = True
         return t
 
-    def subtree(self, prefix: str, as_corpus=True):
+    def subtree(self, prefix: str, as_corpus: bool = True):
+        """ Uses the trie to extract words that exist given a particular prefix
+        """
         if not self.trie:
             self.build_trie()
 
@@ -127,21 +128,11 @@ class Corpus:
         except KeyError:
             return []
 
+        sub_df = self.df.filter(pl.col("word").str in subree_words)
         if as_corpus:
-            return Corpus([w for w in LaFargeWord.select() if w.word in subree_words])
-        else:
-            return subree_words
+            return Corpus(sub_df, self.model)
 
-    def str2laf(self, word: str):
-        return LaFargeWord.select(lambda w: w.word == word)
-
-    def match(self, word_len: int, letters_with_idxs: list[tuple[int, str]]):
-        word_list = []
-        for w in self.word_list:
-            if len(w.word) == word_len and all([w.word[i] == c for i, c in letters_with_idxs]):  # noqa: C419
-                word_list.append(w)
-
-        return word_list
+        return sub_df
 
 
 if __name__ == "__main__":

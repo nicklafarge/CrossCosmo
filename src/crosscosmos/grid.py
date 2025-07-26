@@ -1,5 +1,5 @@
 """
-Defines a Grid class, interfacing between the data and gui laters
+Defines a crossword Grid class, interfacing between the data and gui laters
 
 """
 
@@ -9,73 +9,24 @@ import random
 import string
 from enum import Enum
 from pathlib import Path
-from typing import Union
 
 import numpy as np
 import polars as pl
 from pony import orm
 
-from crosscosmos import io_utils, query
+from crosscosmos.enums import (
+    ModelSource,
+    CellStatus,
+    GridDirection,
+    WordDirection,
+    GridSymmetry,
+    MoveDirection,
+    GridStatus,
+)
+from crosscosmos import io_utils, query, df_filter
 from crosscosmos.corpus import Corpus
 
 logger = logging.getLogger(__name__)
-
-
-class CellStatus(Enum):
-    EMPTY = 0
-    SET = 1
-    LOCKED = 2
-    BLACK = 3
-
-
-class GridDirection(Enum):
-    UP = 0
-    DOWN = 1
-    LEFT = 2
-    RIGHT = 3
-
-
-class WordDirection(Enum):
-    HORIZONTAL = 1
-    VERTICAL = 2
-
-    @staticmethod
-    def from_char(str_id):
-        if str_id.upper() in ["A", "H"]:
-            return WordDirection.HORIZONTAL
-        elif str_id.upper() in ["D", "V"]:
-            return WordDirection.VERTICAL
-        else:
-            raise ValueError("Expected A or D")
-
-    @staticmethod
-    def flip(cls):
-        match cls:
-            case WordDirection.HORIZONTAL:
-                return WordDirection.VERTICAL
-            case WordDirection.VERTICAL:
-                return WordDirection.HORIZONTAL
-            case _:
-                raise ValueError("invalid word direction")
-
-
-class GridSymmetry(Enum):
-    NONE = 0
-    ROTATIONAL = 1
-    REFLECTION = 2
-
-
-class MoveDirection(Enum):
-    FORWARD_HORIZONTAL = 1
-    FORWARD_VERTICAL = 2
-    BACK_HORIZONTAL = 3
-    BACK_VERTICAL = 4
-
-
-class GridStatus(Enum):
-    COMPLETE = 1
-    INCOMPLETE = 2
-    INVALID = 3
 
 
 class Cell:
@@ -85,7 +36,7 @@ class Cell:
         y: int,
         status: CellStatus = CellStatus.EMPTY,
         value: str = "",
-        gui_coordinates: Union[tuple[float, float], None] = None,
+        gui_coordinates: tuple[float, float] | None = None,
         shuffle=True,
     ):
         self.status = status
@@ -118,7 +69,7 @@ class Cell:
             random.shuffle(self.queue)
 
     def __repr__(self):
-        return f"Cell(val='{self.value}', loc={self.matrix_index})"
+        return f"Cell(val='{self.value}',loc={self.matrix_index},status={self.status})"
 
     def to_json(self):
         return {
@@ -262,7 +213,7 @@ class Grid:
         shuffle: bool = True,
         symmetry: GridSymmetry = GridSymmetry.ROTATIONAL,
         auto_symmetry: bool = False,
-        save_path: Union[None, Path] = None,
+        save_path: Path | None = None,
     ):
         # if grid_size[0] % 2 != 0 or grid_size[1] % 2 != 0:
         #     raise ValueError("Currently only even numbers are supported for grids")
@@ -277,7 +228,7 @@ class Grid:
         self.h_heads = []
         self.v_heads = []
 
-        self.corpus = corpus
+        self.corpus = corpus.to_n_letter_corpus(max(self.row_count, self.col_count))
 
         # Fill out grid/center
         self.grid = np.empty(self.grid_size, dtype=Cell)
@@ -350,7 +301,7 @@ class Grid:
 
     def count_possible(
         self,
-        query_cells: Union[CellList, list[tuple[Cell, WordDirection]]],
+        query_cells: CellList | list[tuple[Cell, WordDirection]],
         grid_status: GridStatus = GridStatus.INCOMPLETE,
         query_level: int = 2,
         corpus=None,
@@ -434,13 +385,13 @@ class Grid:
 
         return n_possible
 
-    def save(self, file_path: Union[None, Path] = None):
+    def save(self, file_path: Path | None = None):
         if file_path:
             save_path = file_path
         elif self.save_path:
             save_path = self.save_path
         else:
-            raise RuntimeError("Save path undefined")
+            return
 
         io_utils.save_json_dict(save_path, self.to_json())
 
@@ -452,17 +403,14 @@ class Grid:
 
     def build_tries(self, n: int | None = None):
         if self.corpus:
-            if n:
-                trie_len = n
-            else:
-                trie_len = max(self.row_count, self.col_count) + 1
+            trie_len = n or max(self.row_count, self.col_count) + 1
             self.tries = self.corpus.to_n_tries(trie_len, padded=True)
         else:
             logger.warning("Could not build tries (no corpus loaded)")
 
     # Manipulation ###############################################################
 
-    def set_grid(self, x: int, y: int, value: Union[str, None]):
+    def set_grid(self, x: int, y: int, value: str | None):
         # Check index
         if (x < 0 or x > self.grid_size[0]) or (y < 0 or y > self.grid_size[1]):
             raise IndexError(f"Index outside grid bounds:({self.grid_size[0]}, {self.grid_size[1]})")
@@ -683,7 +631,7 @@ class Grid:
     # Utilities ###############################################################
 
     def corner2center(self, x: int, y: int) -> tuple[float, float]:
-        """Convert coordinate measured form corner, to coordinate measured from center of grid
+        """Convert coordinate measured from corner, to coordinate measured from center of grid
 
         a: Corner -> Pt         [x,y]
         b: Corner -> Center     self.center
@@ -706,13 +654,13 @@ class Grid:
         """
         return int(self.center[0] + c1), int(self.center[1] + c2)
 
-    def full_word_from_cell(self, x: int, y: int, direction: WordDirection, terminate_on_empty=False) -> CellList:
+    def full_word_from_cell(self, x: int, y: int, direction: WordDirection | int, terminate_on_empty=False) -> CellList:
         start_cell = self[x, y]
 
         if start_cell.status == CellStatus.BLACK:
             return CellList([])
 
-        match direction:
+        match WordDirection(direction):
             case direction.VERTICAL:
                 pre_traverse_dir = GridDirection.UP
                 pos_traverse_dir = GridDirection.DOWN
@@ -727,14 +675,14 @@ class Grid:
         cells = [*start_cells, start_cell, *end_cells]
         return CellList(cells)
 
-    def aggregate_cells(self, i: int, j: int, which: GridDirection, terminate_on_empty=False) -> list[Cell]:
+    def aggregate_cells(self, i: int, j: int, which: GridDirection | int, terminate_on_empty=False) -> list[Cell]:
         cells = [self[i, j]]
 
         # Nothing to aggregate if we're starting at a black square
         if cells[0].status == CellStatus.BLACK:
             return []
 
-        match which:
+        match GridDirection(which):
             case GridDirection.UP:
 
                 def termination_criteria(c):
@@ -851,7 +799,6 @@ class Grid:
         possible_letters_map = {}
         for i, cw in enumerate(crossers):
             df_i = query.Query(db, **kwargs).match(cw).limit(None).df()
-            # df_i = query.match_words(db, cw)
             if len(df_i) == 0:
                 return None
             idx_in_crosser = cw.cells.index(current_entry[i])
@@ -859,15 +806,14 @@ class Grid:
             possible_letters_map[i] = possible_letters
 
         # TODO - to query!
-        words = orm.select(w for w in db if len(w.word) == word_len)
+        q = query.Query().length(word_len)
         for i, exclude_chars in exclude.items():
-            for c in list(exclude_chars):
-                words = orm.select(w for w in words if w.word[i] != c)
+            q.exclude_letters(i, exclude_chars)
 
         for i, valid_letters in possible_letters_map.items():
-            words = orm.select(w for w in words if w.word[i] in valid_letters)
+            q.fix_letters(i, valid_letters)
 
-        return query.query_to_df(words)
+        return q.df()
 
     @property
     def h_starts(self):
@@ -973,12 +919,12 @@ class Grid:
                 out_str += "\n"
         print(out_str)
 
-    def print_lens(self, direction: WordDirection):
+    def print_lens(self, direction: WordDirection | int):
         out_str = ""
         for i in range(self.grid_size[0]):
             grid_vals = []
             for j in range(self.col_count):
-                match direction:
+                match WordDirection(direction):
                     case WordDirection.HORIZONTAL:
                         grid_vals += str(self[i, j].hlen)
                     case WordDirection.VERTICAL:
@@ -994,7 +940,7 @@ class Grid:
 if __name__ == "__main__":
     from crosscosmos import project_root
 
-    lc = Corpus.from_test()
+    lc = Corpus.from_lafarge(q=2)
     g = Grid((5, 5), lc)
     g.set_grid(1, 1, "B")
     g.set_grid(2, 2, "F")
@@ -1006,8 +952,13 @@ if __name__ == "__main__":
 
     g.to_console()
 
-    test_file = Path(project_root / "test_grid.xc")
-    # g.save(test_file)
-    g2 = Grid.load(test_file)
-    print()
-    g2.to_console()
+    g.print_lens(0)
+    cl = g.full_word_from_cell(4, 0, WordDirection.HORIZONTAL)
+
+    # g.print_lens(1)
+
+    # test_file = Path(project_root / "test_grid.xc")
+    # # g.save(test_file)
+    # g2 = Grid.load(test_file)
+    # print()
+    # g2.to_console()
