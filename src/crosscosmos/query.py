@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 
 def query_to_df(query, filter_fn: Callable | None = None) -> pl.DataFrame:
-    """ Converts the result of a pony ORM database query to a polars dataframe
+    """Converts the result of a pony ORM database query to a polars dataframe
 
     Parameters
     ----------
@@ -83,6 +83,7 @@ def create_match_regex(match_str: str) -> str:
     regex_pattern = "^" + "".join(regex_parts) + "$"
     return regex_pattern
 
+
 class Query:
     def __init__(
         self,
@@ -91,7 +92,7 @@ class Query:
         sunday: bool = False,
         default: bool = True,
         alpha_only: bool = True,
-        limit: int = 100,
+        limit: int | None = 100,
     ):
         """Helper class for building crossword database queries
 
@@ -155,6 +156,7 @@ class Query:
 
         if self._pattern:
             compiled_pattern = re.compile(self._pattern)
+
             def filter_fn(w):
                 return compiled_pattern.match(w.word)
         else:
@@ -171,8 +173,7 @@ class Query:
         return self.to_df(**kwargs)
 
     def words(self, alphabetical=True) -> list[str]:
-        """ Return the result of the query as a list of words
-        """
+        """Return the result of the query as a list of words"""
         words = self.to_df(order_by_score=True)["word"].to_list()
         if alphabetical:
             words = sorted(words)
@@ -209,9 +210,8 @@ class Query:
         self._limit = limit
         return self
 
-    def fix_letters(self, idx: int, letters:str | list[str]):
-        """ Fix an index to be a specific letter
-        """
+    def fix_letters(self, idx: int, letters: str | list[str]):
+        """Fix an index to be a specific letter"""
         if idx < 0:
             raise ValueError(f"Index must be positive: {idx}")
 
@@ -225,8 +225,7 @@ class Query:
         self._query = orm.select(w for w in self._query if w.word[idx] in letters)
 
     def exclude_letters(self, idx: int, letters: str | list[str]):
-        """ Exclude letter at a given index an index
-        """
+        """Exclude letter at a given index an index"""
         if idx < 0:
             raise ValueError(f"Index must be positive: {idx}")
 
@@ -234,7 +233,7 @@ class Query:
             letters = list(letters)
         for l in letters:
             if len(l) != 1:
-               raise ValueError("Can only fix a single character")
+                raise ValueError("Can only fix a single character")
 
             self._query = orm.select(w for w in self._query if w.word[idx] != l.upper())
 
@@ -285,6 +284,10 @@ class Query:
     def _alpha_only_db_query(self) -> "Query":
         """Restrict to alphabet characters only (no numbers or symbols)"""
         return orm.select(w for w in self.db if orm.raw_sql(f"TRIM(w.word, '{string.ascii_letters}') = ''"))
+
+    def count(self) -> int:
+        """Counts the number of elements in the database that match the current query"""
+        return len(self._query)
 
 
 def search(query_str: str, **kwargs) -> pl.DataFrame:

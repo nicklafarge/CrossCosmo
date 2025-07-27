@@ -59,15 +59,11 @@ class DfFilter:
         return self
 
     def alpha_only(self):
-        """ Filter word list to remove words with symbols or numbers
-        """
-        self._df = self._df.filter(
-            pl.col("word").str.contains(fr"^{constants.ANY_LETTER_RE_PATTERN}+$")
-        )
+        """Filter word list to remove words with symbols or numbers"""
+        self._df = self._df.filter(pl.col("word").str.contains(rf"^{constants.ANY_LETTER_RE_PATTERN}+$"))
 
     def fix_letter(self, letter_idx: int, value: str) -> "DfFilter":
-        """ Filter to words that contain a given value at the specified index
-        """
+        """Filter to words that contain a given value at the specified index"""
         assert len(value) == 1
         self._df = self._df.filter(pl.col("word").str.slice(letter_idx, 1) == value)
         return self

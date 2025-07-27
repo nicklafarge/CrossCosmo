@@ -7,29 +7,60 @@ import copy
 import logging
 import random
 import string
-from enum import Enum
 from pathlib import Path
 
 import numpy as np
 import polars as pl
-from pony import orm
+from numpy.typing import NDArray
 
+from crosscosmos import constants, io_utils, query
+from crosscosmos.corpus import Corpus
 from crosscosmos.enums import (
-    ModelSource,
     CellStatus,
     GridDirection,
-    WordDirection,
+    GridStatus,
     GridSymmetry,
     MoveDirection,
-    GridStatus,
+    WordDirection,
 )
-from crosscosmos import io_utils, query, df_filter
-from crosscosmos.corpus import Corpus
 
 logger = logging.getLogger(__name__)
 
 
 class Cell:
+    """Individual cell in a crossword grid.
+
+    Manages the state, value, and constraints of a single grid position.
+    Tracks word boundaries, removed words, and maintains a queue of
+    possible letters for solving.
+
+    Parameters
+    ----------
+    x : int
+        Row coordinate in the grid
+    y : int
+        Column coordinate in the grid
+    status : CellStatus, optional
+        Initial cell status (default: EMPTY)
+    value : str, optional
+        Letter value of the cell (default: "")
+    gui_coordinates : tuple[float, float] | None, optional
+        GUI display coordinates
+    shuffle : bool, optional
+        Whether to shuffle the letter queue (default: True)
+
+    Attributes
+    ----------
+    queue : list[str]
+        Available letters to try in this cell
+    removed_words : list[tuple[str, WordDirection]]
+        Words that were removed from tries when this cell was filled
+    hlen : int
+        Length of horizontal word containing this cell
+    vlen : int
+        Length of vertical word containing this cell
+    """
+
     def __init__(
         self,
         x: int,
@@ -37,41 +68,135 @@ class Cell:
         status: CellStatus = CellStatus.EMPTY,
         value: str = "",
         gui_coordinates: tuple[float, float] | None = None,
-        shuffle=True,
+        shuffle: bool = True,
     ):
-        self.status = status
-        self.value = value
-        self.matrix_index = (x, y)
-        self.x = x
-        self.y = y
-        self.gui_coordinates = gui_coordinates
-        self.gui_row = None
-        self.gui_col = None
+        self.x: int = x
+        self.y: int = y
+        self.matrix_index: tuple[int, int] = (x, y)
+        self.status: CellStatus = status
+        self.value: str = value
+        self.gui_coordinates: tuple[int, int] | None = gui_coordinates
+        self.gui_row: int | None = None
+        self.gui_col: int | None = None
 
-        self.is_h_start = False
-        self.is_h_end = False
-        self.is_v_start = False
-        self.is_v_end = False
-        self.answer_number = None
+        # Word boundary flags
+        self.is_h_start: bool = False
+        self.is_h_end: bool = False
+        self.is_v_start: bool = False
+        self.is_v_end: bool = False
+        self.answer_number: int | None = None
 
-        self.hlen = 0
-        self.vlen = 0
+        # Word lengths
+        self.hlen: int = 0
+        self.vlen: int = 0
 
-        # Keep track of any word that have been removed from consideration due to this cell
-        self.removed_words = []
-        self.excluded = []
+        # Solving state
+        self.removed_words: list[tuple[str, WordDirection]] = []
+        self.excluded: list[str] = []
 
-        self.queue_order = list(reversed(string.ascii_uppercase))
-        # self.queue = list(string.ascii_uppercase)
-
-        self.queue = copy.deepcopy(self.queue_order)
-        if shuffle:
+        # Letter queue for solving
+        self.queue_order: list[str] = list(reversed(string.ascii_uppercase))
+        self.queue: list[str] = copy.deepcopy(self.queue_order)
+        self.shuffle_for_solving = shuffle
+        if self.shuffle_for_solving:
             random.shuffle(self.queue)
 
     def __repr__(self):
         return f"Cell(val='{self.value}',loc={self.matrix_index},status={self.status})"
 
-    def to_json(self):
+    @property
+    def is_valid(self) -> bool:
+        """Check if cell forms valid crossing words. A cell is valid if black or has 3+ letter words in both directions"""
+        return self.status == CellStatus.BLACK or (self.hlen >= 3 and self.vlen >= 3)
+
+    def is_start(self, direction: WordDirection | int) -> bool:
+        """Check if cell starts a word in given direction (HORIZONTAL=0 or VERTICAL=1)."""
+        match WordDirection(direction):
+            case WordDirection.HORIZONTAL:
+                return self.is_h_start
+            case WordDirection.VERTICAL:
+                return self.is_v_start
+            case _:
+                raise ValueError("Invalid WordDirection")
+
+    def is_end(self, direction: WordDirection | int) -> bool:
+        """Check if cell ends a word in given direction (HORIZONTAL=0 or VERTICAL=1)."""
+        match WordDirection(direction):
+            case WordDirection.HORIZONTAL:
+                return self.is_h_end
+            case WordDirection.VERTICAL:
+                return self.is_v_end
+            case _:
+                raise ValueError("Invalid WordDirection")
+
+    def update(self, value: str | None) -> None:
+        """Update cell value and status.
+
+        Parameters
+        ----------
+        value : str | None
+            New value: single letter, placeholder ('?','-', or ' '), empty string, or None for black
+
+        Raises
+        ------
+        ValueError
+            If value is invalid (not single character or special value)
+        """
+        if value == "" or value in constants.PLACEHOLDERS:
+            self.status = CellStatus.EMPTY
+            self.value = ""
+        elif value is None:
+            self.status = CellStatus.BLACK
+            self.value = None
+        elif isinstance(value, str) and len(value) == 1:
+            self.status = CellStatus.SET
+            self.value = value.upper()
+        else:
+            raise ValueError(f"Invalid input: {value}")
+
+    def reset_cell(self) -> list[tuple[str, WordDirection]]:
+        """Reset cell to empty state.
+
+        Clears the cell value and restores the letter queue.
+        Returns any words that were removed when this cell was filled.
+
+        Returns
+        -------
+        list[tuple[str, WordDirection]]
+            Words that should be restored to tries
+        """
+        if self.status in (CellStatus.LOCKED, CellStatus.BLACK):
+            return []
+
+        self.excluded.append(self.value)
+        self.status = CellStatus.EMPTY
+        self.value = ""
+        self.queue = copy.deepcopy(self.queue_order)
+
+        removed_words = self.removed_words
+        self.removed_words = []
+        return removed_words
+
+    def remove_word(self, word: str, direction: WordDirection | int) -> None:
+        """Track a word removed from the trie due to this cell.
+
+        Parameters
+        ----------
+        word : str
+            Word that was removed
+        direction : WordDirection
+            Direction of the removed word
+        """
+        self.removed_words.append((word, WordDirection(direction)))
+
+    def to_json(self) -> dict:
+        """Serialize cell to JSON-compatible dictionary.
+
+        Returns
+        -------
+        dict
+            Cell data as dictionary
+        """
         return {
             "status": self.status.value,
             "value": self.value,
@@ -91,13 +216,26 @@ class Cell:
         }
 
     @classmethod
-    def from_dict(cls, json_cell: dict):
+    def from_dict(cls, json_cell: dict, **kwargs) -> "Cell":
+        """Create cell from dictionary representation.
+
+        Parameters
+        ----------
+        json_cell : dict
+            Dictionary containing cell data
+
+        Returns
+        -------
+        Cell
+            Reconstructed cell object
+        """
         cell = cls(
             x=json_cell["x"],
             y=json_cell["y"],
             status=CellStatus(json_cell["status"]),
             value=json_cell["value"],
             gui_coordinates=json_cell["gui_coordinates"],
+            **kwargs,
         )
         cell.matrix_index = json_cell["matrix_index"]
         cell.gui_row = json_cell["gui_row"]
@@ -112,72 +250,39 @@ class Cell:
         return cell
 
     @classmethod
-    def load(cls, filename: Path, **kwargs):
+    def load(cls, filename: Path, **kwargs) -> "Cell":
+        """Load cell from JSON file, with additional arguments passed to constructor"""
         return cls.from_dict(io_utils.load_json(filename), **kwargs)
 
-    @property
-    def is_valid(self):
-        return self.status == CellStatus.BLACK or (self.hlen >= 3 and self.vlen >= 3)
-
-    def is_start(self, direction=WordDirection):
-        match direction:
-            case WordDirection.HORIZONTAL:
-                return self.is_h_start
-            case WordDirection.VERTICAL:
-                return self.is_v_start
-            case _:
-                raise ValueError("Invalid WordDirection")
-
-    def is_end(self, direction=WordDirection):
-        match direction:
-            case WordDirection.HORIZONTAL:
-                return self.is_h_end
-            case WordDirection.VERTICAL:
-                return self.is_v_end
-            case _:
-                raise ValueError("Invalid WordDirection")
-
-    def save(self, filename: Path):
+    def save(self, filename: Path) -> None:
+        """Save cell to JSON file."""
         io_utils.save_json_dict(filename, self.to_json())
-
-    def update(self, value: str):
-        if value == " " or value == "":
-            self.status = CellStatus.EMPTY
-            self.value = ""
-        elif value is None:
-            self.status = CellStatus.BLACK
-            self.value = None
-        elif isinstance(value, str) and len(value) == 1:
-            self.status = CellStatus.SET
-            self.value = value.upper()
-        else:
-            raise ValueError(f"Invalid input: {value}")
-
-    def reset_cell(self):
-        # Nothing to reset if locked
-        if self.status == CellStatus.LOCKED or self.status == CellStatus.BLACK:
-            return
-
-        self.excluded.append(self.value)
-        self.status = CellStatus.EMPTY
-        self.value = ""
-        self.queue = copy.deepcopy(self.queue_order)
-
-        # Return the word (if any) that is now valid again
-        removed_words = self.removed_words
-        self.removed_words = []
-        return removed_words
-
-    def remove_word(self, word: str, direction: WordDirection):
-        self.removed_words.append((word, direction))
 
 
 class CellList:
+    """Ordered collection of cells forming a word or partial word.
+
+    Provides convenient access to cells that form a continuous
+    sequence in the grid, typically representing a word slot.
+
+    Parameters
+    ----------
+    cells : list[Cell]
+        Ordered list of cells
+
+    Attributes
+    ----------
+    direction : WordDirection
+        Direction of the cell sequence (auto-detected)
+    """
+
     def __init__(self, cells: list[Cell]):
         self.cells = cells
 
-        # Default
-        if not self.cells or len(self.cells) < 1 or self.cells[1].y > self.cells[0].y:
+        # Auto-detect direction based on cell positions
+        if not self.cells or len(self.cells) < 2:
+            self.direction = WordDirection.HORIZONTAL
+        elif self.cells[1].y > self.cells[0].y:
             self.direction = WordDirection.HORIZONTAL
         else:
             self.direction = WordDirection.VERTICAL
@@ -191,102 +296,967 @@ class CellList:
     def __len__(self):
         return len(self.cells)
 
-    def __str__(self):
+    def __str__(self) -> str:
+        """String representation showing letters/placeholders."""
         return "".join([c.value or "-" for c in self.cells])
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         origin = self.cells[0]
         return f'CellList "{self}": {{x={origin.x}, y={origin.y}, dir={self.direction}}}'
 
     def __iter__(self):
-        return self.cells.__iter__()
+        return iter(self.cells)
 
-    def has_empty_cell(self):
+    def has_empty_cell(self) -> bool:
+        """Check if any cells are empty"""
         return "-" in str(self)
 
+    def truncate_end(self) -> str:
+        cell_str = str(self)
+        return cell_str.rstrip("".join(constants.PLACEHOLDERS))
+
+    def to_first_placeholder(self) -> str:
+        cell_str = str(self)
+        for i, char in enumerate(cell_str):
+            if char in constants.PLACEHOLDERS:
+                return cell_str[:i]
+        return cell_str
 
 class Grid:
+    """Crossword grid with solving and manipulation capabilities.
+
+    Manages a 2D array of cells, tracks word slots, handles symmetry,
+    and provides methods for setting words and solving puzzles.
+
+    Parameters
+    ----------
+    grid_size : tuple[int, int]
+        Dimensions as (rows, columns)
+    corpus : Corpus, optional
+        Word corpus for solving
+    shuffle : bool, optional
+        Whether to shuffle letter queues (default: True)
+    symmetry : GridSymmetry, optional
+        Grid symmetry type (default: ROTATIONAL)
+    auto_symmetry : bool, optional
+        Whether to automatically apply symmetry (default: False)
+    save_path : Path | None, optional
+        Default save location
+
+    Attributes
+    ----------
+    grid : np.ndarray[Cell]
+        2D array of cells
+    tries : list[pygtrie.Trie]
+        Tries indexed by word length for solving
+    h_heads : list[tuple[int, int]]
+        Starting positions of horizontal words
+    v_heads : list[tuple[int, int]]
+        Starting positions of vertical words
+    """
+
     def __init__(
         self,
         grid_size: tuple[int, int],
-        corpus: Corpus = None,
+        corpus: Corpus | None = None,
         shuffle: bool = True,
         symmetry: GridSymmetry = GridSymmetry.ROTATIONAL,
         auto_symmetry: bool = False,
         save_path: Path | None = None,
     ):
-        # if grid_size[0] % 2 != 0 or grid_size[1] % 2 != 0:
-        #     raise ValueError("Currently only even numbers are supported for grids")
-
+        # Validate dimensions
         self.grid_size = grid_size
-        self.row_count = self.grid_size[0]
-        self.col_count = self.grid_size[1]
+        self.row_count = grid_size[0]
+        self.col_count = grid_size[1]
 
-        assert self.row_count >= 3
-        assert self.col_count >= 3
+        if self.row_count < 3 or self.col_count < 3:
+            raise ValueError("Grid dimensions must be at least 3x3")
 
-        self.h_heads = []
-        self.v_heads = []
+        # Initialize grid
+        self.grid: NDArray[Cell] = np.empty(self.grid_size, dtype=Cell)
+        self.center = [(self.row_count - 1) / 2, (self.col_count - 1) / 2]
 
-        self.corpus = corpus.to_n_letter_corpus(max(self.row_count, self.col_count))
-
-        # Fill out grid/center
-        self.grid = np.empty(self.grid_size, dtype=Cell)
-        self.center = [((self.grid_size[0] - 1) / 2), ((self.grid_size[1] - 1) / 2)]
-
-        # Fill out grid
         for i in range(self.row_count):
             for j in range(self.col_count):
                 self.grid[i, j] = Cell(x=i, y=j, shuffle=shuffle)
 
-        # Update the heads for horizontal and vertical clues
-        self.update_length_and_head_data()
+        # Word tracking
+        self.h_heads = []
+        self.v_heads = []
 
-        self.auto_symmetry = auto_symmetry
-        self.symmetry = symmetry
-        self.save_path = save_path
+        # Corpus and solving
+        if corpus:
+            max_len = max(self.row_count, self.col_count)
+            self.corpus = corpus.max_length(max_len)
+        else:
+            self.corpus = None
         self.tries = []
 
-    def __repr__(self):
-        return f"Grid(dim=({self.grid_size[0]}, {self.grid_size[1]})"
+        # Grid properties
+        self.symmetry = symmetry
+        self.auto_symmetry = auto_symmetry
+        self.save_path = save_path
 
-    def __getitem__(self, x: tuple[int, int]) -> Cell:
-        # Check index
-        if (x[0] < 0 or x[0] > self.grid_size[0]) or (x[1] < 0 or x[1] > self.grid_size[1]):
-            raise IndexError(f"Index outside grid bounds:({self.grid_size[0]}, {self.grid_size[1]})")
+        # Initialize word boundaries
+        self.update_length_and_head_data()
 
-        return self.grid[*x]
+    def __str__(self) -> str:
+        return self.to_str()
 
-    def __setitem__(self, x: tuple[int, int], value: str):
-        self.set_grid(x[0], x[1], value)
+    def __repr__(self) -> str:
+        return f"Grid(dim=({self.row_count}, {self.col_count}))"
 
-    @classmethod
-    def from_dict(cls, json_grid: dict):
-        grid = cls(json_grid["grid_size"])
-        grid.symmetry = GridSymmetry(json_grid["symmetry"])
-        grid.auto_symmetry = json_grid["auto_symmetry"]
-        if "grid_letters" in json_grid:
-            grid_letters = json_grid["grid_letters"]
-            for i in range(grid.row_count):
-                for j in range(grid.col_count):
-                    grid.grid[i, j] = Cell.from_dict(grid_letters[i][j])
+    def __getitem__(self, key: tuple[int, int]) -> Cell:
+        """Get cell at coordinates.
 
-        grid.update_length_and_head_data()
-        return grid
+        Parameters
+        ----------
+        key : tuple[int, int]
+            Coordinates as (row, column)
 
-    @classmethod
-    def load(cls, filepath: Path, **kwargs):
-        new_grid = cls.from_dict(io_utils.load_json(filepath))
-        new_grid.save_path = filepath
-        return new_grid
+        Returns
+        -------
+        Cell
+            Cell at given position
+
+        Raises
+        ------
+        IndexError
+            If coordinates are out of bounds
+        """
+        x, y = key
+        if x < 0 or x >= self.row_count or y < 0 or y >= self.col_count:
+            raise IndexError(f"Index {key} outside grid bounds: ({self.row_count}, {self.col_count})")
+        return self.grid[x, y]
+
+    def __setitem__(self, key: tuple[int, int], value: str | None) -> None:
+        """Set cell value at coordinates.
+
+        Parameters
+        ----------
+        key : tuple[int, int]
+            Coordinates as (row, column)
+        value : str | None
+            New cell value
+        """
+        self.set_grid(key[0], key[1], value)
 
     @property
-    def is_valid(self):
+    def is_valid(self) -> bool:
+        """Check if all cells form valid crossings."""
         return all(c.is_valid for c in self.grid.flatten())
 
-    # Saving ###############################################################
+    def build_tries(self, n: int | None = None) -> None:
+        """Build tries from corpus for each word length.
 
-    def to_json(self):
+        Parameters
+        ----------
+        n : int | None, optional
+            Maximum word length (default: max of grid dimensions)
+        """
+        if not self.corpus:
+            logger.warning("Cannot build tries without corpus")
+            return
+
+        trie_len = n or max(self.row_count, self.col_count)
+        self.tries = self.corpus.to_n_tries(trie_len, padded=True)
+
+    def reset_for_solving(self) -> None:
+        """Reset grid to prepare for a new solving attempt.
+
+        Clears all non-locked/non-black cells, rebuilds letter queues,
+        and reconstructs tries from the corpus.
+        """
+        # Reset cells
+        for i in range(self.row_count):
+            for j in range(self.col_count):
+                cell = self[i, j]
+                if cell.status in (CellStatus.BLACK, CellStatus.LOCKED):
+                    continue
+
+                cell.reset_cell()
+                # Rebuild queue with shuffling if originally shuffled
+                if cell.shuffle_for_solving:
+                    cell.queue = copy.deepcopy(cell.queue_order)
+                    random.shuffle(cell.queue)
+
+        # Rebuild tries and update grid metadata
+        self.build_tries()
+        self.update_length_and_head_data()
+
+    def set_grid(self, x: int, y: int, value: str | None) -> None:
+        """Set cell value with symmetry handling.
+
+        Updates the cell at the given position and applies symmetry
+        rules if enabled.
+
+        Parameters
+        ----------
+        x : int
+            Row coordinate
+        y : int
+            Column coordinate
+        value : str | None
+            New value (letter, empty string, or None for black)
+
+        Raises
+        ------
+        IndexError
+            If coordinates are out of bounds
+        """
+        # Validate coordinates
+        if x < 0 or x >= self.row_count or y < 0 or y >= self.col_count:
+            raise IndexError(f"Index ({x}, {y}) outside grid bounds")
+
+        # Set primary cell
+        self.grid[x][y].update(value)
+
+        # Apply symmetry
+        if self.auto_symmetry and self.symmetry == GridSymmetry.ROTATIONAL:
+            sym_x, sym_y = self.get_symmetric_index(x, y, self.symmetry)
+
+            if self.grid[x][y].status == CellStatus.BLACK:
+                self.grid[sym_x][sym_y].update(None)
+            elif self.grid[sym_x][sym_y].status == CellStatus.BLACK:
+                self.grid[sym_x][sym_y].update("")
+
+        # Update word boundaries
+        self.update_length_and_head_data()
+
+    def get_symmetric_index(self, x: int, y: int, symmetry: GridSymmetry) -> tuple[int, int]:
+        """Calculate symmetric position for a cell.
+
+        Parameters
+        ----------
+        x : int
+            Row coordinate
+        y : int
+            Column coordinate
+        symmetry : GridSymmetry
+            Type of symmetry to apply
+
+        Returns
+        -------
+        tuple[int, int]
+            Symmetric coordinates
+        """
+        if symmetry == GridSymmetry.ROTATIONAL:
+            center_x, center_y = self.corner2center(x, y)
+            return self.center2corner(-center_x, -center_y)
+        # Add other symmetry types as needed
+        return x, y
+
+    def update_length_and_head_data(self) -> None:
+        """Update word boundaries, lengths, and numbering.
+
+        Scans the grid to identify word starts/ends, calculate
+        word lengths, and assign answer numbers.
+        """
+        self.h_heads = []
+        self.v_heads = []
+        answer_counter = 1
+
+        # First pass: identify starts and assign numbers
+        for i in range(self.row_count):
+            for j in range(self.col_count):
+                cell = self[i, j]
+
+                # Check word boundaries
+                cell.is_h_start = self._is_h_start(i, j)
+                cell.is_h_end = self._is_h_end(i, j)
+                cell.is_v_start = self._is_v_start(i, j)
+                cell.is_v_end = self._is_v_end(i, j)
+
+                # Track head positions
+                if cell.is_h_start:
+                    self.h_heads.append((i, j))
+                if cell.is_v_start:
+                    self.v_heads.append((i, j))
+
+                # Assign answer numbers
+                if cell.is_h_start or cell.is_v_start:
+                    cell.answer_number = answer_counter
+                    answer_counter += 1
+                else:
+                    cell.answer_number = None
+
+        # Second pass: calculate word lengths
+        for i in range(self.row_count):
+            for j in range(self.col_count):
+                self[i, j].hlen = self.word_len(i, j, WordDirection.HORIZONTAL)
+                self[i, j].vlen = self.word_len(i, j, WordDirection.VERTICAL)
+
+    def _is_h_start(self, i: int, j: int) -> bool:
+        """Check if cell starts a horizontal word."""
+        if self[i, j].status == CellStatus.BLACK:
+            return False
+        if j == 0:
+            return True
+        return self[i, j - 1].status == CellStatus.BLACK
+
+    def _is_h_end(self, i: int, j: int) -> bool:
+        """Check if cell ends a horizontal word."""
+        if self[i, j].status == CellStatus.BLACK:
+            return False
+        if j == self.col_count - 1:
+            return True
+        return self[i, j + 1].status == CellStatus.BLACK
+
+    def _is_v_start(self, i: int, j: int) -> bool:
+        """Check if cell starts a vertical word."""
+        if self[i, j].status == CellStatus.BLACK:
+            return False
+        if i == 0:
+            return True
+        return self[i - 1, j].status == CellStatus.BLACK
+
+    def _is_v_end(self, i: int, j: int) -> bool:
+        """Check if cell ends a vertical word."""
+        if self[i, j].status == CellStatus.BLACK:
+            return False
+        if i == self.row_count - 1:
+            return True
+        return self[i + 1, j].status == CellStatus.BLACK
+
+    def clear(self) -> None:
+        """Clear all non-locked, non-black cells."""
+        for cell in self.grid.flatten():
+            if cell.status == CellStatus.SET:
+                cell.reset_cell()
+
+    def lock_entry(self, i: int, j: int) -> None:
+        """Lock a cell to prevent changes during solving.
+
+        Parameters
+        ----------
+        i : int
+            Row coordinate
+        j : int
+            Column coordinate
+        """
+        if self[i, j].status == CellStatus.SET:
+            self[i, j].status = CellStatus.LOCKED
+            logger.debug(f"Entry [{i},{j}] locked")
+        else:
+            logger.error(f"Cannot lock entry [{i},{j}]: not currently set")
+
+    def unlock_entry(self, i: int, j: int) -> None:
+        """Unlock a previously locked cell.
+
+        Parameters
+        ----------
+        i : int
+            Row coordinate
+        j : int
+            Column coordinate
+        """
+        if self[i, j].status == CellStatus.LOCKED:
+            self[i, j].status = CellStatus.SET
+            logger.debug(f"Entry [{i},{j}] unlocked")
+        else:
+            logger.error(f"Cannot unlock entry [{i},{j}]: not currently locked")
+
+    def toggle_locked(self, i: int, j: int) -> None:
+        """Toggle locked status of a cell.
+
+        Parameters
+        ----------
+        i : int
+            Row coordinate
+        j : int
+            Column coordinate
+        """
+        cell = self[i, j]
+        if cell.status == CellStatus.LOCKED:
+            cell.status = CellStatus.SET
+            logger.debug(f"Entry [{i},{j}] unlocked")
+        elif cell.status == CellStatus.SET:
+            cell.status = CellStatus.LOCKED
+            logger.debug(f"Entry [{i},{j}] locked")
+        else:
+            logger.error(f"Cannot toggle lock: [{i},{j}] is {cell.status}")
+
+    def set_black(self, i: int, j: int, n: int = 1, direction: WordDirection | int = WordDirection.HORIZONTAL):
+        black_sequence = [None]*n
+        self.set_word(black_sequence, i, j, direction)
+
+    def set_word(self, word: str | list[str | None], i: int, j: int, direction: WordDirection | int, lock: bool = False) -> None:
+        """Place a word in the grid.
+
+        Parameters
+        ----------
+        word : str or list[str|None]
+            Word to place (can include placeholders)
+        i : int
+            Starting row coordinate
+        j : int
+            Starting column coordinate
+        direction : WordDirection
+            Direction to place word
+        lock : bool, optional
+            Whether to lock the cells (default: False)
+
+        Raises
+        ------
+        ValueError
+            If word doesn't fit in grid
+        """
+        match WordDirection(direction):
+            case WordDirection.HORIZONTAL:
+                if self.col_count - j < len(word):
+                    raise ValueError("Word too long for horizontal space")
+                for idx, letter in enumerate(word):
+                    self[i, j + idx].update(letter)
+                    if lock:
+                        self[i, j + idx].status = CellStatus.LOCKED
+
+            case WordDirection.VERTICAL:
+                if self.row_count - i < len(word):
+                    raise ValueError("Word too long for vertical space")
+                for idx, letter in enumerate(word):
+                    self[i + idx, j].update(letter)
+                    if lock:
+                        self[i + idx, j].status = CellStatus.LOCKED
+
+            case _:
+                raise ValueError("Invalid word direction")
+
+    def full_word_from_cell(
+        self, x: int, y: int, direction: WordDirection, terminate_on_empty: bool = False
+    ) -> CellList:
+        """Get all cells forming a word from a given position.
+
+        Parameters
+        ----------
+        x : int
+            Starting row coordinate
+        y : int
+            Starting column coordinate
+        direction : WordDirection
+            Direction of the word
+        terminate_on_empty : bool, optional
+            Stop at first empty cell (default: False)
+
+        Returns
+        -------
+        CellList
+            Cells forming the complete word
+        """
+        start_cell = self[x, y]
+        if start_cell.status == CellStatus.BLACK:
+            return CellList([])
+
+        # Determine traversal directions
+        if direction == WordDirection.VERTICAL:
+            pre_dir = GridDirection.UP
+            post_dir = GridDirection.DOWN
+        else:
+            pre_dir = GridDirection.LEFT
+            post_dir = GridDirection.RIGHT
+
+        # Collect cells before and after start position
+        pre_cells = self._traverse_cells(x, y, pre_dir, terminate_on_empty)
+        post_cells = self._traverse_cells(x, y, post_dir, terminate_on_empty)
+
+        # Combine in correct order
+        cells = [*list(reversed(pre_cells[1:])), start_cell, *post_cells[1:]]
+        return CellList(cells)
+
+    def _traverse_cells(self, i: int, j: int, direction: GridDirection, terminate_on_empty: bool = False) -> list[Cell]:
+        """Traverse cells in a given direction until boundary.
+
+        Traverses from the starting cell in the specified direction,
+        collecting cells until a word boundary or empty cell is reached.
+
+        Parameters
+        ----------
+        i : int
+            Starting row
+        j : int
+            Starting column
+        which : GridDirection
+            Direction to traverse (UP, DOWN, LEFT, RIGHT)
+        terminate_on_empty : bool, optional
+            Whether to stop at first empty cell (default: False)
+
+        Returns
+        -------
+        list[Cell]
+            List of cells including the starting cell.
+            Returns empty list if starting cell is black.
+        """
+        cells = [self[i, j]]
+
+        if cells[0].status == CellStatus.BLACK:
+            return []
+
+        # Define movement functions based on direction
+        match GridDirection(direction):
+            case GridDirection.UP:
+
+                def should_stop(c):
+                    return c.is_v_start or (terminate_on_empty and c.status == CellStatus.EMPTY)
+
+                def next_cell(c):
+                    return self[c.x - 1, c.y] if c.x > 0 else None
+
+            case GridDirection.DOWN:
+
+                def should_stop(c):
+                    return c.is_v_end or (terminate_on_empty and c.status == CellStatus.EMPTY)
+
+                def next_cell(c):
+                    return self[c.x + 1, c.y] if c.x < self.row_count - 1 else None
+
+            case GridDirection.LEFT:
+
+                def should_stop(c):
+                    return c.is_h_start or (terminate_on_empty and c.status == CellStatus.EMPTY)
+
+                def next_cell(c):
+                    return self[c.x, c.y - 1] if c.y > 0 else None
+
+            case GridDirection.RIGHT:
+
+                def should_stop(c):
+                    return c.is_h_end or (terminate_on_empty and c.status == CellStatus.EMPTY)
+
+                def next_cell(c):
+                    return self[c.x, c.y + 1] if c.y < self.col_count - 1 else None
+
+            case _:
+                raise ValueError(f"Invalid direction: {direction}")
+
+        # Traverse until boundary
+        while not should_stop(cells[-1]):
+            next_c = next_cell(cells[-1])
+            if next_c is None:
+                break
+            cells.append(next_c)
+
+        return cells
+
+    def word_len(self, i: int, j: int, direction: WordDirection) -> int:
+        """Get length of word at position (i, j)."""
+        return len(self.full_word_from_cell(i, j, direction))
+
+    def get_next_cell(self, x: int, y: int, move_dir: MoveDirection) -> Cell:
+        """Get next cell in solving order.
+
+        Moves through grid left-to-right, top-to-bottom, skipping black cells.
+
+        Parameters
+        ----------
+        x : int
+            Current row
+        y : int
+            Current column
+        move_dir : MoveDirection
+            Direction to move
+
+        Returns
+        -------
+        Cell
+            Next cell (or current if can't move)
+        """
+        i, j = x, y
+
+        match MoveDirection(move_dir):
+            case MoveDirection.FORWARD_HORIZONTAL:
+                if j < self.col_count - 1:
+                    j += 1
+                elif i < self.row_count - 1:
+                    i += 1
+                    j = 0
+                else:
+                    return self[i, j]  # Can't move forward
+
+            case MoveDirection.FORWARD_VERTICAL:
+                if i < self.row_count - 1:
+                    i += 1
+                elif j < self.col_count - 1:
+                    j += 1
+                    i = 0
+                else:
+                    return self[i, j]
+
+            case MoveDirection.BACK_HORIZONTAL:
+                if j > 0:
+                    j -= 1
+                elif i > 0:
+                    i -= 1
+                    j = self.col_count - 1
+                else:
+                    return self[i, j]
+
+            case MoveDirection.BACK_VERTICAL:
+                if i > 0:
+                    i -= 1
+                elif j > 0:
+                    j -= 1
+                    i = self.row_count - 1
+                else:
+                    return self[i, j]
+
+        # Skip black cells
+        if self[i, j].status == CellStatus.BLACK:
+            return self.get_next_cell(i, j, move_dir)
+
+        return self[i, j]
+
+    def get_word(self, entry_id: str) -> CellList | None:
+        """Get cells forming a numbered word entry.
+
+        Parameters
+        ----------
+        entry_id : str
+            Entry identifier (e.g., "1A" or "10D")
+
+        Returns
+        -------
+        CellList | None
+            Cells forming the word, or None if not found
+
+        Raises
+        ------
+        ValueError
+            If entry_id format is invalid
+        """
+        if not entry_id or len(entry_id) < 2:
+            raise ValueError(f"Invalid entry ID format: {entry_id}")
+
+        direction_char = entry_id[-1].upper()
+        if direction_char not in ("A", "D"):
+            raise ValueError(f"Invalid direction in entry ID: {entry_id}")
+
+        try:
+            entry_num = int(entry_id[:-1])
+        except ValueError as e:
+            raise ValueError(f"Invalid entry number in ID: {entry_id}") from e
+
+        word_dir = WordDirection.HORIZONTAL if direction_char == "A" else WordDirection.VERTICAL
+
+        # Find the starting cell
+        for i in range(self.row_count):
+            for j in range(self.col_count):
+                cell = self[i, j]
+                if cell.answer_number != entry_num:
+                    continue
+
+                if (word_dir == WordDirection.HORIZONTAL and cell.is_h_start) or (
+                    word_dir == WordDirection.VERTICAL and cell.is_v_start
+                ):
+                    return self.full_word_from_cell(i, j, word_dir)
+
+        return None
+        # Previous implementation
+        # -----------------------
+        # Left in place in case of errors with the auto-updated one
+        #
+        # word_dir = WordDirection.from_char(entry_id[-1])
+        # starts = self.h_starts if word_dir == WordDirection.HORIZONTAL else self.v_starts
+        #
+        # entry_num = int(entry_id[:-1])
+        # try:
+        #     start_cell_data = starts.row(by_predicate=(pl.col("answer_number") == entry_num), named=True)
+        # except pl.exceptions.NoRowsReturnedError as e:
+        #     raise ValueError(f"Invalid entry ID: {entry_id}") from e
+        # start_cell = Cell.from_dict(start_cell_data)
+        # return self.full_word_from_cell(*start_cell.matrix_index, direction=word_dir)
+
+    def get_crossers(self, entry_id: str) -> list[CellList]:
+        """Find all words crossing a given entry.
+
+        Parameters
+        ----------
+        entry_id : str
+            Entry identifier (e.g., "1A" or "10D")
+
+        Returns
+        -------
+        list[CellList]
+            All crossing words
+        """
+        word = self.get_word(entry_id)
+        if not word:
+            return []
+
+        cross_dir = WordDirection.flip(word.direction)
+        return [self.full_word_from_cell(cell.x, cell.y, cross_dir) for cell in word]
+
+    def count_possible(
+        self,
+        query_cells: CellList | list[tuple[Cell, WordDirection]],
+        grid_status: GridStatus = GridStatus.INCOMPLETE,
+        query_level: int = 2,
+        corpus: Corpus | None = None,
+    ) -> int:
+        """Count possible word configurations for a cell set.
+
+        Recursively explores possible word placements to estimate
+        the difficulty of filling a region.
+
+        Notes
+        -----
+        This has not been tested recently - needs to be updated to use Query!
+
+        Parameters
+        ----------
+        query_cells : CellList | list[tuple[Cell, WordDirection]]
+            Cells to analyze
+        grid_status : GridStatus, optional
+            Current grid status
+        query_level : int, optional
+            Recursion depth (default: 2)
+        corpus : Corpus | None, optional
+            Word corpus to use
+
+        Returns
+        -------
+        int
+            Number of possible configurations
+        """
+        if query_level == 0:
+            return 0
+
+        corpus = corpus or self.corpus
+        if not corpus:
+            return 0
+
+        n_possible = 0
+
+        for qc in query_cells:
+            # Extract cell and direction
+            if hasattr(query_cells, "direction"):
+                cell = qc
+                original_direction = query_cells.direction
+            else:
+                cell, original_direction = qc
+
+            # Get perpendicular word
+            query_direction = WordDirection.flip(original_direction)
+            query_cell_list = self.full_word_from_cell(cell.x, cell.y, query_direction, terminate_on_empty=False)
+
+            if not query_cell_list.has_empty_cell():
+                continue
+
+            # Find matching words
+            pattern = str(query_cell_list)
+            candidate_words = query.match(corpus, pattern)
+
+            if len(candidate_words) == 0:
+                return 0  # Dead end
+
+            # Prepare next level cells
+            next_level_cells = []
+            for c in query_cell_list:
+                word_cells = self.full_word_from_cell(c.x, c.y, original_direction, terminate_on_empty=False)
+                next_level_cells.extend(
+                    [(nc, original_direction) for nc in word_cells if nc.is_start(original_direction)]
+                )
+            next_level_cells = list(set(next_level_cells))
+
+            # Try each candidate word
+            head_cell = query_cell_list[0]
+            for candidate in candidate_words:
+                # Temporarily place word
+                self.set_word(candidate.word, head_cell.x, head_cell.y, query_direction)
+
+                # Recursive count
+                n_possible += self.count_possible(next_level_cells, grid_status, query_level - 1, corpus)
+
+                # Restore original state
+                self.set_word(pattern, head_cell.x, head_cell.y, query_direction)
+
+            n_possible += len(candidate_words)
+
+        return n_possible
+
+    def corner2center(self, x: int, y: int) -> tuple[float, float]:
+        """Convert grid coordinates (x,y) to center-relative coordinates (c1,c2).
+
+        Notes
+        -----
+        Given the following values:
+            a: Corner -> Pt         [x,y]
+            b: Corner -> Center     self.center
+            c: Center -> Pt         [c1,c2]
+
+        The Center-relative coordinates are computed as
+            a = (b + c)    ->    C = (a - b)
+            [c1,c2] = [x,y] - self.center
+
+        Returns
+        -------
+        tuple[float, float]
+            Coordinates relative to grid center (c1,c2).
+        """
+        return x - self.center[0], y - self.center[1]
+
+    def center2corner(self, c1: float, c2: float) -> tuple[int, int]:
+        """Convert center-relative coordinates (c1,c2) to grid coordinates (x,y).
+
+        Notes
+        -----
+        Given the following values:
+            A: Corner -> Pt         [x,y]
+            B: Corner -> Center     self.center
+            C: Center -> Pt         [c1,c2]
+
+        The grid coordinates are computed as:
+            A = (B + C)
+            self.center + [c1,c2] = [x,y]
+
+        Returns
+        -------
+        tuple[int, int]
+            Grid coordinates (x,y)
+        """
+        return int(self.center[0] + c1), int(self.center[1] + c2)
+
+    @property
+    def h_starts(self) -> pl.DataFrame:
+        """Get dataframe of horizontal word starts."""
+        return self.to_dataframe().filter(pl.col("is_h_start"))
+
+    @property
+    def v_starts(self) -> pl.DataFrame:
+        """Get dataframe of vertical word starts."""
+        return self.to_dataframe().filter(pl.col("is_v_start"))
+
+    def word_lengths(self) -> pl.DataFrame:
+        """Analyze word length distribution in grid.
+
+        Returns
+        -------
+        pl.DataFrame
+            Word lengths with counts and entry IDs
+        """
+        df = self.to_dataframe()
+
+        # Process horizontal words
+        h_starts = df.filter(pl.col("is_h_start"))
+        h_starts = h_starts.with_columns([pl.lit("A").alias("dir"), pl.col("hlen").alias("word_len")])
+
+        # Process vertical words
+        v_starts = df.filter(pl.col("is_v_start"))
+        v_starts = v_starts.with_columns([pl.lit("D").alias("dir"), pl.col("vlen").alias("word_len")])
+
+        # Combine and aggregate
+        cols = ["word_len", "answer_number", "dir"]
+        all_starts = pl.concat([h_starts[cols], v_starts[cols]])
+
+        return (
+            all_starts.with_columns(
+                pl.concat_str([pl.col("answer_number").cast(pl.Utf8), pl.col("dir")]).alias("entry_id")
+            )
+            .group_by("word_len")
+            .agg([pl.len().alias("count"), pl.col("entry_id").alias("entries")])
+            .sort("word_len")
+        )
+
+    def to_str(self, delimiter: str = "\n") -> str:
+        """Convert grid to string representation.
+
+        Parameters
+        ----------
+        delimiter : str, optional
+            Line separator (default: newline)
+
+        Returns
+        -------
+        str
+            Grid as text with cells separated by spaces
+        """
+        lines = []
+        for i in range(self.row_count):
+            row_chars = []
+            for j in range(self.col_count):
+                cell = self[i, j]
+                if cell.status == CellStatus.BLACK:
+                    row_chars.append("■")
+                elif cell.status == CellStatus.EMPTY:
+                    row_chars.append("-")
+                else:
+                    row_chars.append(cell.value)
+            lines.append(" ".join(row_chars))
+
+        return delimiter.join(lines)
+
+    def to_dataframe(self) -> pl.DataFrame:
+        """Convert grid to dataframe representation."""
+        return pl.DataFrame([c.to_json() for c in self.grid.flatten()])
+
+    def print(self) -> None:
+        """Print grid to console."""
+        print(self.to_str())
+
+    def to_console(self):
+        """Print grid to console."""
+        self.print()
+
+    def print_boundaries(self, show_key: bool = True) -> None:
+        """Print grid showing word start/end positions."""
+
+        for i in range(self.row_count):
+            row_chars = []
+            for j in range(self.col_count):
+                if self._is_h_start(i, j) and self._is_v_start(i, j):
+                    char = "x"
+                elif self._is_h_end(i, j) and self._is_v_end(i, j):
+                    char = "X"
+                elif self._is_h_start(i, j) and self._is_v_end(i, j):
+                    char = "y"
+                elif self._is_h_end(i, j) and self._is_v_start(i, j):
+                    char = "Y"
+                elif self._is_h_start(i, j):
+                    char = "h"
+                elif self._is_v_start(i, j):
+                    char = "v"
+                elif self._is_h_end(i, j):
+                    char = "H"
+                elif self._is_v_end(i, j):
+                    char = "V"
+                else:
+                    char = "-"
+                row_chars.append(char)
+            print(" ".join(row_chars))
+
+        if show_key:
+            key_lines = [
+                "x = horizontal start and vertical start",
+                "X = horizontal end and vertical end",
+                "y = horizontal start and vertical end",
+                "Y = horizontal end and vertical start",
+                "h = horizontal start only",
+                "v = vertical start only",
+                "H = horizontal end only",
+                "V = vertical end only",
+                "- = no start or end"
+            ]
+            print("Key:")
+            for k in key_lines:
+                print(f"    {k}")
+
+    def print_lens(self, direction: WordDirection) -> None:
+        """Print grid showing word lengths.
+
+        Parameters
+        ----------
+        direction : WordDirection
+            Which direction lengths to show
+        """
+        for i in range(self.row_count):
+            row_vals = []
+            for j in range(self.col_count):
+                if direction == WordDirection.HORIZONTAL:
+                    row_vals.append(str(self[i, j].hlen))
+                else:
+                    row_vals.append(str(self[i, j].vlen))
+            print(" ".join(row_vals))
+
+    def to_json(self) -> dict:
+        """Serialize grid to JSON-compatible dictionary."""
         grid_letters = []
         for i in range(self.row_count):
             row = [self.grid[i, j].to_json() for j in range(self.col_count)]
@@ -299,473 +1269,50 @@ class Grid:
             "auto_symmetry": self.auto_symmetry,
         }
 
-    def count_possible(
-        self,
-        query_cells: CellList | list[tuple[Cell, WordDirection]],
-        grid_status: GridStatus = GridStatus.INCOMPLETE,
-        query_level: int = 2,
-        corpus=None,
-    ) -> int:
-        """Count the number of configurations by varying a set of cell
+    def save(self, file_path: Path | None = None) -> None:
+        """Save grid to JSON file.
 
-        Args:
-            query_cells:
-            grid_status:
-            query_level:
-            corpus:
-
-        Returns:
-
+        Parameters
+        ----------
+        file_path : Path | None, optional
+            Save location (uses default if None)
         """
+        save_path = file_path or self.save_path
+        if save_path:
+            io_utils.save_json_dict(save_path, self.to_json())
 
-        # Setup loop --------------------------------------------------------------------------------------------------#
+    @classmethod
+    def from_dict(cls, json_grid: dict) -> "Grid":
+        """Create grid from dictionary representation."""
+        grid = cls(grid_size=json_grid["grid_size"])
+        grid.symmetry = GridSymmetry(json_grid["symmetry"])
+        grid.auto_symmetry = json_grid["auto_symmetry"]
 
-        # End case for recursion
-        if query_level == 0:
-            return 0
+        if "grid_letters" in json_grid:
+            grid_letters = json_grid["grid_letters"]
+            for i in range(grid.row_count):
+                for j in range(grid.col_count):
+                    grid.grid[i, j] = Cell.from_dict(grid_letters[i][j])
 
-        # To override corpus
-        if not corpus:
-            corpus = self.corpus
+        grid.update_length_and_head_data()
+        return grid
 
-        # Count the number of entries given the candidate word
-        n_possible = 0
-
-        # Check through each of the query cells -----------------------------------------------------------------------#
-        for qc in query_cells:
-            # Get the cell/direction
-            if hasattr(query_cells, "direction"):
-                cell = qc
-                original_direction = query_cells.direction
-            else:
-                cell, original_direction = qc
-
-            # Get the cells starting at {cell} in flip({direction})
-            query_direction = WordDirection.flip(original_direction)
-            query_cell_list = self.full_word_from_cell(cell.x, cell.y, query_direction, terminate_on_empty=False)
-
-            # Get the list of cells for the next level
-            next_level_cells = []
-            for c in query_cell_list:
-                possible_next_cells = self.full_word_from_cell(c.x, c.y, query_direction, terminate_on_empty=False)
-                next_level_cells.extend(
-                    [
-                        (next_cell, query_direction)
-                        for next_cell in possible_next_cells
-                        if next_cell.is_start(query_direction)
-                    ]
-                )
-            next_level_cells = list(set(next_level_cells))
-
-            # No information available here
-            if not query_cell_list.has_empty_cell():
-                continue
-
-            # Get the possible words
-            c_candidate_words = query.match(corpus, str(query_cell_list))
-
-            # Recursively check other directions ---------------------------------------#
-            head_cell = query_cell_list[0]
-            for candidate_word in c_candidate_words:
-                # Set the word (temporary)
-                self.set_word(candidate_word.word, head_cell.x, head_cell.y, query_direction)
-
-                # Recursive call to increment the number of possible words in next direction
-                n_possible += self.count_possible(next_level_cells, grid_status, query_level - 1)
-
-                # Reset values
-                self.set_word(str(query_cell_list), head_cell.x, head_cell.y, query_direction)
-
-            # Add to the possibilities if we're at the bottom query level
-            n_possible += len(c_candidate_words)
-
-            # Short circuit if we have reached an impossible grid configuration
-            if len(c_candidate_words) == 0:
-                return 0
-
-        return n_possible
-
-    def save(self, file_path: Path | None = None):
-        if file_path:
-            save_path = file_path
-        elif self.save_path:
-            save_path = self.save_path
-        else:
-            return
-
-        io_utils.save_json_dict(save_path, self.to_json())
-
-    def get_symmetric_index(self, x: int, y: int, symmetry: GridSymmetry):
-        if symmetry == GridSymmetry.ROTATIONAL:
-            coord_center = self.corner2center(x, y)
-            coord_rot_center = -coord_center[0], -coord_center[1]
-            return self.center2corner(*coord_rot_center)
-
-    def build_tries(self, n: int | None = None):
-        if self.corpus:
-            trie_len = n or max(self.row_count, self.col_count) + 1
-            self.tries = self.corpus.to_n_tries(trie_len, padded=True)
-        else:
-            logger.warning("Could not build tries (no corpus loaded)")
-
-    # Manipulation ###############################################################
-
-    def set_grid(self, x: int, y: int, value: str | None):
-        # Check index
-        if (x < 0 or x > self.grid_size[0]) or (y < 0 or y > self.grid_size[1]):
-            raise IndexError(f"Index outside grid bounds:({self.grid_size[0]}, {self.grid_size[1]})")
-
-        # Set value
-        self.grid[x][y].update(value)
-
-        # Set symmetry
-        if self.symmetry != GridSymmetry.NONE:
-            cr1, cr2 = self.get_symmetric_index(x, y, self.symmetry)
-
-            if self.auto_symmetry and self.symmetry == GridSymmetry.ROTATIONAL:
-                if self.grid[x][y].status != CellStatus.BLACK and self.grid[cr1][cr2].status == CellStatus.BLACK:
-                    # If the rotated state is black, then reset that black square to default
-                    self.grid[cr1][cr2].update("")
-
-                elif self.grid[x][y].status == CellStatus.BLACK:
-                    # Set the rotated state to black
-                    self.grid[cr1][cr2].update(None)
-
-        # Update heads
-        self.update_length_and_head_data()
-
-    def update_length_and_head_data(self):
-        """Compute/save word lengths, and which squares are origins"""
-
-        # Update horizontal / vertical heads
-        self.h_heads = []
-        self.v_heads = []
-        answer_counter = 1
-        for i in range(self.row_count):
-            for j in range(self.col_count):
-                # Update lists of head nodes
-                is_h_start = self.is_h_start(i, j)
-                is_v_start = self.is_v_start(i, j)
-
-                if is_h_start:
-                    self.h_heads.append((i, j))
-
-                if is_v_start:
-                    self.v_heads.append((i, j))
-
-                if is_h_start or is_v_start:
-                    self[i, j].answer_number = answer_counter
-                    answer_counter += 1
-                else:
-                    self[i, j].answer_number = None
-
-                # Update start/end data
-                self[i, j].is_h_start = self.is_h_start(i, j)
-                self[i, j].is_h_end = self.is_h_end(i, j)
-                self[i, j].is_v_start = self.is_v_start(i, j)
-                self[i, j].is_v_end = self.is_v_end(i, j)
-
-        # Update word lengths
-        for i in range(self.row_count):
-            for j in range(self.col_count):
-                self[i, j].hlen = self.horizontal_word_len(i, j)
-                self[i, j].vlen = self.vertical_word_len(i, j)
-
-    def clear(self):
-        """Reset all values in the grid, except those that are locked or black"""
-        for c in self.grid.flatten():
-            if c.status == CellStatus.SET:
-                c.reset_cell()
-
-    def lock_entry(self, i: int, j: int):
-        """Lock the cell at [i, j]"""
-
-        # Change from set -> locked
-        if self[i, j].status == CellStatus.SET:
-            logger.debug(f"Entry [{i},{j}] status changed to LOCKED")
-            self[i, j].status = CellStatus.LOCKED
-        else:
-            logger.error(f"Cannot lock entry [{i},{j}]: it is not currently set")
-
-    def unlock_entry(self, i: int, j: int):
-        """Unlock the cell at [i, j]"""
-
-        # Change from locked -> set
-        if self[i, j].status == CellStatus.LOCKED:
-            logger.debug(f"Entry [{i},{j}] status changed to SET")
-            self[i, j].status = CellStatus.SET
-        else:
-            logger.error(f"Cannot unlock entry [{i},{j}]: it is not currently locked")
-
-    def toggle_locked(self, i: int, j: int):
-        """Flip the locked status of the cell at [i, j]"""
-        # Change from locked -> set
-        if self[i, j].status == CellStatus.LOCKED:
-            self[i, j].status = CellStatus.SET
-            logger.debug(f"Entry [{i},{j}] status changed to SET")
-        elif self[i, j].status == CellStatus.SET:
-            logger.debug(f"Entry [{i},{j}] status changed to LOCKED")
-            self[i, j].status = CellStatus.LOCKED
-        else:
-            logger.error(f"Cannot toggle locked status for entry [{i},{j}]: it is neither SET nor LOCKED")
-
-    def set_word(self, word: str, i: int, j: int, direction: WordDirection, lock: bool = False):
-        """
-        Set word (or word fragment) in the grid beginning at index [i,j]
-
-        Args:
-            word: (str) word to set
-            i (int): row of the beginning of the word
-            j (int): column of the beginning of the word
-            direction (WordDirection): direction of the word (vertical/horizontal)
-            lock (bool): true if the status of cells containing the inputted word should be set to locked
-        """
-
-        match direction:
-            case direction.HORIZONTAL:
-                if self.col_count - j < len(word):
-                    raise ValueError("Dimension Mismatch: Cannot fit word within horizontal section")
-
-                for lix in range(len(word)):
-                    self[i, j + lix].update(word[lix])
-                    if lock:
-                        self[i, j + lix].status = CellStatus.LOCKED
-            case direction.VERTICAL:
-                if self.row_count - i < len(word):
-                    raise ValueError("Dimension Mismatch: Cannot fit word within vertical section")
-                for lix in range(len(word)):
-                    self[i + lix, j].update(word[lix])
-                    if lock:
-                        self[i + lix, j].status = CellStatus.LOCKED
-            case _:
-                raise ValueError("Invalid word direction")
-
-    # Attributes ##################################################################
-
-    def is_h_start(self, i: int, j: int) -> bool:
-        if j > 0:
-            is_after_black = self[i, j - 1].status == CellStatus.BLACK and self[i, j].status != CellStatus.BLACK
-        else:
-            is_after_black = False
-
-        return self[i, j].status != CellStatus.BLACK and (j == 0 or is_after_black)
-
-    def is_h_end(self, i: int, j: int) -> bool:
-        if j < self.col_count - 1:
-            is_before_black = self[i, j + 1].status == CellStatus.BLACK and self[i, j].status != CellStatus.BLACK
-        else:
-            is_before_black = False
-        return self[i, j].status != CellStatus.BLACK and (j == (self.col_count - 1) or is_before_black)
-
-    def is_v_start(self, i: int, j: int) -> bool:
-        if i > 0:
-            is_after_black = self[i - 1, j].status == CellStatus.BLACK and self[i, j].status != CellStatus.BLACK
-        else:
-            is_after_black = False
-        return self[i, j].status != CellStatus.BLACK and (i == 0 or is_after_black)
-
-    def is_v_end(self, i: int, j: int) -> bool:
-        if i < self.row_count - 1:
-            is_before_black = self[i + 1, j].status == CellStatus.BLACK and self[i, j].status != CellStatus.BLACK
-        else:
-            is_before_black = False
-        return self[i, j].status != CellStatus.BLACK and (i == (self.row_count - 1) or is_before_black)
-
-    def get_next_cell(self, x: int, y: int, move_dir: MoveDirection) -> Cell:
-        # Next square index
-        i = x
-        j = y
-
-        # Save for readability
-        on_left_column = j == 0
-        on_right_column = j == (self.col_count - 1)
-        on_top_row = i == 0
-        on_bottom_row = i == (self.row_count - 1)
-
-        match move_dir:
-            case MoveDirection.FORWARD_HORIZONTAL:
-                if on_bottom_row and on_right_column:
-                    # Can't proceed forward
-                    return self[i, j]
-                if j < self.col_count - 1:
-                    j += 1
-                elif j == self.col_count - 1 and i < self.row_count - 1:
-                    j = 0
-                    i += 1
-
-            case MoveDirection.FORWARD_VERTICAL:
-                if not on_bottom_row:
-                    i += 1
-                elif not on_right_column:
-                    i = 0
-                    j += 1
-                else:
-                    # Can't proceed forward
-                    return self[i, j]
-
-            case MoveDirection.BACK_HORIZONTAL:
-                if not on_left_column:
-                    j -= 1
-                elif not on_top_row:
-                    i -= 1
-                    j = self.col_count - 1
-                else:
-                    # Can't proceed forward
-                    return self[i, j]
-
-            case MoveDirection.BACK_VERTICAL:
-                if not on_top_row:
-                    # Move one square up the left
-                    i -= 1
-                elif not on_left_column:
-                    # Cannot move up further
-                    return self[self.row_count - 1, j - 1]
-                else:
-                    return self[i, j]
-
-        if self[i, j].status == CellStatus.BLACK:
-            return self.get_next_cell(i, j, move_dir)
-        else:
-            return self[i, j]
+    @classmethod
+    def load(cls, filepath: Path) -> "Grid":
+        """Load grid from JSON file."""
+        grid = cls.from_dict(io_utils.load_json(filepath))
+        grid.save_path = filepath
+        return grid
 
     # Utilities ###############################################################
 
-    def corner2center(self, x: int, y: int) -> tuple[float, float]:
-        """Convert coordinate measured from corner, to coordinate measured from center of grid
-
-        a: Corner -> Pt         [x,y]
-        b: Corner -> Center     self.center
-        c: Center -> Pt         [c1,c2]
-
-        a = (b + c)    ->    C = (a - b)
-        [c1,c2] = [x,y] - self.center
-        """
-        return x - self.center[0], y - self.center[1]
-
-    def center2corner(self, c1: float, c2: float) -> tuple[int, int]:
-        """Convert coordinate measured form center, to coordinate measured from corner
-
-        A: Corner -> Pt         [x,y]
-        B: Corner -> Center     self.center
-        C: Center -> Pt         [c1,c2]
-
-        A = (B + C)
-        self.center + [c1,c2] = [x,y]
-        """
-        return int(self.center[0] + c1), int(self.center[1] + c2)
-
-    def full_word_from_cell(self, x: int, y: int, direction: WordDirection | int, terminate_on_empty=False) -> CellList:
-        start_cell = self[x, y]
-
-        if start_cell.status == CellStatus.BLACK:
-            return CellList([])
-
-        match WordDirection(direction):
-            case direction.VERTICAL:
-                pre_traverse_dir = GridDirection.UP
-                pos_traverse_dir = GridDirection.DOWN
-            case direction.HORIZONTAL:
-                pre_traverse_dir = GridDirection.LEFT
-                pos_traverse_dir = GridDirection.RIGHT
-            case _:
-                raise ValueError("Invalid direction")
-
-        start_cells = list(reversed(self.aggregate_cells(x, y, pre_traverse_dir, terminate_on_empty)[1:]))
-        end_cells = self.aggregate_cells(x, y, pos_traverse_dir, terminate_on_empty)[1:]
-        cells = [*start_cells, start_cell, *end_cells]
-        return CellList(cells)
-
-    def aggregate_cells(self, i: int, j: int, which: GridDirection | int, terminate_on_empty=False) -> list[Cell]:
-        cells = [self[i, j]]
-
-        # Nothing to aggregate if we're starting at a black square
-        if cells[0].status == CellStatus.BLACK:
-            return []
-
-        match GridDirection(which):
-            case GridDirection.UP:
-
-                def termination_criteria(c):
-                    return c.is_v_start or (terminate_on_empty and c.status == CellStatus.EMPTY)
-
-                def update(c):
-                    return self[c.x - 1, c.y]
-            case GridDirection.DOWN:
-
-                def termination_criteria(c):
-                    return c.is_v_end or (terminate_on_empty and c.status == CellStatus.EMPTY)
-
-                def update(c):
-                    return self[c.x + 1, c.y]
-            case GridDirection.LEFT:
-
-                def termination_criteria(c):
-                    return c.is_h_start or (terminate_on_empty and c.status == CellStatus.EMPTY)
-
-                def update(c):
-                    return self[c.x, c.y - 1]
-            case GridDirection.RIGHT:
-
-                def termination_criteria(c):
-                    return c.is_h_end or (terminate_on_empty and c.status == CellStatus.EMPTY)
-
-                def update(c):
-                    return self[c.x, c.y + 1]
-            case _:
-                raise ValueError("invalid direction encountered")
-
-        while not termination_criteria(cells[-1]):
-            cells.append(update(cells[-1]))
-
-        return cells
-
-    def word_len(self, i: int, j: int, direction: WordDirection):
-        return len(self.full_word_from_cell(i, j, direction))
-
-    def horizontal_word_len(self, i: int, j: int):
+    def horizontal_word_len(self, i: int, j: int) -> int:
+        """Get length of horizontal word containing cell at (i,j)"""
         return self.word_len(i, j, WordDirection.HORIZONTAL)
 
-    def vertical_word_len(self, i: int, j: int):
+    def vertical_word_len(self, i: int, j: int) -> int:
+        """Get length of vertical word containing cell at (i,j)"""
         return self.word_len(i, j, WordDirection.VERTICAL)
-
-    def get_word(self, entry_id: str) -> CellList | None:
-        """Returns a given word entry (list of cells)
-
-        Parameters
-        ----------
-        entry_id : str
-            Cell ID, must be a number followed by "A" or "D" (e.g., '1A' or '10D')
-
-        """
-        word_dir = WordDirection.from_char(entry_id[-1])
-        starts = self.h_starts if word_dir == WordDirection.HORIZONTAL else self.v_starts
-
-        entry_num = int(entry_id[:-1])
-        try:
-            start_cell_data = starts.row(by_predicate=(pl.col("answer_number") == entry_num), named=True)
-        except pl.exceptions.NoRowsReturnedError as e:
-            raise ValueError(f"Invalid entry ID: {entry_id}") from e
-        start_cell = Cell.from_dict(start_cell_data)
-        return self.full_word_from_cell(*start_cell.matrix_index, direction=word_dir)
-
-    def get_crossers(self, entry_id: str) -> list[CellList]:
-        """Finds a words the intersect a given entry
-
-        Parameters
-        ----------
-        entry_id : str
-            Cell ID, must be a number followed by "A" or "D" (e.g., '1A' or '10D')
-
-        Returns
-        -------
-        list of CellList
-            Crossing words
-
-        """
-        word = self.get_word(entry_id)
-        return [
-            self.full_word_from_cell(*cell.matrix_index, direction=WordDirection.flip(word.direction)) for cell in word
-        ]
 
     def get_possible_words(
         self, db, entry_id: str, exclude: dict[int, list[str] | str] | None = None, **kwargs
@@ -815,131 +1362,8 @@ class Grid:
 
         return q.df()
 
-    @property
-    def h_starts(self):
-        return self.to_dataframe().filter(pl.col("is_h_start"))
-
-    @property
-    def v_starts(self):
-        return self.to_dataframe().filter(pl.col("is_v_start"))
-
-    def word_lengths(self) -> pl.DataFrame:
-        """Builds a dataframe containing word lengths
-
-        Returns
-        -------
-
-        """
-        df = self.to_dataframe()
-
-        cols = ["word_len", "answer_number", "dir"]
-        h_starts = df.filter(pl.col("is_h_start"))
-        h_starts = h_starts.with_columns(
-            [pl.Series(name="dir", values=["A"] * len(h_starts)), pl.Series(name="word_len", values=h_starts["hlen"])]
-        )
-
-        v_starts = df.filter(pl.col("is_v_start"))
-        v_starts = v_starts.with_columns(
-            [pl.Series(name="dir", values=["D"] * len(v_starts)), pl.Series(name="word_len", values=v_starts["vlen"])]
-        )
-
-        starts = pl.concat([h_starts[cols], v_starts[cols]])
-
-        starts = (
-            starts.with_columns(
-                [pl.concat_str([pl.col("answer_number").cast(pl.Utf8), pl.lit(""), pl.col("dir")]).alias("dir_answer")]
-            )
-            .group_by("word_len")
-            .agg([pl.len().alias("wcount"), pl.col("dir_answer").alias("dir_answer_list")])
-            .sort("word_len")
-        )
-        return starts
-
-    # Output ###############################################################
-
-    def to_str(self, delimiter="\n"):
-        out_str = ""
-        for i in range(self.grid_size[0]):
-            grid_vals = []
-            for x in self.grid[i]:
-                match x.status:
-                    case CellStatus.EMPTY:
-                        gv = "-"
-                    case CellStatus.BLACK:
-                        gv = "■"
-                    case _:
-                        gv = x.value
-
-                grid_vals += gv
-
-            out_str += " ".join(grid_vals)
-
-            if i < self.grid_size[0] - 1:
-                out_str += delimiter
-        return out_str
-
-    def to_dataframe(self):
-        return pl.DataFrame([c.to_json() for c in self.grid.flatten()])
-
-    def print(self):
-        self.to_console()
-
-    def to_console(self):
-        print(self.to_str())
-
-    def print_boundaries(self):
-        out_str = ""
-        for i in range(self.row_count):
-            grid_vals = []
-            for j in range(self.col_count):
-                if self.is_h_start(i, j) and self.is_v_start(i, j):
-                    gv = "x"
-                elif self.is_h_end(i, j) and self.is_v_end(i, j):
-                    gv = "X"
-                elif self.is_h_start(i, j) and self.is_v_end(i, j):
-                    gv = "y"
-                elif self.is_h_end(i, j) and self.is_v_start(i, j):
-                    gv = "Y"
-                elif self.is_h_start(i, j):
-                    gv = "h"
-                elif self.is_v_start(i, j):
-                    gv = "v"
-                elif self.is_h_end(i, j):
-                    gv = "H"
-                elif self.is_v_end(i, j):
-                    gv = "V"
-                else:
-                    gv = "-"
-
-                grid_vals += gv
-
-            out_str += " ".join(grid_vals)
-
-            if i < self.grid_size[0] - 1:
-                out_str += "\n"
-        print(out_str)
-
-    def print_lens(self, direction: WordDirection | int):
-        out_str = ""
-        for i in range(self.grid_size[0]):
-            grid_vals = []
-            for j in range(self.col_count):
-                match WordDirection(direction):
-                    case WordDirection.HORIZONTAL:
-                        grid_vals += str(self[i, j].hlen)
-                    case WordDirection.VERTICAL:
-                        grid_vals += str(self[i, j].vlen)
-
-            out_str += " ".join(grid_vals)
-
-            if i < self.grid_size[0] - 1:
-                out_str += "\n"
-        print(out_str)
-
 
 if __name__ == "__main__":
-    from crosscosmos import project_root
-
     lc = Corpus.from_lafarge(q=2)
     g = Grid((5, 5), lc)
     g.set_grid(1, 1, "B")

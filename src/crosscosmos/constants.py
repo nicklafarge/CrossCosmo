@@ -1,6 +1,5 @@
 """ """
 
-
 PLACEHOLDERS = [r"?", r"-", r" "]
 
 VOWELS = "aeiouAEIOU"

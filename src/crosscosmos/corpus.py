@@ -32,6 +32,7 @@ class Corpus:
     @classmethod
     def from_crossword_tracker(cls, **kwargs):
         from crosscosmos.wordlists.crossword_tracker import XwordWord
+
         logger.info("Loading crossword tracker ...")
         words = query.Query(XwordWord, **kwargs).df()
         return cls(words, ModelSource.CrosswordTracker)
@@ -39,28 +40,32 @@ class Corpus:
     @classmethod
     def from_collab(cls, **kwargs):
         from crosscosmos.wordlists.collaborative_wordlist import CollabWordListWord
+
         logger.info("Loading collab list ...")
         words = query.Query(CollabWordListWord, **kwargs).df()
         return cls(words, ModelSource.CollabWordList)
 
     @classmethod
-    def from_lafarge(cls, **kwargs):
+    def from_lafarge(cls, max_length: int | None = None, **kwargs):
         kwargs.setdefault("limit", None)
         from crosscosmos.wordlists.lafarge import LaFargeWord
+
         logger.info("Loading LaFarge...")
-        words = query.Query(LaFargeWord, **kwargs).df()
-        return cls(words, ModelSource.LaFarge)
+        q = query.Query(LaFargeWord, **kwargs)
+        if max_length:
+            q.max_length(max_length)
+        return cls(q.df(), ModelSource.LaFarge)
 
     @classmethod
     def from_diehl(cls, **kwargs):
         from crosscosmos.wordlists.diehl import DiehlWord
+
         logger.info("Loading Diehl...")
         words = query.Query(DiehlWord, **kwargs).df()
         return cls(words, ModelSource.Diehl)
 
     def to_n_letter_corpus(self, n: int) -> "Corpus":
-        """ Creates a new Corpus instance containing only words of a particular length
-        """
+        """Creates a new Corpus instance containing only words of a particular length"""
         return self.to_subcorpus(n, n)
 
     def max_length(self, word_len: int) -> "Corpus":
@@ -68,19 +73,18 @@ class Corpus:
         self._df = df_filter.DfFilter(self._df).max_length(word_len).df()
         return self
 
-
     def to_subcorpus(self, min_len: int, max_len: int) -> "Corpus":
-        """ Creates a new Corpus instance containing only words between a min/max length bound
-        """
+        """Creates a new Corpus instance containing only words between a min/max length bound"""
         assert 3 <= min_len <= constants.NYT_SUNDAY_SIZE
         assert 3 <= max_len <= constants.NYT_SUNDAY_SIZE
         assert max_len >= min_len
 
         filt = df_filter.DfFilter(self._df)
-        return Corpus(filt.length((min_len, max_len)).df(), self.model)
+        sub_df = filt.length((min_len, max_len)).df()
+        return Corpus(sub_df, self.model)
 
-    def to_n_tries(self, n: int, padded: bool = False) -> list[pygtrie.CharTrie] :
-        """ Constructs 'n' trie instances for sequential word lengths, starting at 3.
+    def to_n_tries(self, n: int, padded: bool = False) -> list[pygtrie.CharTrie]:
+        """Constructs 'n' trie instances for sequential word lengths, starting at 3.
 
         Parameters
         ----------
@@ -100,26 +104,22 @@ class Corpus:
         return [None, None, None, *tries] if padded else tries
 
     def query(self, query_str: str) -> pl.DataFrame:
-        """ Queries the current word list
-        """
+        """Queries the current word list"""
         return df_filter.DfFilter(self._df).match(query_str).by_score()
 
     def build_trie(self):
-        """ Updates the 'trie' variable with values from the current word list
-        """
+        """Updates the 'trie' variable with values from the current word list"""
         self.trie = self.to_trie()
 
     def to_trie(self) -> pygtrie.CharTrie:
-        """ Construct a trie from the current word list
-        """
+        """Construct a trie from the current word list"""
         t = pygtrie.CharTrie()
         for row in self.df.iter_rows(named=True):
             t[row["word"]] = True
         return t
 
     def subtree(self, prefix: str, as_corpus: bool = True):
-        """ Uses the trie to extract words that exist given a particular prefix
-        """
+        """Uses the trie to extract words that exist given a particular prefix"""
         if not self.trie:
             self.build_trie()
 
