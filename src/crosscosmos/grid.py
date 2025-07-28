@@ -7,6 +7,7 @@ import copy
 import logging
 import random
 import string
+from collections.abc import Iterable
 from pathlib import Path
 
 import numpy as np
@@ -99,7 +100,7 @@ class Cell:
         self.queue: list[str] = copy.deepcopy(self.queue_order)
         self.shuffle_for_solving = shuffle
         if self.shuffle_for_solving:
-            random.shuffle(self.queue)
+            self.shuffle()
 
     def __repr__(self):
         return f"Cell(val='{self.value}',loc={self.matrix_index},status={self.status})"
@@ -108,6 +109,10 @@ class Cell:
     def is_valid(self) -> bool:
         """Check if cell forms valid crossing words. A cell is valid if black or has 3+ letter words in both directions"""
         return self.status == CellStatus.BLACK or (self.hlen >= 3 and self.vlen >= 3)
+
+    def shuffle(self) -> None:
+        """Shuffles the letter queue."""
+        random.shuffle(self.queue)
 
     def is_start(self, direction: WordDirection | int) -> bool:
         """Check if cell starts a word in given direction (HORIZONTAL=0 or VERTICAL=1)."""
@@ -307,6 +312,18 @@ class CellList:
     def __iter__(self):
         return iter(self.cells)
 
+    @property
+    def x_range(self) -> tuple[int, int]:
+        """Gets the range of x values of this word in the grid"""
+        x_vals = [c.x for c in self.cells]
+        return min(x_vals), max(x_vals)
+
+    @property
+    def y_range(self) -> tuple[int, int]:
+        """Gets the range of x values of this word in the grid"""
+        y_vals = [c.y for c in self.cells]
+        return min(y_vals), max(y_vals)
+
     def has_empty_cell(self) -> bool:
         """Check if any cells are empty"""
         return "-" in str(self)
@@ -321,6 +338,7 @@ class CellList:
             if char in constants.PLACEHOLDERS:
                 return cell_str[:i]
         return cell_str
+
 
 class Grid:
     """Crossword grid with solving and manipulation capabilities.
@@ -446,6 +464,51 @@ class Grid:
         """Check if all cells form valid crossings."""
         return all(c.is_valid for c in self.grid.flatten())
 
+    @property
+    def h_starts(self) -> pl.DataFrame:
+        """Get dataframe of horizontal word starts."""
+        return self.to_dataframe().filter(pl.col("is_h_start"))
+
+    @property
+    def v_starts(self) -> pl.DataFrame:
+        """Get dataframe of vertical word starts."""
+        return self.to_dataframe().filter(pl.col("is_v_start"))
+
+    @classmethod
+    def from_dict(cls, json_grid: dict, **kwargs) -> "Grid":
+        """Create grid from dictionary representation."""
+        grid = cls(grid_size=json_grid["grid_size"], **kwargs)
+        grid.symmetry = GridSymmetry(json_grid["symmetry"])
+        grid.auto_symmetry = json_grid["auto_symmetry"]
+
+        if "grid_letters" in json_grid:
+            grid_letters = json_grid["grid_letters"]
+            for i in range(grid.row_count):
+                for j in range(grid.col_count):
+                    grid.grid[i, j] = Cell.from_dict(grid_letters[i][j])
+
+        grid.update_length_and_head_data()
+        return grid
+
+    @classmethod
+    def load(cls, filepath: Path, **kwargs) -> "Grid":
+        """Load grid from JSON file."""
+        grid = cls.from_dict(io_utils.load_json(filepath), **kwargs)
+        grid.save_path = filepath
+        return grid
+
+    def clone(self):
+        """ Clone (deepcopy) this grid
+        """
+        return copy.deepcopy(self)
+
+
+    def shuffle(self):
+        """ Shuffles the queue in all cells
+        """
+        for c in self.grid.flatten():
+            c.shuffle()
+
     def build_tries(self, n: int | None = None) -> None:
         """Build tries from corpus for each word length.
 
@@ -477,8 +540,9 @@ class Grid:
                 cell.reset_cell()
                 # Rebuild queue with shuffling if originally shuffled
                 if cell.shuffle_for_solving:
-                    cell.queue = copy.deepcopy(cell.queue_order)
-                    random.shuffle(cell.queue)
+                    cell.shuffle()
+                    # cell.queue = copy.deepcopy(cell.queue_order)
+                    # random.shuffle(cell.queue)
 
         # Rebuild tries and update grid metadata
         self.build_tries()
@@ -586,38 +650,6 @@ class Grid:
                 self[i, j].hlen = self.word_len(i, j, WordDirection.HORIZONTAL)
                 self[i, j].vlen = self.word_len(i, j, WordDirection.VERTICAL)
 
-    def _is_h_start(self, i: int, j: int) -> bool:
-        """Check if cell starts a horizontal word."""
-        if self[i, j].status == CellStatus.BLACK:
-            return False
-        if j == 0:
-            return True
-        return self[i, j - 1].status == CellStatus.BLACK
-
-    def _is_h_end(self, i: int, j: int) -> bool:
-        """Check if cell ends a horizontal word."""
-        if self[i, j].status == CellStatus.BLACK:
-            return False
-        if j == self.col_count - 1:
-            return True
-        return self[i, j + 1].status == CellStatus.BLACK
-
-    def _is_v_start(self, i: int, j: int) -> bool:
-        """Check if cell starts a vertical word."""
-        if self[i, j].status == CellStatus.BLACK:
-            return False
-        if i == 0:
-            return True
-        return self[i - 1, j].status == CellStatus.BLACK
-
-    def _is_v_end(self, i: int, j: int) -> bool:
-        """Check if cell ends a vertical word."""
-        if self[i, j].status == CellStatus.BLACK:
-            return False
-        if i == self.row_count - 1:
-            return True
-        return self[i + 1, j].status == CellStatus.BLACK
-
     def clear(self) -> None:
         """Clear all non-locked, non-black cells."""
         for cell in self.grid.flatten():
@@ -677,10 +709,12 @@ class Grid:
             logger.error(f"Cannot toggle lock: [{i},{j}] is {cell.status}")
 
     def set_black(self, i: int, j: int, n: int = 1, direction: WordDirection | int = WordDirection.HORIZONTAL):
-        black_sequence = [None]*n
+        black_sequence = [None] * n
         self.set_word(black_sequence, i, j, direction)
 
-    def set_word(self, word: str | list[str | None], i: int, j: int, direction: WordDirection | int, lock: bool = False) -> None:
+    def set_word(
+        self, word: str | list[str | None], i: int, j: int, direction: WordDirection | int, lock: bool = False
+    ) -> None:
         """Place a word in the grid.
 
         Parameters
@@ -761,80 +795,6 @@ class Grid:
         # Combine in correct order
         cells = [*list(reversed(pre_cells[1:])), start_cell, *post_cells[1:]]
         return CellList(cells)
-
-    def _traverse_cells(self, i: int, j: int, direction: GridDirection, terminate_on_empty: bool = False) -> list[Cell]:
-        """Traverse cells in a given direction until boundary.
-
-        Traverses from the starting cell in the specified direction,
-        collecting cells until a word boundary or empty cell is reached.
-
-        Parameters
-        ----------
-        i : int
-            Starting row
-        j : int
-            Starting column
-        which : GridDirection
-            Direction to traverse (UP, DOWN, LEFT, RIGHT)
-        terminate_on_empty : bool, optional
-            Whether to stop at first empty cell (default: False)
-
-        Returns
-        -------
-        list[Cell]
-            List of cells including the starting cell.
-            Returns empty list if starting cell is black.
-        """
-        cells = [self[i, j]]
-
-        if cells[0].status == CellStatus.BLACK:
-            return []
-
-        # Define movement functions based on direction
-        match GridDirection(direction):
-            case GridDirection.UP:
-
-                def should_stop(c):
-                    return c.is_v_start or (terminate_on_empty and c.status == CellStatus.EMPTY)
-
-                def next_cell(c):
-                    return self[c.x - 1, c.y] if c.x > 0 else None
-
-            case GridDirection.DOWN:
-
-                def should_stop(c):
-                    return c.is_v_end or (terminate_on_empty and c.status == CellStatus.EMPTY)
-
-                def next_cell(c):
-                    return self[c.x + 1, c.y] if c.x < self.row_count - 1 else None
-
-            case GridDirection.LEFT:
-
-                def should_stop(c):
-                    return c.is_h_start or (terminate_on_empty and c.status == CellStatus.EMPTY)
-
-                def next_cell(c):
-                    return self[c.x, c.y - 1] if c.y > 0 else None
-
-            case GridDirection.RIGHT:
-
-                def should_stop(c):
-                    return c.is_h_end or (terminate_on_empty and c.status == CellStatus.EMPTY)
-
-                def next_cell(c):
-                    return self[c.x, c.y + 1] if c.y < self.col_count - 1 else None
-
-            case _:
-                raise ValueError(f"Invalid direction: {direction}")
-
-        # Traverse until boundary
-        while not should_stop(cells[-1]):
-            next_c = next_cell(cells[-1])
-            if next_c is None:
-                break
-            cells.append(next_c)
-
-        return cells
 
     def word_len(self, i: int, j: int, direction: WordDirection) -> int:
         """Get length of word at position (i, j)."""
@@ -936,7 +896,7 @@ class Grid:
 
         word_dir = WordDirection.HORIZONTAL if direction_char == "A" else WordDirection.VERTICAL
 
-        # Find the starting cell
+        # Find the starting cell (todo - use grid's h_starts
         for i in range(self.row_count):
             for j in range(self.col_count):
                 cell = self[i, j]
@@ -1114,16 +1074,6 @@ class Grid:
         """
         return int(self.center[0] + c1), int(self.center[1] + c2)
 
-    @property
-    def h_starts(self) -> pl.DataFrame:
-        """Get dataframe of horizontal word starts."""
-        return self.to_dataframe().filter(pl.col("is_h_start"))
-
-    @property
-    def v_starts(self) -> pl.DataFrame:
-        """Get dataframe of vertical word starts."""
-        return self.to_dataframe().filter(pl.col("is_v_start"))
-
     def word_lengths(self) -> pl.DataFrame:
         """Analyze word length distribution in grid.
 
@@ -1232,7 +1182,7 @@ class Grid:
                 "v = vertical start only",
                 "H = horizontal end only",
                 "V = vertical end only",
-                "- = no start or end"
+                "- = no start or end",
             ]
             print("Key:")
             for k in key_lines:
@@ -1280,31 +1230,6 @@ class Grid:
         save_path = file_path or self.save_path
         if save_path:
             io_utils.save_json_dict(save_path, self.to_json())
-
-    @classmethod
-    def from_dict(cls, json_grid: dict) -> "Grid":
-        """Create grid from dictionary representation."""
-        grid = cls(grid_size=json_grid["grid_size"])
-        grid.symmetry = GridSymmetry(json_grid["symmetry"])
-        grid.auto_symmetry = json_grid["auto_symmetry"]
-
-        if "grid_letters" in json_grid:
-            grid_letters = json_grid["grid_letters"]
-            for i in range(grid.row_count):
-                for j in range(grid.col_count):
-                    grid.grid[i, j] = Cell.from_dict(grid_letters[i][j])
-
-        grid.update_length_and_head_data()
-        return grid
-
-    @classmethod
-    def load(cls, filepath: Path) -> "Grid":
-        """Load grid from JSON file."""
-        grid = cls.from_dict(io_utils.load_json(filepath))
-        grid.save_path = filepath
-        return grid
-
-    # Utilities ###############################################################
 
     def horizontal_word_len(self, i: int, j: int) -> int:
         """Get length of horizontal word containing cell at (i,j)"""
@@ -1361,6 +1286,199 @@ class Grid:
             q.fix_letters(i, valid_letters)
 
         return q.df()
+
+    def get_min_cell_list_spans(self) -> tuple[int, int]:
+        """Computes the minimum word length in the horizontal/vertical directions
+
+        Returns
+        -------
+        Tuple[int,int]
+            Tuple of (h_max, v_max) representing the minimum word length in the horizontal/vertical directions
+
+        """
+        return self.h_starts["hlen"].min(), self.v_starts["vlen"].min()
+
+    def get_max_cell_list_spans(self) -> tuple[int, int]:
+        """Computes the maximum word length in the horizontal/vertical directions
+
+        Returns
+        -------
+        Tuple[int,int]
+            Tuple of (h_max, v_max) representing the maximum word length in the horizontal/vertical directions
+
+        """
+        return self.h_starts["hlen"].max(), self.v_starts["vlen"].max()
+
+    def make_subgrid_from_words(self, word_ids: Iterable[str], **kwargs) -> "Grid":
+        """Creates a subgrid from word IDs ("11A", "14D", etc.).
+
+        Any set letters become locked int the subgrid, and any squares outside the ones
+        in word_ids are set to black.
+
+        Parameters
+        ----------
+        word_ids : Iterable[str]
+            List of word IDs ("11A", "14D", etc.).
+        kwargs : dict
+            Passed to the Grid constructor
+
+        Returns
+        -------
+        Grid
+            Newly created grid containing only the requested words (all others black)
+        """
+
+        cell_lists = [self.get_word(w) for w in word_ids]
+
+        # Get the size of the new grid based on the total span of the inputted cell lists
+        xmin = min([w.x_range[0] for w in cell_lists])
+        xmax = max([w.x_range[1] for w in cell_lists])
+        ymin = min([w.y_range[0] for w in cell_lists])
+        ymax = max([w.y_range[1] for w in cell_lists])
+
+        xrange = (xmax - xmin) + 1
+        yrange = (ymax - ymin) + 1
+
+        # Collect list of grid locations (x,y) contained in the cell lists
+        all_index_pairs = []
+        for w in cell_lists:
+            index_pairs = [(c.x, c.y) for c in w]
+            all_index_pairs.extend(index_pairs)
+
+        # Defaults for the new Grid
+        kwargs.setdefault("symmetry", GridSymmetry.NONE)
+        kwargs.setdefault("corpus", self.corpus)
+
+        # Create new grid and set values/statuses from this grid
+        subgrid = Grid(grid_size=(xrange, yrange), **kwargs)
+
+        for xsub in range(xrange):
+            for ysub in range(yrange):
+                # 'sub' are coordinates in the new subgrid
+                # 'orig' are coordinates in this grid
+                xorig = xsub + xmin
+                yorig = ysub + ymin
+                cell_sub = subgrid[xsub, ysub]
+                cell_orig = self[xorig, yorig]
+
+                # Anything not in the index pairs list is black
+                if (xorig, yorig) not in all_index_pairs:
+                    cell_sub.status = CellStatus.BLACK
+                    continue
+
+                # Set value/status
+                subgrid[xsub, ysub].value = cell_orig.value
+                subgrid[xsub, ysub].status = (
+                    CellStatus.LOCKED if cell_orig.status == CellStatus.SET else CellStatus.EMPTY
+                )
+
+        return subgrid
+
+    def _is_h_start(self, i: int, j: int) -> bool:
+        """Check if cell starts a horizontal word."""
+        if self[i, j].status == CellStatus.BLACK:
+            return False
+        if j == 0:
+            return True
+        return self[i, j - 1].status == CellStatus.BLACK
+
+    def _is_h_end(self, i: int, j: int) -> bool:
+        """Check if cell ends a horizontal word."""
+        if self[i, j].status == CellStatus.BLACK:
+            return False
+        if j == self.col_count - 1:
+            return True
+        return self[i, j + 1].status == CellStatus.BLACK
+
+    def _is_v_start(self, i: int, j: int) -> bool:
+        """Check if cell starts a vertical word."""
+        if self[i, j].status == CellStatus.BLACK:
+            return False
+        if i == 0:
+            return True
+        return self[i - 1, j].status == CellStatus.BLACK
+
+    def _is_v_end(self, i: int, j: int) -> bool:
+        """Check if cell ends a vertical word."""
+        if self[i, j].status == CellStatus.BLACK:
+            return False
+        if i == self.row_count - 1:
+            return True
+        return self[i + 1, j].status == CellStatus.BLACK
+
+    def _traverse_cells(self, i: int, j: int, direction: GridDirection, terminate_on_empty: bool = False) -> list[Cell]:
+        """Traverse cells in a given direction until boundary.
+
+        Traverses from the starting cell in the specified direction,
+        collecting cells until a word boundary or empty cell is reached.
+
+        Parameters
+        ----------
+        i : int
+            Starting row
+        j : int
+            Starting column
+        which : GridDirection
+            Direction to traverse (UP, DOWN, LEFT, RIGHT)
+        terminate_on_empty : bool, optional
+            Whether to stop at first empty cell (default: False)
+
+        Returns
+        -------
+        list[Cell]
+            List of cells including the starting cell.
+            Returns empty list if starting cell is black.
+        """
+        cells = [self[i, j]]
+
+        if cells[0].status == CellStatus.BLACK:
+            return []
+
+        # Define movement functions based on direction
+        match GridDirection(direction):
+            case GridDirection.UP:
+
+                def should_stop(c):
+                    return c.is_v_start or (terminate_on_empty and c.status == CellStatus.EMPTY)
+
+                def next_cell(c):
+                    return self[c.x - 1, c.y] if c.x > 0 else None
+
+            case GridDirection.DOWN:
+
+                def should_stop(c):
+                    return c.is_v_end or (terminate_on_empty and c.status == CellStatus.EMPTY)
+
+                def next_cell(c):
+                    return self[c.x + 1, c.y] if c.x < self.row_count - 1 else None
+
+            case GridDirection.LEFT:
+
+                def should_stop(c):
+                    return c.is_h_start or (terminate_on_empty and c.status == CellStatus.EMPTY)
+
+                def next_cell(c):
+                    return self[c.x, c.y - 1] if c.y > 0 else None
+
+            case GridDirection.RIGHT:
+
+                def should_stop(c):
+                    return c.is_h_end or (terminate_on_empty and c.status == CellStatus.EMPTY)
+
+                def next_cell(c):
+                    return self[c.x, c.y + 1] if c.y < self.col_count - 1 else None
+
+            case _:
+                raise ValueError(f"Invalid direction: {direction}")
+
+        # Traverse until boundary
+        while not should_stop(cells[-1]):
+            next_c = next_cell(cells[-1])
+            if next_c is None:
+                break
+            cells.append(next_c)
+
+        return cells
 
 
 if __name__ == "__main__":

@@ -1,11 +1,20 @@
 """Root __init__.py for CrossCosmos."""
-# noqa: F403
+# ruff: noqa: F403,E402, I001
 
-# Retrieve the explicitly exported variables from crosscosmos.config
-from .config import *
+# Configuration
+from .config import crosscosmos_root, project_root
+
+# Logging
+import logging
+from .log_config import setup_logging
+
+setup_logging(project_root)
+logger = logging.getLogger("crosscosmos")
+
+# Basic classes
+from .enums import *
 
 from . import wordlists
-from .enums import *
 
 # Expose submodules
 from . import (
@@ -23,9 +32,9 @@ from . import (
 
 from .query import Query, search
 from .wordlists.lafarge import LaFargeWord
+from .df_filter import DfFilter
 
-# Setup logging
-log_config.setup_logging(project_root)
+from . import bot
 
 
 try:

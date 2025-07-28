@@ -19,6 +19,7 @@ class LetterSequenceStatus(Enum):
     INVALID = 1
     VALID_SUBTRIE = 2
     VALID_WORD = 3
+    AUTO_VALID = 4
 
 
 class ModelSource(Enum):

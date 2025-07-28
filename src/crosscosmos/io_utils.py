@@ -16,8 +16,8 @@ def save_json_dict(filename: Path | str, jdict: dict) -> None:
     """
     filename = Path(filename)
 
-    if not filename.is_file():
-        raise FileNotFoundError("File not found: {filename}")
+    if not filename.parent.is_dir():
+        raise FileNotFoundError("Folder not found: {filename}")
 
     with open(filename, "w") as outfile:
         json.dump(jdict, outfile, indent=2)

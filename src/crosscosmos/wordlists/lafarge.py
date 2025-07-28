@@ -55,7 +55,7 @@ class LaFargeWord(lafarge_word_db.Entity):
     word = orm.PrimaryKey(str)
     score = orm.Required(float, default=0)
     clues = orm.Set("LaFargeClue")
-    sources = orm.Required(orm.Json)
+    sources = orm.Required(orm.Json) # 'manual' for ones I put in
     collab_score = orm.Optional(int)
     diehl_score = orm.Optional(int)
     stw_score = orm.Optional(int)
