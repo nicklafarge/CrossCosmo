@@ -114,6 +114,12 @@ class DfFilter:
         self._df = self._df.filter(pl.col("word").str.contains(re_pattern))
         return self
 
+    def sort_by_score(self):
+        """ Sorts the data frame by the score value
+        """
+        self._df = self._df.sort(by="score", descending=True)
+        return self
+
     def apply(self) -> pl.DataFrame:
         return self._df
 
@@ -124,4 +130,27 @@ class DfFilter:
         return self._df.sort(by="word")
 
     def by_score(self) -> pl.DataFrame:
-        return self._df.sort(by="score", descending=True)
+        return self.sort_by_score().df()
+
+
+def refine(
+    df: pl.DataFrame,
+    match_term: str | None = None,
+    fixed_letters: dict[int, str] | None = None,
+    length: int | None = None,
+    min_score: int | None = None,
+    **kwargs,
+) -> pl.DataFrame:
+    df_filter = DfFilter(df, **kwargs)
+    if match_term:
+        df_filter = df_filter.match(match_term)
+    if length:
+        df_filter = df_filter.length(length)
+    if min_score:
+        df_filter = df_filter.min_score(min_score)
+
+    fixed_letters = fixed_letters or {}
+    for k, v in fixed_letters.items():
+        df_filter = df_filter.fix_letter(k, v)
+
+    return df_filter.by_score()

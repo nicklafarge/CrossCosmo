@@ -498,14 +498,11 @@ class Grid:
         return grid
 
     def clone(self):
-        """ Clone (deepcopy) this grid
-        """
+        """Clone (deepcopy) this grid"""
         return copy.deepcopy(self)
 
-
     def shuffle(self):
-        """ Shuffles the queue in all cells
-        """
+        """Shuffles the queue in all cells"""
         for c in self.grid.flatten():
             c.shuffle()
 

@@ -36,7 +36,11 @@ def query_to_df(query, filter_fn: Callable | None = None) -> pl.DataFrame:
     if len(df) == 0:
         return df
 
-    return df.sort(by="score", descending=True)
+    df = df.sort(by="score", descending=True)
+    df = df.with_columns(
+        length=pl.col("word").str.len_chars().cast(pl.Int64)
+    )
+    return df
 
 
 def expand_match_pattern(pattern: str):

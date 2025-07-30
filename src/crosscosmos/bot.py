@@ -444,7 +444,7 @@ class DepthFirstSolver:
         total_time = time.time() - start_time
         logger.info(f"{len(solutions)} found in {total_time:.2f} seconds")
         for i, g in enumerate(solutions):
-            logger.info(f"Solution {i+1}:\n{g}")
+            logger.info(f"Solution {i + 1}:\n{g}")
 
         return solutions
 

@@ -14,7 +14,7 @@ from crosscosmos.wordlists.diehl import DiehlWord
 from crosscosmos.wordlists.saul_xd import XdWord, XdWordUsage
 from crosscosmos.wordlists.spread_the_word import StwWord
 
-logger = logging.getLogger(__file__)
+logger = logging.getLogger(__name__)
 
 def setup_database_regexp(db_object):
     """
@@ -66,6 +66,16 @@ class LaFargeWord(lafarge_word_db.Entity):
     def __repr__(cls):
         return f"LaFargeWord['{cls.word}', {cls.score}]"
 
+    @classmethod
+    def add_word(cls, word: str, score: int, **kwargs):
+        existing_entry = LaFargeWord.get(word=word)
+        if existing_entry:
+            raise ValueError(f"Already exists in database: {existing_entry}")
+
+        kwargs.setdefault("sources", ["manual"])
+        LaFargeWord(word=word, score=score, **kwargs)
+        orm.commit()
+
     @property
     def avg_score(self):
         scores_to_average = [
@@ -79,6 +89,10 @@ class LaFargeWord(lafarge_word_db.Entity):
             return np.mean(scores_to_average)
         else:
             return 0
+
+    @property
+    def length(self):
+        return len(self.word)
 
     def verbose(self, override_xword=True):
         if override_xword:
