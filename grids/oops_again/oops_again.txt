@@ -1,0 +1,79 @@
+
+---------------------------------------------------------
+Possible Pairs
+---------------------------------------------------------
+
+14
+HOITITYTOITITY          Hoity-toity
+NITITTYGRITITY          Nitty-gritty
+
+17
+HITITMEWITITHITIT       Hit me with it (x3)
+BAITITANDSWITITCH       Bait and switch
+
+18
+HITITITITOFFWITITH      Hit it off with (x3)
+QUIDDITITCHPITITCH      Quidditch pitch
+
+20
+QUIDDITITCHPITITCHES    Quidditch pitches
+INITITIATIONRITITUAL    Initiation ritual
+LIMITITEDLIABILITITY    Limited liability
+
+---------------------------------------------------------
+Words with 'IT' two or three times (x3)
+---------------------------------------------------------
+9
+BRITITNEY               Britney
+HITITITIT               Hit it
+
+10
+NITITWITIT              Nitwit
+
+14
+HOITITYTOITITY          Hoity-toity
+LITITLEFAITITH          Little faith
+NITITTYGRITITY          Nitty-gritty
+
+
+15
+HOSPITITALITITY         Hospitality
+SENSITITIVITITY         Sensitivity
+DITITDITITDITIT         Dit dit dit (x3)
+
+16
+SPIRITITUALITITY        Spirituality
+
+17
+HITITMEWITITHITIT       Hit me with it (x3)
+BAITITANDSWITITCH       Bait and switch
+PROFITITABILITITY       Profitability
+
+18
+HITITITITOFFWITITH      Hit it off with (x3)
+YEOFLITITLEFAITITH      Ye of little faith
+QUIDDITITCHPITITCH      Quidditch pitch
+
+20
+ITITTYBITITTYKITITTY    Itty-bitty kitty (x3)
+SAYITITWITITHFLOWERS    Say it with flowers
+DOITITYOURSELFKITITS    Do it yourself kits
+TAKEITITTOTHELIMITIT    Take it to the limit
+QUIDDITITCHPITITCHES    Quidditch pitches
+GETTINJIGGYWITITITIT    Gettin' jiggy wit it
+INITITIATIONRITITUAL    Initiation ritual
+LIMITITEDLIABILITITY    Limited liability
+PHOTOSENSITITIVITITY    Photosensitivity
+
+21
+CITITYWITITHINACITITY   City within a city (x3)
+CONSTITITUTIONALITITY   Constitutionality
+TELLINGITITLIKEITITIS   Telling it like it is
+LITITERARYCRITITICISM   Literary criticism
+WORLDHERITITAGESITITE   World heritage site
+---------------------------------------------------------
+Revealer
+---------------------------------------------------------
+
+15
+OOPSIDIDITAGAIN
