@@ -338,7 +338,7 @@ class DepthFirstSolver:
         orig_grid: xc.grid.Grid,
         max_solutions: int = 3,
         max_time: float = 30,
-        print_frequency: int = 100,
+        print_frequency: int = 1000,
         reshuffle: bool = True,
     ) -> list[xc.grid.Grid]:
         """Solve a crossword puzzle using backtracking with tries.
@@ -362,7 +362,7 @@ class DepthFirstSolver:
         grid = orig_grid.clone()
 
         if not grid.corpus:
-            raise ValueError("No corpus foudn in the grid")
+            raise ValueError("No corpus found in the grid")
 
         if not grid.tries:
             logger.info("No tries found! Building to cover the maximum span of cell lists in the grid")

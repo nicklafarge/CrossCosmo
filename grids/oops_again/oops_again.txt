@@ -1,5 +1,39 @@
 
 ---------------------------------------------------------
+Other possible entries for oops_again1.json
+---------------------------------------------------------
+
+Top Right
+13
+PITITUITITARY
+
+14
+CITITYLIMITITS
+POSITITIVITITY
+CHIQUITITITITA
+
+15
+LITITTLEITITALY
+KITITTYLITITTER
+SENSITITIVITITY
+SUITITABILITITY
+CITITYEDITITORS
+
+Bottom
+11
+NITITWITITS
+FITITBITITS
+
+14
+PITITUITITARY
+
+15
+HOSPITITALITITY
+SENSITITIVITITY
+PITITUITITARIES
+CRITITICALITITY
+
+---------------------------------------------------------
 Possible Pairs
 ---------------------------------------------------------
 
@@ -33,13 +67,13 @@ NITITWITIT              Nitwit
 14
 HOITITYTOITITY          Hoity-toity
 LITITLEFAITITH          Little faith
-NITITTYGRITITY          Nitty-gritty
-
+POSITITIVITITY
 
 15
 HOSPITITALITITY         Hospitality
 SENSITITIVITITY         Sensitivity
 DITITDITITDITIT         Dit dit dit (x3)
+NITITTYGRITITTY         Nitty-gritty
 
 16
 SPIRITITUALITITY        Spirituality

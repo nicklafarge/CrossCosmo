@@ -28,10 +28,11 @@ def query_to_df(query, filter_fn: Callable | None = None) -> pl.DataFrame:
     pl.DataFrame
         DataFrame containing query results
     """
-    if filter_fn:
-        df = pl.DataFrame(w.to_dict() for w in query if filter_fn(w))
-    else:
-        df = pl.DataFrame(w.to_dict() for w in query)
+    with orm.db_session:
+        if filter_fn:
+            df = pl.DataFrame(w.to_dict() for w in query if filter_fn(w))
+        else:
+            df = pl.DataFrame(w.to_dict() for w in query)
 
     if len(df) == 0:
         return df
@@ -93,7 +94,7 @@ class Query:
         self,
         db=LaFargeWord,
         q: int = 1,
-        sunday: bool = False,
+        sunday: bool = True,
         default: bool = True,
         alpha_only: bool = True,
         limit: int | None = 100,
@@ -301,7 +302,7 @@ def search(query_str: str, **kwargs) -> pl.DataFrame:
     ----------
     query_str : str
         Query string, see Query.match for usage
-    kwargs : dict
+    kwargs
         Passed to Query() constructor
 
     Returns

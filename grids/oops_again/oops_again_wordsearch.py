@@ -13,10 +13,11 @@ from crosscosmos.df_filter import DfFilter
 sunday = xc.constants.NYT_SUNDAY_SIZE
 cols = ["word", "score", "length"]
 
-df_orig = xc.Query(default=False, q=0, limit=None).df()
+df_orig = xc.Query(db=LaFargeWord, default=False, q=0, limit=None).df()
 
 grid_path = Path(__file__).parent / "oops_again1.json"
-grid = xc.grid.Grid.load(grid_path)
+grid = xc.grid.Grid.load(grid_path, corpus=xc.corpus.Corpus.from_lafarge())
+
 
 ################################################################################################
 # Helper functions
@@ -57,9 +58,9 @@ df_all = pl.concat([df_orig, pl.DataFrame(new_data)])
 ################################################################################################
 # GET "IT" x3, x2, and x1 values
 ################################################################################################
-df3 = xc.refine(df_all, match_term="*IT"*6 +" *", sunday=True).filter(doubled=True)
-df2 = xc.refine(df_all, match_term="*IT"*4 +" *", sunday=True).filter(doubled=True)
-df1 = xc.refine(df_all, match_term="*IT"*2 +" *", sunday=True).filter(doubled=True)
+df3 = xc.refine(df_all, match_term="*IT"*6 +"*", sunday=True).filter(doubled=True)
+df2 = xc.refine(df_all, match_term="*IT"*4 +"*", sunday=True).filter(doubled=True)
+df1 = xc.refine(df_all, match_term="*IT"*2 +"*", sunday=True).filter(doubled=True)
 
 
 ################################################################################################
@@ -102,8 +103,42 @@ lower = xc.refine(
     fixed_letters={3: "D"}
 )
 
-left = left_intersect(3,"I,I", df2)
+left = left_intersect(3,"S,I", df2)
+
 right = xc.refine(df2, fixed_letters={6:"O"})[cols]
+
+
+top = xc.refine(df2,"*I??????")[cols]
+bottom =xc.refine(df2,"??????I*")[cols]
+
+left = xc.refine(df2, "??????I????")[cols]
+right = xc.refine(df2, "????T??????")[cols]
+
+topleft = xc.refine(df2, "????I*", max_length=11)[cols]
+lowerright = xc.refine(df2, "*I????", max_length=11)[cols]
+lowerright2 = xc.refine(df2, "I???????I????")[cols]
+
+
+x = grid.get_possible_words("1A", default=False)
+
+
+
+################################################################################################
+# Bot
+################################################################################################
+# grid_path = Path(__file__).parent / "oops_again1.json"
+# grid = xc.grid.Grid.load(grid_path, corpus=xc.corpus.Corpus(df2, xc.ModelSource.LaFarge))
+# grid.build_tries(21)
+# sg = grid.make_subgrid_from_words([ "25A", "37A", "43A", "53A", "15D", "35D", "32D"])
+# sg.build_tries(21)
+# xc.grid_gui.run_default(sg)
+# solver = xc.bot.DepthFirstSolver()
+# solver.solve(sg)
+
+sg = xc.grid.Grid.load(grid_path,corpus=grid.corpus)
+topleft = sg.make_subgrid_from_words(["1D", "2D", "3D", "4D", "5D"])
+solver = xc.bot.DepthFirstSolver()
+solver.solve(topleft, print_frequency=1000, max_time=60)
 
 # df18_len = dfitit.filter(pl.col("word_itit").str.len_chars()==18)[cols]
 # df18_lent =  df18_len.filter(pl.col("word_itit").str.slice(4, 1) == "T")

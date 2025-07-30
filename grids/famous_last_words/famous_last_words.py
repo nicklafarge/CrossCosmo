@@ -15,18 +15,18 @@ xc_grid = xc.grid.Grid.load(grid_path)
 # match_strs = [str(w) for w in crossers]
 
 q = 1
-# df45d = xc_grid.get_possible_words(LaFargeWord, "45D", q=q, exclude = {1: "Y"})
+# df45d = xc_grid.get_possible_words("45D", q=q, exclude = {1: "Y"})
 #
 #
-# df38d = xc_grid.get_possible_words(LaFargeWord, "38D", q=q)
+# df38d = xc_grid.get_possible_words("38D", q=q)
 #
 # # KODOS (simpsons alien)
-# df44d = xc_grid.get_possible_words(LaFargeWord, "44D", q=q)
-# df47d = xc_grid.get_possible_words(LaFargeWord, "47D", q=q)
-# df48d = xc_grid.get_possible_words(LaFargeWord, "48D", q=q)
-# df64a = xc_grid.get_possible_words(LaFargeWord, "64A", q=q)
+# df44d = xc_grid.get_possible_words("44D", q=q)
+# df47d = xc_grid.get_possible_words("47D", q=q)
+# df48d = xc_grid.get_possible_words("48D", q=q)
+# df64a = xc_grid.get_possible_words("64A", q=q)
 # #
-# df51a = xc_grid.get_possible_words(LaFargeWord, "51A", q=q,
+# df51a = xc_grid.get_possible_words("51A", q=q,
 #                                    exclude = {1:"GM", 2:"G"}
 #                                    # exclude = {0:"AE", 1:"GM", 2:"G"}
 #                                    )
@@ -37,11 +37,11 @@ q = 1
 # xc_grid.get_word("60A")[2].value = "E"
 #
 #
-# df61a = xc_grid.get_possible_words(LaFargeWord, "61A", q=q)
+# df61a = xc_grid.get_possible_words("61A", q=q)
 #
-# df55d = xc_grid.get_possible_words(LaFargeWord, "55D", q=q)
-# df56d = xc_grid.get_possible_words(LaFargeWord, "56D", q=q)
-# df57d = xc_grid.get_possible_words(LaFargeWord, "57D", q=q)
+# df55d = xc_grid.get_possible_words("55D", q=q)
+# df56d = xc_grid.get_possible_words("56D", q=q)
+# df57d = xc_grid.get_possible_words("57D", q=q)
 #
 # xc_grid.get_word("60A")
 
@@ -50,59 +50,59 @@ q = 1
 ####################################################################################
 xc_grid = xc.grid.Grid.load(grid_path)
 
-df28a = xc_grid.get_possible_words(LaFargeWord, "28A", q=0)
-df30a = xc_grid.get_possible_words(LaFargeWord, "30A", q=q)
-df40a = xc_grid.get_possible_words(LaFargeWord, "40A", q=q)
-df42a = xc_grid.get_possible_words(LaFargeWord, "42A", q=q)
+df28a = xc_grid.get_possible_words("28A", q=0)
+df30a = xc_grid.get_possible_words("30A", q=q)
+df40a = xc_grid.get_possible_words("40A", q=q)
+df42a = xc_grid.get_possible_words("42A", q=q)
 
 
-df21d = xc_grid.get_possible_words(LaFargeWord, "21D", q=q)
-df24d = xc_grid.get_possible_words(LaFargeWord, "24D", q=q)
-df30d = xc_grid.get_possible_words(LaFargeWord, "30D", q=q)
-df31d = xc_grid.get_possible_words(LaFargeWord, "31D", q=q)
-df32d = xc_grid.get_possible_words(LaFargeWord, "32D", q=q)
-df33d = xc_grid.get_possible_words(LaFargeWord, "33D", q=q)
+df21d = xc_grid.get_possible_words("21D", q=q)
+df24d = xc_grid.get_possible_words("24D", q=q)
+df30d = xc_grid.get_possible_words("30D", q=q)
+df31d = xc_grid.get_possible_words("31D", q=q)
+df32d = xc_grid.get_possible_words("32D", q=q)
+df33d = xc_grid.get_possible_words("33D", q=q)
 
 ####################################################################################
 # Upper middle
 ####################################################################################
 xc_grid = xc.grid.Grid.load(grid_path)
 
-# df5a = xc_grid.get_possible_words(LaFargeWord, "5A", q=q)
-# df15a = xc_grid.get_possible_words(LaFargeWord, "15A", q=q)
-# df18a = xc_grid.get_possible_words(LaFargeWord, "18A", q=q)
-# df22a = xc_grid.get_possible_words(LaFargeWord, "22A", q=q, exclude={3:"A"})
-# df28a = xc_grid.get_possible_words(LaFargeWord, "28A", q=q)
-# df30a = xc_grid.get_possible_words(LaFargeWord, "30A", q=q)
+# df5a = xc_grid.get_possible_words("5A", q=q)
+# df15a = xc_grid.get_possible_words("15A", q=q)
+# df18a = xc_grid.get_possible_words("18A", q=q)
+# df22a = xc_grid.get_possible_words("22A", q=q, exclude={3:"A"})
+# df28a = xc_grid.get_possible_words("28A", q=q)
+# df30a = xc_grid.get_possible_words("30A", q=q)
 #
-# df5d = xc_grid.get_possible_words(LaFargeWord, "5D", q=q)
-# df6d = xc_grid.get_possible_words(LaFargeWord, "6D", q=q)
-# df7d = xc_grid.get_possible_words(LaFargeWord, "7D", q=q)
-# df8d = xc_grid.get_possible_words(LaFargeWord, "8D", q=q)
+# df5d = xc_grid.get_possible_words("5D", q=q)
+# df6d = xc_grid.get_possible_words("6D", q=q)
+# df7d = xc_grid.get_possible_words("7D", q=q)
+# df8d = xc_grid.get_possible_words("8D", q=q)
 ####################################################################################
 # Lower left
 ####################################################################################
 # xc_grid = xc.grid.Grid.load(grid_path)
-# df60a = xc_grid.get_possible_words(LaFargeWord, "60A", q=q)
-# df63a = xc_grid.get_possible_words(LaFargeWord, "63A", q=q)
+# df60a = xc_grid.get_possible_words("60A", q=q)
+# df63a = xc_grid.get_possible_words("63A", q=q)
 
-# df55d = xc_grid.get_possible_words(LaFargeWord, "55D", q=q)
-# df56d = xc_grid.get_possible_words(LaFargeWord, "56D", q=q)
-# df57d = xc_grid.get_possible_words(LaFargeWord, "57D", q=q)
+# df55d = xc_grid.get_possible_words("55D", q=q)
+# df56d = xc_grid.get_possible_words("56D", q=q)
+# df57d = xc_grid.get_possible_words("57D", q=q)
 
 ####################################################################################
 # Lower right
 ####################################################################################
 # xc_grid = xc.grid.Grid.load(grid_path)
-# df49d = xc_grid.get_possible_words(LaFargeWord, "49D", q=q)
-# df50d = xc_grid.get_possible_words(LaFargeWord, "50D", q=q)
-# df53d = xc_grid.get_possible_words(LaFargeWord, "53D", q=q)
-# df54d = xc_grid.get_possible_words(LaFargeWord, "54D", q=q)
+# df49d = xc_grid.get_possible_words("49D", q=q)
+# df50d = xc_grid.get_possible_words("50D", q=q)
+# df53d = xc_grid.get_possible_words("53D", q=q)
+# df54d = xc_grid.get_possible_words("54D", q=q)
 
-# df52a = xc_grid.get_possible_words(LaFargeWord, "52A", q=q)
-# df59a = xc_grid.get_possible_words(LaFargeWord, "59A", q=q)
-# df62a = xc_grid.get_possible_words(LaFargeWord, "62A", q=q)
-# df65a = xc_grid.get_possible_words(LaFargeWord, "65A", q=q)
+# df52a = xc_grid.get_possible_words("52A", q=q)
+# df59a = xc_grid.get_possible_words("59A", q=q)
+# df62a = xc_grid.get_possible_words("62A", q=q)
+# df65a = xc_grid.get_possible_words("65A", q=q)
 #
 #
 # from crosscosmos.filter import Filter

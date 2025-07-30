@@ -138,6 +138,8 @@ def refine(
     match_term: str | None = None,
     fixed_letters: dict[int, str] | None = None,
     length: int | None = None,
+    max_length: int | None = None,
+    min_length: int | None = None,
     min_score: int | None = None,
     **kwargs,
 ) -> pl.DataFrame:
@@ -148,6 +150,10 @@ def refine(
         df_filter = df_filter.length(length)
     if min_score:
         df_filter = df_filter.min_score(min_score)
+    if max_length:
+        df_filter = df_filter.max_length(max_length)
+    if min_length:
+        df_filter = df_filter.min_length(min_length)
 
     fixed_letters = fixed_letters or {}
     for k, v in fixed_letters.items():

@@ -24,6 +24,7 @@ from crosscosmos.enums import (
     MoveDirection,
     WordDirection,
 )
+from crosscosmos.wordlists.lafarge import LaFargeWord
 
 logger = logging.getLogger(__name__)
 
@@ -1237,7 +1238,7 @@ class Grid:
         return self.word_len(i, j, WordDirection.VERTICAL)
 
     def get_possible_words(
-        self, db, entry_id: str, exclude: dict[int, list[str] | str] | None = None, **kwargs
+        self,  entry_id: str, db=LaFargeWord, exclude: dict[int, list[str] | str] | None = None, **kwargs
     ) -> pl.DataFrame:
         """Get all possible words for a given entry given a data source and minimum score threshold
 
@@ -1250,7 +1251,7 @@ class Grid:
         exclude : dict (index -> character list)
             Dictionary representing indices to exclude letters. For example {1: "A"} will filter all entires that have
             "A" as the first character
-        kwargs : dict
+        kwargs
             passed to Query
 
         Returns
@@ -1267,7 +1268,7 @@ class Grid:
 
         possible_letters_map = {}
         for i, cw in enumerate(crossers):
-            df_i = query.Query(db, **kwargs).match(cw).limit(None).df()
+            df_i = query.Query(db, **kwargs).match(str(cw)).limit(None).df()
             if len(df_i) == 0:
                 return None
             idx_in_crosser = cw.cells.index(current_entry[i])
@@ -1275,7 +1276,7 @@ class Grid:
             possible_letters_map[i] = possible_letters
 
         # TODO - to query!
-        q = query.Query().length(word_len)
+        q = query.Query(default=False).length(word_len)
         for i, exclude_chars in exclude.items():
             q.exclude_letters(i, exclude_chars)
 
@@ -1316,7 +1317,7 @@ class Grid:
         ----------
         word_ids : Iterable[str]
             List of word IDs ("11A", "14D", etc.).
-        kwargs : dict
+        kwargs
             Passed to the Grid constructor
 
         Returns
