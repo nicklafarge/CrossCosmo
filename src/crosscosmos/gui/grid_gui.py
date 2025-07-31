@@ -14,16 +14,18 @@ from crosscosmos import bot
 from crosscosmos.grid import (
     Cell,
     CellStatus,
+    Grid,
     GridSymmetry,
     MoveDirection,
     WordDirection,
 )
 from crosscosmos.gui.image_transform import RGBTransform
 
-logger = logging.getLogger("gui")
+logger = logging.getLogger(__name__)
 # logger.setLevel(logging.INFO)
 logger.setLevel(logging.DEBUG)
 
+# Constants
 UPDATES_PER_FRAME = 100
 A_TO_Z = list(range(arcade.key.A, arcade.key.Z + 1))
 ONE_TO_TEN = list(range(arcade.key.KEY_0, arcade.key.KEY_9 + 1))
@@ -36,9 +38,9 @@ CELL_BACKGROUND_COLOR = arcade.color.WHITE
 TEXT_COLOR = arcade.color.BLACK
 LOCKED_TEXT_COLOR = (0, 153, 255)  # cyan
 
-# Curser colors
-CURSER_COLOR_1 = arcade.color.BLACK
-CURSER_COLOR_2 = arcade.color.DARK_GRAY
+# Cursor colors
+CURSOR_COLOR_1 = arcade.color.BLACK
+CURSOR_COLOR_2 = arcade.color.DARK_GRAY
 
 # Cell colors
 DEFAULT_CELL_COLOR = (80, 80, 80)  # Dark-ish Gray
@@ -57,25 +59,32 @@ ALL_KEY_VALS = [getattr(arcade.key, k) for k in ALL_KEYS]
 ALL_MODS = [k for k in dir(arcade.key) if k.isupper() and "MOD_" in k]
 ALL_MODS_VALS = [getattr(arcade.key, k) for k in ALL_MODS]
 
-
 class CrossCosmosGame(arcade.Window):
-    def __init__(self, config_in: ConfigParser, grid_in: xc.grid.Grid):
+    """Main game window for the crossword puzzle creator.
+
+    Attributes
+    ----------
+    grid : Grid
+        Grid to display/edit in the GUI
+    frame_update_count : int
+        Frame counter to keep track of blinking curser
+    toggle_black_mode_active : bool
+        Boolean indicating whether to toggle black mode (for evaluating symmetry when placing a black square)
+    grave_down : bool
+        Tracks whether the grave key is activated; used for highlighting words with length greater than 9
+    """
+
+    def __init__(self, config_in: ConfigParser, grid_in: Grid):
         super().__init__(
             config_in.getint("window", "width"),
             config_in.getint("window", "height"),
             config_in["window"]["title"],
         )
 
-        self.grid = grid_in
-
-        # Frame counter to keep track of blinking curser
-        self.frame_update_count = 0
-
-        # For hovering over
-        self.toggle_black_mode_active = False
-
-        # For using grave as a modifier
-        self.grave_down = False
+        self.grid:Grid = grid_in
+        self.frame_update_count: int = 0
+        self.toggle_black_mode_active: bool = False
+        self.grave_down: bool = False
 
         # Size computations -------------------------------------------------------------------------------------------#
 
@@ -250,6 +259,33 @@ class CrossCosmosGame(arcade.Window):
         # Sync with grid
         self.sync_gui_grid()
 
+    def _init_layout_parameters(self, config: ConfigParser):
+        """Initialize layout parameters with responsive sizing."""
+        self.inner_margin = config.getint("grid", "inner_margin")
+        self.outer_margin = config.getint("grid", "outer_margin")
+
+        # Calculate grid dimensions
+        larger_dim = max(self.grid.row_count, self.grid.col_count)
+        vertical_inner_margin_sum = (larger_dim - 1) * self.inner_margin
+
+        # Reserve space for right panel (30% of window width)
+        self.right_panel_width = int(self.width * 0.3)
+        available_width = self.width - self.right_panel_width - 2 * self.outer_margin
+        available_height = self.height - 2 * self.outer_margin - vertical_inner_margin_sum
+
+        # Use the smaller dimension to ensure square cells
+        self.grid_edge_dimension = min(available_width, available_height)
+        self.square_size = int(self.grid_edge_dimension // larger_dim)
+
+        # Recalculate grid dimension based on actual square size
+        self.grid_edge_dimension = self.square_size * larger_dim + vertical_inner_margin_sum
+
+        # Calculate font sizes based on square size
+        self.cell_font_size = max(12, int(self.square_size * 0.4))
+        self.number_font_size = max(8, int(self.square_size * 0.2))
+
+        self.half_square = self.square_size / 2
+
     @property
     def selected_grid_cell(self) -> Cell:
         """Returns the currently selected cell located by the selected x/y coordinates"""
@@ -293,10 +329,10 @@ class CrossCosmosGame(arcade.Window):
             self.frame_update_count = 0
 
             # Swap cursor color
-            if self.text_curser.color == CURSER_COLOR_1:
-                self.text_curser.color = CURSER_COLOR_2
+            if self.text_curser.color == CURSOR_COLOR_1:
+                self.text_curser.color = CURSOR_COLOR_2
             else:
-                self.text_curser.color = CURSER_COLOR_1
+                self.text_curser.color = CURSOR_COLOR_1
 
     def sync_gui_grid(self):
         for gui_row in range(self.grid.row_count):
@@ -487,7 +523,7 @@ class CrossCosmosGame(arcade.Window):
             return
 
         # Set the color
-        temp_grid = xc.grid.Grid.from_dict(self.grid.to_json())
+        temp_grid = Grid.from_dict(self.grid.to_json())
         temp_grid.set_grid(grid_row, grid_col, None)
         highlight_color = BLACK_VALID_HIGHLIGHT_COLOR if temp_grid.is_valid else BLACK_INVALID_HIGHLIGHT_COLOR
         if not is_highlighted:
@@ -753,7 +789,7 @@ class CrossCosmosGame(arcade.Window):
     def show_curser(self):
         logger.debug("Showing curser")
         self.curser_visible = True
-        self.text_curser.color = CURSER_COLOR_1
+        self.text_curser.color = CURSOR_COLOR_1
 
     def build_button(self, name: str, texture_str: str, dim: float) -> arcade.gui.UITextureButton:
         texture = arcade.load_texture(texture_str)
@@ -773,7 +809,7 @@ class CrossCosmosGame(arcade.Window):
         )
 
 
-def run_default(grid: xc.grid.Grid, override_config_path=None):
+def run_default(grid: Grid, override_config_path=None):
     config = ConfigParser()
 
     config_path = xc.crosscosmos_root / "gui" / "gui_config.ini"
@@ -802,10 +838,10 @@ if __name__ == "__main__":
     # test_file = Path(xc.crosscosmos_project_root / "grids" / "famous_last_words.json")
     test_file = Path(xc.project_root / "test_grid_88.json")
     # test_file = Path(xc.crosscosmos_project_root / "test_grid_55.json")
-    xc_grid = xc.grid.Grid.load(test_file)
+    xc_grid = Grid.load(test_file)
     xc_grid.corpus = xc.corpus.Corpus.from_test()
     xc_grid.build_tries()
-    # xc_grid = xc.grid.Grid(size, corpus_backend)
+    # xc_grid = Grid(size, corpus_backend)
 
     # Create/run gui window
     CrossCosmosGame(config, xc_grid)

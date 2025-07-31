@@ -59,9 +59,90 @@ ALL_MODS_VALS = [getattr(arcade.key, k) for k in ALL_MODS]
 
 
 class CrossCosmosGame(arcade.Window):
-    """Main game window for the crossword puzzle creator."""
+    """Main game window for the crossword puzzle creator.
+
+    A professional crossword puzzle creation interface with grid editing,
+    automatic solving, and various helper features.
+
+    Attributes:
+        grid (xc.grid.Grid): The underlying crossword grid data structure
+        frame_update_count (int): Counter for cursor blink animation
+        toggle_black_mode_active (bool): Whether black square toggle mode is active
+        grave_down (bool): Whether grave key is pressed (modifier for number keys)
+
+        # Layout parameters
+        inner_margin (int): Space between grid cells in pixels
+        outer_margin (int): Space between grid and window edge in pixels
+        right_panel_width (int): Width of the right info panel
+        grid_edge_dimension (int): Total size of the grid area
+        square_size (int): Size of each grid cell in pixels
+        half_square (float): Half of square_size for positioning
+        cell_font_size (int): Font size for letters in cells
+        number_font_size (int): Font size for cell numbers
+
+        # Data structures
+        grid_sprite_list (arcade.SpriteList): All grid sprites for batch drawing
+        grid_sprites (np.array): 2D array of cell background sprites
+        text_labels (np.array): 2D array of cell number labels
+        cell_letters (np.array): 2D array of cell letter displays
+
+        # UI elements
+        text_cursor (arcade.SpriteSolidColor): Blinking text cursor
+        cursor_visible (bool): Whether cursor is currently visible
+        text_cursor_blink_frequency (int): Frames between cursor blinks
+        manager (arcade.gui.UIManager): UI manager for buttons/panels
+        position_text (arcade.Text): Displays current grid position
+        word_info_text (arcade.Text): Displays current word and length
+        direction_text (arcade.Text): Displays current edit direction
+
+        # Editing state
+        edit_direction (WordDirection): Current editing direction (H/V)
+        selected_x (int): Currently selected cell X coordinate
+        selected_y (int): Currently selected cell Y coordinate
+
+    Keyboard Controls:
+        Letters A-Z: Type letters into empty cells
+        Tab: Toggle between horizontal/vertical editing
+        Arrow Keys: Navigate the grid
+        Space: Move forward in current direction
+        Delete/Backspace: Clear current cell and move back
+
+        Shift+Click: Lock/unlock a cell (prevents editing)
+        Shift+Cmd/Win+Click: Toggle black square
+        Shift+Cmd/Win+Hover: Preview black square placement
+
+        Cmd/Ctrl+C: Copy current word pattern to clipboard (? for blanks)
+        Ctrl+[1-9]: Highlight all words of length 1-9
+        Grave+Ctrl+[1-9]: Highlight all words of length 11-19
+
+    Mouse Controls:
+        Click: Select a cell
+        Shift+Click: Lock/unlock the clicked cell
+        Shift+Cmd/Win+Click: Toggle black square at clicked position
+        Shift+Cmd/Win+Hover: Preview black square validity (green=valid, red=invalid)
+
+    Button Controls:
+        Auto Solve: Clear grid and automatically fill with valid words
+        Clear Grid: Remove all letters from the grid
+        Save Grid: Save current grid state to file
+
+    Visual Indicators:
+        - Light gray: Currently selected cell
+        - Dark gray: Other cells in current word
+        - Cyan text: Locked cells (can't be edited)
+        - Black: Black squares (grid separators)
+        - Red: Invalid cell configurations
+        - Blue: Cells matching searched word length
+        - Blinking cursor: Current typing position
+    """
 
     def __init__(self, config_in: ConfigParser, grid_in: xc.grid.Grid):
+        """Initialize the crossword creator window.
+
+        Args:
+            config_in: Configuration parser with window and grid settings
+            grid_in: Pre-initialized crossword grid to edit
+        """
         super().__init__(
             config_in.getint("window", "width"),
             config_in.getint("window", "height"),
@@ -84,7 +165,14 @@ class CrossCosmosGame(arcade.Window):
         self.sync_gui_grid()
 
     def _init_layout_parameters(self, config: ConfigParser):
-        """Initialize layout parameters with responsive sizing."""
+        """Initialize layout parameters with responsive sizing.
+
+        Calculates grid dimensions, cell sizes, and font sizes based on
+        window size and grid dimensions. Reserves space for right panel.
+
+        Args:
+            config: Configuration parser with margin settings
+        """
         self.inner_margin = config.getint("grid", "inner_margin")
         self.outer_margin = config.getint("grid", "outer_margin")
 
@@ -111,7 +199,11 @@ class CrossCosmosGame(arcade.Window):
         self.half_square = self.square_size / 2
 
     def _init_data_structures(self):
-        """Initialize data structures for sprites and text."""
+        """Initialize data structures for sprites and text.
+
+        Creates empty numpy arrays for grid sprites, text labels, and cell letters.
+        Sets up cursor properties and initial editing state.
+        """
         self.grid_sprite_list = arcade.SpriteList()
         self.grid_sprites = np.empty(self.grid.grid_size, dtype=arcade.Sprite)
         self.text_labels = np.empty(self.grid.grid_size, dtype=arcade.Text)
@@ -127,15 +219,29 @@ class CrossCosmosGame(arcade.Window):
         self.selected_y = 0
 
     def _init_gui_elements(self):
-        """Initialize GUI elements like cursor."""
+        """Initialize GUI elements like cursor.
+
+        Creates the blinking text cursor with appropriate size based on cell dimensions.
+        """
         # Create text cursor with appropriate size
         cursor_height = int(self.square_size * 0.5)
         cursor_width = max(2, int(self.square_size * 0.05))
 
-        self.text_cursor = arcade.SpriteSolidColor(width=cursor_width, height=cursor_height, color=arcade.color.WHITE)
+        self.text_cursor = arcade.SpriteSolidColor(
+            width=cursor_width,
+            height=cursor_height,
+            color=arcade.color.WHITE
+        )
 
     def _create_grid_sprites(self):
-        """Create sprites for each grid cell."""
+        """Create sprites for each grid cell.
+
+        Initializes all visual elements for the crossword grid including:
+        - Background sprites for each cell
+        - Text objects for letters in cells
+        - Number labels for crossword clues
+        - Stores GUI coordinates in the underlying grid
+        """
         for row in range(self.grid.row_count):
             for column in range(self.grid.col_count):
                 grid_row, grid_col = self.gui_row_col_to_grid_row_col(row, column)
@@ -158,7 +264,7 @@ class CrossCosmosGame(arcade.Window):
                     anchor_y="center",
                     font_size=self.cell_font_size,
                     font_name="Arial",
-                    bold=True,
+                    bold=True
                 )
                 self.cell_letters[row, column] = cell_letter
 
@@ -172,7 +278,7 @@ class CrossCosmosGame(arcade.Window):
                     anchor_x="center",
                     anchor_y="center",
                     font_size=self.number_font_size,
-                    font_name="Arial",
+                    font_name="Arial"
                 )
                 self.text_labels[row, column] = t
 
@@ -193,7 +299,11 @@ class CrossCosmosGame(arcade.Window):
         self.draw_answer_numbers()
 
     def _init_ui_manager(self):
-        """Initialize UI manager and create UI elements."""
+        """Initialize UI manager and create UI elements.
+
+        Sets up the arcade GUI manager and creates the right panel
+        with information display and control buttons.
+        """
         self.manager = arcade.gui.UIManager()
         self.manager.enable()
 
@@ -207,13 +317,22 @@ class CrossCosmosGame(arcade.Window):
             anchor_x="right",
             anchor_y="center",
             align_x=0,  # Right edge alignment
-            align_y=0,  # Center alignment
+            align_y=0  # Center alignment
         )
 
         self.manager.add(anchor_layout)
 
     def _create_right_panel(self) -> arcade.gui.UIWidget:
-        """Create the right panel with info and controls."""
+        """Create the right panel with info and controls.
+
+        Builds a vertical panel containing:
+        - Title header
+        - Dynamic text displays for position, word info, and direction
+        - Control buttons for auto-solve, clear, and save
+
+        Returns:
+            UIWidget with dark background containing all panel elements
+        """
         # Create main panel container
         panel_width = self.right_panel_width - 20
 
@@ -227,7 +346,7 @@ class CrossCosmosGame(arcade.Window):
             height=40,
             font_size=20,
             font_name="Arial",
-            text_color=arcade.color.WHITE,
+            text_color=arcade.color.WHITE
         )
         title_text.read_only = True  # Make it read-only
         panel_content.add(title_text)
@@ -249,7 +368,11 @@ class CrossCosmosGame(arcade.Window):
         button_height = 40
 
         # Bot solve button
-        bot_button = arcade.gui.UIFlatButton(text="Auto Solve", width=button_width, height=button_height)
+        bot_button = arcade.gui.UIFlatButton(
+            text="Auto Solve",
+            width=button_width,
+            height=button_height
+        )
 
         @bot_button.event("on_click")
         def on_click_bot(event):
@@ -262,7 +385,11 @@ class CrossCosmosGame(arcade.Window):
         panel_content.add(bot_button)
 
         # Clear button
-        clear_button = arcade.gui.UIFlatButton(text="Clear Grid", width=button_width, height=button_height)
+        clear_button = arcade.gui.UIFlatButton(
+            text="Clear Grid",
+            width=button_width,
+            height=button_height
+        )
 
         @clear_button.event("on_click")
         def on_click_clear(event):
@@ -274,7 +401,11 @@ class CrossCosmosGame(arcade.Window):
         panel_content.add(clear_button)
 
         # Save button
-        save_button = arcade.gui.UIFlatButton(text="Save Grid", width=button_width, height=button_height)
+        save_button = arcade.gui.UIFlatButton(
+            text="Save Grid",
+            width=button_width,
+            height=button_height
+        )
 
         @save_button.event("on_click")
         def on_click_save(event):
@@ -297,7 +428,7 @@ class CrossCosmosGame(arcade.Window):
             y=base_y,
             color=arcade.color.WHITE,
             font_size=14,
-            font_name="Arial",
+            font_name="Arial"
         )
 
         self.word_info_text = arcade.Text(
@@ -306,7 +437,7 @@ class CrossCosmosGame(arcade.Window):
             y=base_y - 30,
             color=arcade.color.WHITE,
             font_size=14,
-            font_name="Arial",
+            font_name="Arial"
         )
 
         self.direction_text = arcade.Text(
@@ -315,19 +446,28 @@ class CrossCosmosGame(arcade.Window):
             y=base_y - 60,
             color=arcade.color.WHITE,
             font_size=14,
-            font_name="Arial",
+            font_name="Arial"
         )
 
         # Return the panel with background
         return padded_content.with_background(color=(40, 40, 40, 255))
 
     def _update_info_panel(self):
-        """Update the information displayed in the right panel."""
+        """Update the information displayed in the right panel.
+
+        Updates dynamic text displays to show:
+        - Current grid position (x, y)
+        - Current word pattern with ? for empty cells
+        - Word length
+        - Current editing direction
+        """
         # Update position
         self.position_text.text = f"Position: ({self.selected_x}, {self.selected_y})"
 
         # Update current word info
-        active_word = self.grid.full_word_from_cell(self.selected_x, self.selected_y, self.edit_direction)
+        active_word = self.grid.full_word_from_cell(
+            self.selected_x, self.selected_y, self.edit_direction
+        )
         word_str = str(active_word).replace("-", "?")
         word_len = len(active_word)
         self.word_info_text.text = f"Word: {word_str} ({word_len} letters)"
@@ -338,16 +478,24 @@ class CrossCosmosGame(arcade.Window):
 
     @property
     def selected_grid_cell(self) -> Cell:
-        """Returns the currently selected cell."""
+        """Returns the currently selected cell from the grid data structure."""
         return self.grid[self.selected_x, self.selected_y]
 
     @property
     def selected_gui_cell(self) -> arcade.Sprite:
-        """Returns the currently selected GUI sprite."""
+        """Returns the currently selected GUI sprite for visual updates."""
         return self.grid_sprites[self.selected_grid_cell.gui_row, self.selected_grid_cell.gui_col]
 
     def on_draw(self):
-        """Render the screen."""
+        """Render the screen.
+
+        Called automatically by arcade to draw each frame. Renders:
+        1. Background colors for grid and panel areas
+        2. All grid sprites (cells and cursor)
+        3. Cell letters and numbers
+        4. UI manager elements (buttons)
+        5. Dynamic text displays
+        """
         self.clear()
 
         # Draw grid background
@@ -356,12 +504,16 @@ class CrossCosmosGame(arcade.Window):
             right=self.grid_edge_dimension + 2 * self.outer_margin,
             bottom=0,
             top=self.height,
-            color=(50, 50, 50),
+            color=(50, 50, 50)
         )
 
         # Draw right panel background
         arcade.draw_lrbt_rectangle_filled(
-            left=self.width - self.right_panel_width, right=self.width, bottom=0, top=self.height, color=(30, 30, 30)
+            left=self.width - self.right_panel_width,
+            right=self.width,
+            bottom=0,
+            top=self.height,
+            color=(30, 30, 30)
         )
 
         # Draw sprites
@@ -382,7 +534,14 @@ class CrossCosmosGame(arcade.Window):
         self.direction_text.draw()
 
     def on_update(self, delta_time: float):
-        """Update animations."""
+        """Update animations.
+
+        Called automatically each frame to update animations.
+        Handles cursor blinking by alternating colors.
+
+        Args:
+            delta_time: Time elapsed since last frame (unused)
+        """
         self.frame_update_count += 1
 
         if self.cursor_visible and self.frame_update_count % self.text_cursor_blink_frequency == 0:
@@ -394,7 +553,14 @@ class CrossCosmosGame(arcade.Window):
                 self.text_cursor.color = CURSOR_COLOR_1
 
     def sync_gui_grid(self):
-        """Synchronize GUI with underlying grid data."""
+        """Synchronize GUI with underlying grid data.
+
+        Updates all visual elements to match the current grid state:
+        - Cell colors (default, black, invalid)
+        - Letter displays
+        - Locked cell indicators (cyan text)
+        - Clears text from black cells
+        """
         for gui_row in range(self.grid.row_count):
             for gui_col in range(self.grid.col_count):
                 grid_row, grid_col = self.gui_row_col_to_grid_row_col(gui_row, gui_col)
@@ -421,7 +587,18 @@ class CrossCosmosGame(arcade.Window):
         self.update_gui_colors()
 
     def on_key_press(self, key, modifiers):
-        """Handle key press events."""
+        """Handle key press events.
+
+        Processes keyboard shortcuts and special key combinations:
+        - Shift+Cmd/Win: Activates black square toggle mode
+        - Grave key: Modifier for extending number ranges
+        - Ctrl+Number: Highlight words of specific length
+        - Cmd/Ctrl+C: Copy current word to clipboard
+
+        Args:
+            key: Arcade key code
+            modifiers: Bit flags for modifier keys (Shift, Ctrl, etc.)
+        """
         if self.with_black_toggle_modifiers(modifiers):
             self.toggle_black_mode_active = True
 
@@ -441,7 +618,7 @@ class CrossCosmosGame(arcade.Window):
                     self.grid_sprites[cell.gui_row, cell.gui_col].color = SEARCH_LEN_COLOR
 
         # Copy current word to clipboard
-        if key == arcade.key.C and (modifiers & arcade.key.MOD_CTRL):
+        if key == arcade.key.C and (modifiers & (arcade.key.MOD_CTRL | arcade.key.MOD_COMMAND)):
             active_word_cells = self.grid.full_word_from_cell(
                 self.selected_grid_cell.x, self.selected_grid_cell.y, self.edit_direction
             )
@@ -450,7 +627,21 @@ class CrossCosmosGame(arcade.Window):
             pyperclip.copy(copy_str)
 
     def on_key_release(self, key, modifiers):
-        """Handle key release events."""
+        """Handle key release events.
+
+        Main keyboard input handler for:
+        - Letter input (A-Z) into cells
+        - Navigation (arrows, tab)
+        - Editing (delete, backspace)
+        - Special keys (space, tab)
+
+        Ignores input when Ctrl/Cmd is held to prevent conflicts
+        with keyboard shortcuts.
+
+        Args:
+            key: Arcade key code
+            modifiers: Bit flags for modifier keys
+        """
         if key == arcade.key.GRAVE:
             self.grave_down = False
 
@@ -466,7 +657,9 @@ class CrossCosmosGame(arcade.Window):
         # Tab: switch direction
         if key == arcade.key.TAB and self.cursor_visible:
             self.edit_direction = (
-                WordDirection.VERTICAL if self.edit_direction == WordDirection.HORIZONTAL else WordDirection.HORIZONTAL
+                WordDirection.VERTICAL
+                if self.edit_direction == WordDirection.HORIZONTAL
+                else WordDirection.HORIZONTAL
             )
             self.update_gui_colors()
             self._update_info_panel()
@@ -538,14 +731,37 @@ class CrossCosmosGame(arcade.Window):
         self.sync_gui_grid()
 
     def with_black_toggle_modifiers(self, modifiers: int) -> bool:
-        """Check if black toggle modifiers are active."""
+        """Check if black toggle modifiers are active.
+
+        Black squares are toggled with Shift+Cmd (Mac) or Shift+Win (Windows).
+
+        Args:
+            modifiers: Bit flags for active modifier keys
+
+        Returns:
+            True if the correct modifier combination is pressed
+        """
         with_shift = modifiers & arcade.key.MOD_SHIFT
         with_cmd = modifiers & arcade.key.MOD_COMMAND
         with_win = modifiers & arcade.key.MOD_WINDOWS
         return with_shift and (with_cmd or with_win)
 
     def on_mouse_motion(self, x: int, y: int, dx: int, dy: int):
-        """Handle mouse motion events."""
+        """Handle mouse motion events.
+
+        When black toggle mode is active (Shift+Cmd/Win held), shows
+        preview of black square placement with color coding:
+        - Green: Valid placement (maintains valid grid)
+        - Red: Invalid placement (would create invalid grid)
+
+        Also handles symmetry preview if grid has symmetry enabled.
+
+        Args:
+            x: Mouse x coordinate
+            y: Mouse y coordinate
+            dx: Change in x (unused)
+            dy: Change in y (unused)
+        """
         if not self.toggle_black_mode_active:
             return
 
@@ -582,7 +798,22 @@ class CrossCosmosGame(arcade.Window):
                 symm_sprite.color = highlight_color
 
     def on_mouse_press(self, x: float, y: float, button, modifiers):
-        """Handle mouse press events."""
+        """Handle mouse press events.
+
+        Processes different click types:
+        - Normal click: Select cell
+        - Shift+click: Toggle lock on cell
+        - Shift+Cmd/Win+click: Toggle black square
+
+        Updates cursor visibility based on cell type (hidden for
+        locked/black cells).
+
+        Args:
+            x: Mouse x coordinate
+            y: Mouse y coordinate
+            button: Mouse button pressed
+            modifiers: Active modifier keys
+        """
         on_gui_grid, gui_row, gui_col = self.gui_xy_to_gui_row_col(x, y)
         if not on_gui_grid:
             return
@@ -624,12 +855,26 @@ class CrossCosmosGame(arcade.Window):
         self.sync_gui_grid()
 
     def update_selected_cell(self, new_value: str):
-        """Update the currently selected cell value."""
+        """Update the currently selected cell value.
+
+        Updates both the underlying grid data and the GUI display.
+
+        Args:
+            new_value: New letter value for the cell (empty string to clear)
+        """
         logger.info(f"Updating cell {self.selected_x}, {self.selected_y} to {new_value}")
         self.grid.set_grid(self.selected_x, self.selected_y, new_value)
 
     def update_locked_color(self, gui_row: int, gui_col: int):
-        """Update color for locked cells."""
+        """Update color for locked cells.
+
+        Locked cells are displayed with cyan text to indicate they
+        cannot be edited.
+
+        Args:
+            gui_row: Row index in GUI coordinates
+            gui_col: Column index in GUI coordinates
+        """
         gui_text_label = self.cell_letters[gui_row, gui_col]
         grid_row, grid_col = self.gui_row_col_to_grid_row_col(gui_row, gui_col)
         cell = self.grid[grid_row, grid_col]
@@ -640,7 +885,12 @@ class CrossCosmosGame(arcade.Window):
             gui_text_label.color = TEXT_COLOR
 
     def draw_answer_numbers(self):
-        """Draw answer numbers on cells."""
+        """Draw answer numbers on cells.
+
+        Updates the small numbers in the upper-left corner of cells
+        that indicate the start of across or down answers. Numbers
+        are assigned by the underlying grid logic.
+        """
         for gui_row in range(self.grid.row_count):
             for gui_col in range(self.grid.col_count):
                 grid_row, grid_col = self.gui_row_col_to_grid_row_col(gui_row, gui_col)
@@ -648,7 +898,17 @@ class CrossCosmosGame(arcade.Window):
                 self.text_labels[gui_row, gui_col].text = str(cell.answer_number) if cell.answer_number else ""
 
     def toggle_black_square(self, gui_row: int, gui_col: int):
-        """Toggle a cell between black and normal status."""
+        """Toggle a cell between black and normal status.
+
+        Black squares are used to separate words in the crossword.
+        Toggles between:
+        - Normal cell → Black square
+        - Black square → Empty cell
+
+        Args:
+            gui_row: Row index in GUI coordinates
+            gui_col: Column index in GUI coordinates
+        """
         grid_row, grid_col = self.gui_row_col_to_grid_row_col(gui_row, gui_col)
 
         if self.grid[grid_row, grid_col].status == CellStatus.BLACK:
@@ -660,7 +920,15 @@ class CrossCosmosGame(arcade.Window):
         self.cell_letters[gui_row, gui_col].text = ""
 
     def reset_colors(self):
-        """Reset all cell colors to defaults."""
+        """Reset all cell colors to defaults.
+
+        Sets cells to their base colors:
+        - Black cells remain black
+        - Invalid cells become red
+        - All other cells become default gray
+
+        Called before applying selection/word highlighting.
+        """
         for gui_row in range(self.grid.row_count):
             for gui_col in range(self.grid.col_count):
                 grid_row, grid_col = self.gui_row_col_to_grid_row_col(gui_row, gui_col)
@@ -674,7 +942,18 @@ class CrossCosmosGame(arcade.Window):
                     self.grid_sprites[gui_row, gui_col].color = DEFAULT_CELL_COLOR
 
     def update_gui_colors(self, show_cursor=True):
-        """Update GUI colors and cursor position."""
+        """Update GUI colors and cursor position.
+
+        Refreshes the visual state of the grid:
+        - Moves cursor to selected cell
+        - Resets all cells to default colors
+        - Highlights selected cell (light gray)
+        - Highlights current word (dark gray)
+        - Shows/hides cursor based on parameter
+
+        Args:
+            show_cursor: Whether to display the text cursor
+        """
         selected_gui_x, selected_gui_y = self.selected_grid_cell.gui_coordinates
 
         # Position cursor
@@ -703,11 +982,36 @@ class CrossCosmosGame(arcade.Window):
                 self.grid_sprites[cell.gui_row, cell.gui_col].color = ACTIVE_WORD_CELL_COLOR
 
     def gui_row_col_to_grid_row_col(self, gui_row: int, gui_col: int) -> tuple[int, int]:
-        """Convert GUI coordinates to grid coordinates."""
+        """Convert GUI coordinates to grid coordinates.
+
+        The GUI uses bottom-left origin while the grid uses top-left,
+        so rows need to be inverted.
+
+        Args:
+            gui_row: Row index in GUI (bottom-up)
+            gui_col: Column index in GUI
+
+        Returns:
+            Tuple of (grid_row, grid_col) in top-down coordinates
+        """
         return self.grid.row_count - gui_row - 1, gui_col
 
     def gui_xy_to_gui_row_col(self, x: float, y: float) -> tuple[bool, int, int]:
-        """Convert mouse position to grid coordinates."""
+        """Convert mouse position to grid coordinates.
+
+        Translates pixel coordinates to grid cell indices, accounting
+        for margins and cell spacing.
+
+        Args:
+            x: Mouse x position in pixels
+            y: Mouse y position in pixels
+
+        Returns:
+            Tuple of (on_grid, row, col) where:
+            - on_grid: True if position is within grid bounds
+            - row: Grid row index (0 if off-grid)
+            - col: Grid column index (0 if off-grid)
+        """
         x_adj = x - self.outer_margin
         y_adj = y - self.outer_margin
 
@@ -720,17 +1024,37 @@ class CrossCosmosGame(arcade.Window):
         return True, row, col
 
     def hide_cursor(self):
-        """Hide the text cursor."""
+        """Hide the text cursor.
+
+        Makes cursor invisible by matching its color to the selected
+        cell's background color. Used when selecting locked or black cells.
+        """
         self.cursor_visible = False
         self.text_cursor.color = self.selected_gui_cell.color
 
     def show_cursor(self):
-        """Show the text cursor."""
+        """Show the text cursor.
+
+        Makes cursor visible by setting it to the primary cursor color.
+        The cursor will blink between two colors via the update method.
+        """
         self.cursor_visible = True
         self.text_cursor.color = CURSOR_COLOR_1
 
     def build_button(self, name: str, texture_str: str, dim: float) -> arcade.gui.UITextureButton:
-        """Build a textured button with hover and click effects."""
+        """Build a textured button with hover and click effects.
+
+        Creates a button with visual feedback by lightening the texture
+        on hover and click events.
+
+        Args:
+            name: Button identifier (unused but kept for compatibility)
+            texture_str: Path to button texture image
+            dim: Width and height of the button in pixels
+
+        Returns:
+            UITextureButton with hover and pressed states
+        """
         texture = arcade.load_texture(texture_str)
 
         hover_image = RGBTransform().mix_with([220] * 3, factor=0.40).applied_to(texture.image)
@@ -749,7 +1073,15 @@ class CrossCosmosGame(arcade.Window):
 
 
 def run_default(grid: xc.grid.Grid, override_config_path=None):
-    """Run the crossword creator with default configuration."""
+    """Run the crossword creator with default configuration.
+
+    Main entry point for the application. Loads configuration,
+    builds grid data structures, and launches the GUI.
+
+    Args:
+        grid: Pre-initialized crossword grid to edit
+        override_config_path: Optional path to custom config file
+    """
     config = ConfigParser()
 
     config_path = xc.crosscosmos_root / "gui" / "gui_config.ini"

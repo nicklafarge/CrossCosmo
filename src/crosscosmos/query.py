@@ -310,7 +310,7 @@ def search(query_str: str, **kwargs) -> pl.DataFrame:
     pl.DataFrame
         Query results
     """
-    return xc.Query(**kwargs).match(query_str).submit()
+    return xc.Query(**kwargs).match(str(query_str)).submit()
 
 
 def contains_str_and_removed_str(db, substr: str, score_threshold=0, filter_start_end: bool = False):
