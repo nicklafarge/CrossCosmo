@@ -28,7 +28,7 @@ def read_csv_generator(path: Path, delimiter: str = ",", **kwargs) -> Generator[
     list[str]
         Row from CSV file
     """
-    with open(path, encoding="utf-8") as file:
+    with open(path, encoding='ISO-8859-1') as file:
         yield from csv.reader(file, delimiter=delimiter, **kwargs)
 
 
@@ -36,7 +36,7 @@ def parse_word_score(
     word_score_path: Path,
     word_model,
     delimiter: str = ",",
-    score_multiplier: int = 1,
+    score_multiplier: float = 1,
     batch_size: int = 1000,
     show_progress: bool = True,
 ) -> None:
@@ -51,7 +51,7 @@ def parse_word_score(
         Pony ORM model class with 'word' and 'score' fields
     delimiter : str, optional
         CSV delimiter, by default ","
-    score_multiplier : int, optional
+    score_multiplier : float, optional
         Multiplier for score values, by default 1
     batch_size : int, optional
         Number of records to process before committing, by default 1000
@@ -75,7 +75,7 @@ def parse_word_score(
             word = word.strip().upper()
 
             try:
-                score_value = int(score) * score_multiplier
+                score_value = int(int(score) * score_multiplier)
             except ValueError:
                 logger.warning(f"Invalid score '{score}' for word '{word}'")
                 continue

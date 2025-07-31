@@ -107,7 +107,6 @@ left = left_intersect(3,"S,I", df2)
 
 right = xc.refine(df2, fixed_letters={6:"O"})[cols]
 
-
 top = xc.refine(df2,"*I??????")[cols]
 bottom =xc.refine(df2,"??????I*")[cols]
 
@@ -118,10 +117,12 @@ topleft = xc.refine(df2, "????I*", max_length=11)[cols]
 lowerright = xc.refine(df2, "*I????", max_length=11)[cols]
 lowerright2 = xc.refine(df2, "I???????I????")[cols]
 
-
+"WAIT IT ITI TI"
 x = grid.get_possible_words("1A", default=False)
 
-
+df1a = xc.search("LAW??")
+df20a = xc.search("OVA??")
+df23a = xc.search("WEI??")
 
 ################################################################################################
 # Bot
@@ -135,10 +136,10 @@ x = grid.get_possible_words("1A", default=False)
 # solver = xc.bot.DepthFirstSolver()
 # solver.solve(sg)
 
-sg = xc.grid.Grid.load(grid_path,corpus=grid.corpus)
-topleft = sg.make_subgrid_from_words(["1D", "2D", "3D", "4D", "5D"])
-solver = xc.bot.DepthFirstSolver()
-solver.solve(topleft, print_frequency=1000, max_time=60)
+# sg = xc.grid.Grid.load(grid_path,corpus=grid.corpus)
+# topleft = sg.make_subgrid_from_words(["1D", "2D", "3D", "4D", "5D"])
+# solver = xc.bot.DepthFirstSolver()
+# solver.solve(topleft, print_frequency=1000, max_time=60)
 
 # df18_len = dfitit.filter(pl.col("word_itit").str.len_chars()==18)[cols]
 # df18_lent =  df18_len.filter(pl.col("word_itit").str.slice(4, 1) == "T")
