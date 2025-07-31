@@ -13,6 +13,7 @@ from crosscosmos.wordlists.crossword_tracker import XwordWord
 from crosscosmos.wordlists.diehl import DiehlWord
 from crosscosmos.wordlists.saul_xd import XdWord, XdWordUsage
 from crosscosmos.wordlists.spread_the_word import StwWord
+from crosscosmos.wordlists.expanded_names import ExpNameWord
 
 logger = logging.getLogger(__name__)
 
@@ -57,11 +58,13 @@ class LaFargeWord(lafarge_word_db.Entity):
     clues = orm.Set("LaFargeClue")
     sources = orm.Required(orm.Json) # 'manual' for ones I put in
     collab_score = orm.Optional(int)
+    expname_score = orm.Optional(float)
     diehl_score = orm.Optional(int)
     stw_score = orm.Optional(int)
     xword_link = orm.Optional(str)
     notes = orm.Optional(str)
     is_word = orm.Optional(bool)
+    length = orm.Required(int)
 
     def __repr__(cls):
         return f"LaFargeWord['{cls.word}', {cls.score}]"
@@ -78,13 +81,13 @@ class LaFargeWord(lafarge_word_db.Entity):
 
     @property
     def avg_score(self):
-        scores_to_average = [
-            s or 0 for s in [self.diehl_score, self.collab_score, self.stw_score]
-        ]
         # scores_to_average = [
-        #     s for s in [self.diehl_score, self.collab_score, self.stw_score]
-        #     if s is not None
+        #     s for s in [self.diehl_score, self.collab_score, self.stw_score, self.expname_score] if s is not None
         # ]
+        scores_to_average = [
+            s for s in [self.diehl_score, self.collab_score, self.stw_score, self.expname_score]
+            if s is not None
+        ]
         if scores_to_average:
             return np.mean(scores_to_average)
         else:
@@ -206,6 +209,15 @@ def populate() -> None:
     # Update from spread the word
     update_from_source(StwWord, "spread_the_word", lambda laf, src: setattr(laf, "stw_score", src.score))
 
+    # Update from expanded names
+    update_from_source(ExpNameWord, "exp_name", lambda laf, src: setattr(laf, "expname_score", src.score))
+
+    orm.commit()
+
+def update_score():
+    for w in LaFargeWord.select():
+        w.score = w.avg_score
+        w.length = len(w.word)
     orm.commit()
 
 def update_score():
@@ -216,6 +228,17 @@ def update_score():
 
 if __name__ == "__main__":
     pass
+
+    # Update from expanded names
+    def update_fn(laf, src):
+        setattr(laf, "expname_score", src.score)
+    update_from_source(ExpNameWord, "exp_name", update_fn)
+
+    for w in LaFargeWord.select():
+        w.score = w.avg_score
+        # w.length = len(w.word)
+    orm.commit()
+
     update_score()
     # Update from collaborative word list
     # update_from_source(
