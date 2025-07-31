@@ -276,13 +276,16 @@ class Query:
                 continue
             elif c == "#":
                 # Consonant
-                self._query = orm.select(w for w in self._query if w.word[i] in xc.constants.CONSONANTS)
+                self._query = self._query.filter(lambda w, i = i: w.word[i] in xc.constants.CONSONANTS)
+                # self._query = orm.select(w for w in self._query if w.word[i] in xc.constants.CONSONANTS)
             elif c == "@":
                 # Vowel
-                self._query = orm.select(w for w in self._query if w.word[i] in xc.constants.VOWELS)
+                self._query = self._query.filter(lambda w, i = i: w.word[i] in xc.constants.VOWELS)
+                # self._query = orm.select(w for w in self._query if w.word[i] in xc.constants.VOWELS)
             else:
                 # Exact character match
-                self._query = orm.select(w for w in self._query if w.word[i] == c)
+                self._query = self._query.filter(lambda w, i = i: w.word[i] == c)
+                # self._query = orm.select(w for w in self._query if w.word[i] == c)
 
         return self
 

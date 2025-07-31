@@ -1,7 +1,7 @@
 import logging
 from configparser import ConfigParser
 from pathlib import Path
-from typing import Tuple
+import tomllib
 
 import arcade
 import arcade.gui
@@ -136,17 +136,34 @@ class CrossCosmosGame(arcade.Window):
         - Blinking cursor: Current typing position
     """
 
-    def __init__(self, config_in: ConfigParser, grid_in: xc.grid.Grid):
-        """Initialize the crossword creator window.
-
-        Args:
-            config_in: Configuration parser with window and grid settings
-            grid_in: Pre-initialized crossword grid to edit
+    def __init__(self, grid_in: xc.grid.Grid, config: Path | str | dict | None = None):
         """
+        Initialize the crossword creator window.
+
+        Parameters
+        ----------
+        grid_in : xc.grid.Grid
+            Pre-initialized crossword grid to edit
+        """
+
+        config_path = None
+        if isinstance(config, Path) or isinstance(config, str):
+            config_path = Path(config)
+        elif not config:
+            config_path = xc.config_root / "gui_config.toml"
+        elif isinstance(config, dict):
+            pass
+        else:
+            raise ValueError(f"Unexpected config input type: {config}")
+
+        if config_path:
+            with open(config_path, "rb") as f:
+                config = tomllib.load(f)
+
         super().__init__(
-            config_in.getint("window", "width"),
-            config_in.getint("window", "height"),
-            config_in["window"]["title"],
+            int(config["window"]["width"]),
+            int(config["window"]["height"]),
+            config["window"]["title"]
         )
 
         self.grid = grid_in
@@ -155,7 +172,7 @@ class CrossCosmosGame(arcade.Window):
         self.grave_down = False
 
         # Initialize layout parameters
-        self._init_layout_parameters(config_in)
+        self._init_layout_parameters(config)
         self._init_data_structures()
         self._init_gui_elements()
         self._create_grid_sprites()
@@ -164,24 +181,30 @@ class CrossCosmosGame(arcade.Window):
         # Initial sync and draw
         self.sync_gui_grid()
 
-    def _init_layout_parameters(self, config: ConfigParser):
-        """Initialize layout parameters with responsive sizing.
+    def _init_layout_parameters(self, config: dict):
+        """
+        Initialize layout parameters with responsive sizing.
 
         Calculates grid dimensions, cell sizes, and font sizes based on
         window size and grid dimensions. Reserves space for right panel.
 
-        Args:
-            config: Configuration parser with margin settings
+        Parameters
+        ----------
+        config : dict
+            Configuration settings
         """
-        self.inner_margin = config.getint("grid", "inner_margin")
-        self.outer_margin = config.getint("grid", "outer_margin")
+        self.inner_margin: int= int(config["grid"]["inner_margin"])
+        self.outer_margin: int = int(config["grid"]["outer_margin"])
 
         # Calculate grid dimensions
         larger_dim = max(self.grid.row_count, self.grid.col_count)
         vertical_inner_margin_sum = (larger_dim - 1) * self.inner_margin
 
         # Reserve space for right panel (30% of window width)
-        self.right_panel_width = int(self.width * 0.3)
+        right_panel_width_pct = float(config["grid"]["width_pct"]["right_panel"])
+        self.right_panel_width: int = int(self.width * right_panel_width_pct)
+        self.right_panel_column_width = self.right_panel_width/2.0
+
         available_width = self.width - self.right_panel_width - 2 * self.outer_margin
         available_height = self.height - 2 * self.outer_margin - vertical_inner_margin_sum
 
@@ -308,12 +331,22 @@ class CrossCosmosGame(arcade.Window):
         self.manager.enable()
 
         # Create right panel
-        self.right_panel = self._create_right_panel()
+        self.right_panel1 = self._create_right_panel()
+        self.right_panel2 = self._create_right_panel()
+
+        # Test multiple panels
+        self.right_column = arcade.gui.UIBoxLayout(
+            vertical=False,
+            space_between=0,
+            children = [self.right_panel1, self.right_panel2]
+        )
+        # self.right_column.add(self.right_panel1)
+        # self.right_column.add(self.right_panel2)
 
         # Position the panel on the right side
         anchor_layout = arcade.gui.UIAnchorLayout()
         anchor_layout.add(
-            child=self.right_panel,
+            child=self.right_column,
             anchor_x="right",
             anchor_y="center",
             align_x=0,  # Right edge alignment
@@ -323,18 +356,21 @@ class CrossCosmosGame(arcade.Window):
         self.manager.add(anchor_layout)
 
     def _create_right_panel(self) -> arcade.gui.UIWidget:
-        """Create the right panel with info and controls.
+        """
+        Create the right panel with info and controls.
 
         Builds a vertical panel containing:
         - Title header
         - Dynamic text displays for position, word info, and direction
         - Control buttons for auto-solve, clear, and save
 
-        Returns:
+        Returns
+        -------
+        arcade.gui.UIWidget
             UIWidget with dark background containing all panel elements
         """
         # Create main panel container
-        panel_width = self.right_panel_width - 20
+        panel_width = self.right_panel_column_width - 20
 
         # Create vertical layout for content
         panel_content = arcade.gui.UIBoxLayout(vertical=True, space_between=10)
@@ -419,7 +455,7 @@ class CrossCosmosGame(arcade.Window):
 
         # Create regular arcade.Text objects for dynamic labels
         # Position them manually in the right panel area
-        panel_x = self.width - self.right_panel_width + 40
+        panel_x = self.width - self.right_panel_column_width + 40
         base_y = self.height - 120  # Start below title
 
         self.position_text = arcade.Text(
@@ -534,13 +570,16 @@ class CrossCosmosGame(arcade.Window):
         self.direction_text.draw()
 
     def on_update(self, delta_time: float):
-        """Update animations.
+        """
+        Update animations.
 
         Called automatically each frame to update animations.
         Handles cursor blinking by alternating colors.
 
-        Args:
-            delta_time: Time elapsed since last frame (unused)
+        Parameters
+        ----------
+        delta_time : float
+            Time elapsed since last frame (unused)
         """
         self.frame_update_count += 1
 
@@ -587,7 +626,8 @@ class CrossCosmosGame(arcade.Window):
         self.update_gui_colors()
 
     def on_key_press(self, key, modifiers):
-        """Handle key press events.
+        """
+        Handle key press events.
 
         Processes keyboard shortcuts and special key combinations:
         - Shift+Cmd/Win: Activates black square toggle mode
@@ -595,9 +635,12 @@ class CrossCosmosGame(arcade.Window):
         - Ctrl+Number: Highlight words of specific length
         - Cmd/Ctrl+C: Copy current word to clipboard
 
-        Args:
-            key: Arcade key code
-            modifiers: Bit flags for modifier keys (Shift, Ctrl, etc.)
+        Parameters
+        ----------
+        key : int
+            Arcade key code
+        modifiers : int
+            Bit flags for modifier keys (Shift, Ctrl, etc.)
         """
         if self.with_black_toggle_modifiers(modifiers):
             self.toggle_black_mode_active = True
@@ -627,7 +670,8 @@ class CrossCosmosGame(arcade.Window):
             pyperclip.copy(copy_str)
 
     def on_key_release(self, key, modifiers):
-        """Handle key release events.
+        """
+        Handle key release events.
 
         Main keyboard input handler for:
         - Letter input (A-Z) into cells
@@ -638,9 +682,12 @@ class CrossCosmosGame(arcade.Window):
         Ignores input when Ctrl/Cmd is held to prevent conflicts
         with keyboard shortcuts.
 
-        Args:
-            key: Arcade key code
-            modifiers: Bit flags for modifier keys
+        Parameters
+        ----------
+        key : int
+            Arcade key code
+        modifiers : int
+            Bit flags for modifier keys
         """
         if key == arcade.key.GRAVE:
             self.grave_down = False
@@ -731,14 +778,19 @@ class CrossCosmosGame(arcade.Window):
         self.sync_gui_grid()
 
     def with_black_toggle_modifiers(self, modifiers: int) -> bool:
-        """Check if black toggle modifiers are active.
+        """
+        Check if black toggle modifiers are active.
 
         Black squares are toggled with Shift+Cmd (Mac) or Shift+Win (Windows).
 
-        Args:
-            modifiers: Bit flags for active modifier keys
+        Parameters
+        ----------
+        modifiers : int
+            Bit flags for active modifier keys
 
-        Returns:
+        Returns
+        -------
+        bool
             True if the correct modifier combination is pressed
         """
         with_shift = modifiers & arcade.key.MOD_SHIFT
@@ -747,7 +799,8 @@ class CrossCosmosGame(arcade.Window):
         return with_shift and (with_cmd or with_win)
 
     def on_mouse_motion(self, x: int, y: int, dx: int, dy: int):
-        """Handle mouse motion events.
+        """
+        Handle mouse motion events.
 
         When black toggle mode is active (Shift+Cmd/Win held), shows
         preview of black square placement with color coding:
@@ -756,11 +809,16 @@ class CrossCosmosGame(arcade.Window):
 
         Also handles symmetry preview if grid has symmetry enabled.
 
-        Args:
-            x: Mouse x coordinate
-            y: Mouse y coordinate
-            dx: Change in x (unused)
-            dy: Change in y (unused)
+        Parameters
+        ----------
+        x : int
+            Mouse x coordinate
+        y : int
+            Mouse y coordinate
+        dx : int
+            Change in x (unused)
+        dy : int
+            Change in y (unused)
         """
         if not self.toggle_black_mode_active:
             return
@@ -798,7 +856,8 @@ class CrossCosmosGame(arcade.Window):
                 symm_sprite.color = highlight_color
 
     def on_mouse_press(self, x: float, y: float, button, modifiers):
-        """Handle mouse press events.
+        """
+        Handle mouse press events.
 
         Processes different click types:
         - Normal click: Select cell
@@ -808,11 +867,16 @@ class CrossCosmosGame(arcade.Window):
         Updates cursor visibility based on cell type (hidden for
         locked/black cells).
 
-        Args:
-            x: Mouse x coordinate
-            y: Mouse y coordinate
-            button: Mouse button pressed
-            modifiers: Active modifier keys
+        Parameters
+        ----------
+        x : float
+            Mouse x coordinate
+        y : float
+            Mouse y coordinate
+        button : int
+            Mouse button pressed
+        modifiers : int
+            Active modifier keys
         """
         on_gui_grid, gui_row, gui_col = self.gui_xy_to_gui_row_col(x, y)
         if not on_gui_grid:
@@ -855,25 +919,32 @@ class CrossCosmosGame(arcade.Window):
         self.sync_gui_grid()
 
     def update_selected_cell(self, new_value: str):
-        """Update the currently selected cell value.
+        """
+        Update the currently selected cell value.
 
         Updates both the underlying grid data and the GUI display.
 
-        Args:
-            new_value: New letter value for the cell (empty string to clear)
+        Parameters
+        ----------
+        new_value : str
+            New letter value for the cell (empty string to clear)
         """
         logger.info(f"Updating cell {self.selected_x}, {self.selected_y} to {new_value}")
         self.grid.set_grid(self.selected_x, self.selected_y, new_value)
 
     def update_locked_color(self, gui_row: int, gui_col: int):
-        """Update color for locked cells.
+        """
+        Update color for locked cells.
 
         Locked cells are displayed with cyan text to indicate they
         cannot be edited.
 
-        Args:
-            gui_row: Row index in GUI coordinates
-            gui_col: Column index in GUI coordinates
+        Parameters
+        ----------
+        gui_row : int
+            Row index in GUI coordinates
+        gui_col : int
+            Column index in GUI coordinates
         """
         gui_text_label = self.cell_letters[gui_row, gui_col]
         grid_row, grid_col = self.gui_row_col_to_grid_row_col(gui_row, gui_col)
@@ -898,16 +969,20 @@ class CrossCosmosGame(arcade.Window):
                 self.text_labels[gui_row, gui_col].text = str(cell.answer_number) if cell.answer_number else ""
 
     def toggle_black_square(self, gui_row: int, gui_col: int):
-        """Toggle a cell between black and normal status.
+        """
+        Toggle a cell between black and normal status.
 
         Black squares are used to separate words in the crossword.
         Toggles between:
         - Normal cell → Black square
         - Black square → Empty cell
 
-        Args:
-            gui_row: Row index in GUI coordinates
-            gui_col: Column index in GUI coordinates
+        Parameters
+        ----------
+        gui_row : int
+            Row index in GUI coordinates
+        gui_col : int
+            Column index in GUI coordinates
         """
         grid_row, grid_col = self.gui_row_col_to_grid_row_col(gui_row, gui_col)
 
@@ -942,7 +1017,8 @@ class CrossCosmosGame(arcade.Window):
                     self.grid_sprites[gui_row, gui_col].color = DEFAULT_CELL_COLOR
 
     def update_gui_colors(self, show_cursor=True):
-        """Update GUI colors and cursor position.
+        """
+        Update GUI colors and cursor position.
 
         Refreshes the visual state of the grid:
         - Moves cursor to selected cell
@@ -951,8 +1027,10 @@ class CrossCosmosGame(arcade.Window):
         - Highlights current word (dark gray)
         - Shows/hides cursor based on parameter
 
-        Args:
-            show_cursor: Whether to display the text cursor
+        Parameters
+        ----------
+        show_cursor : bool, optional
+            Whether to display the text cursor (default True)
         """
         selected_gui_x, selected_gui_y = self.selected_grid_cell.gui_coordinates
 
@@ -982,32 +1060,44 @@ class CrossCosmosGame(arcade.Window):
                 self.grid_sprites[cell.gui_row, cell.gui_col].color = ACTIVE_WORD_CELL_COLOR
 
     def gui_row_col_to_grid_row_col(self, gui_row: int, gui_col: int) -> tuple[int, int]:
-        """Convert GUI coordinates to grid coordinates.
+        """
+        Convert GUI coordinates to grid coordinates.
 
         The GUI uses bottom-left origin while the grid uses top-left,
         so rows need to be inverted.
 
-        Args:
-            gui_row: Row index in GUI (bottom-up)
-            gui_col: Column index in GUI
+        Parameters
+        ----------
+        gui_row : int
+            Row index in GUI (bottom-up)
+        gui_col : int
+            Column index in GUI
 
-        Returns:
-            Tuple of (grid_row, grid_col) in top-down coordinates
+        Returns
+        -------
+        tuple[int, int]
+            (grid_row, grid_col) in top-down coordinates
         """
         return self.grid.row_count - gui_row - 1, gui_col
 
     def gui_xy_to_gui_row_col(self, x: float, y: float) -> tuple[bool, int, int]:
-        """Convert mouse position to grid coordinates.
+        """
+        Convert mouse position to grid coordinates.
 
         Translates pixel coordinates to grid cell indices, accounting
         for margins and cell spacing.
 
-        Args:
-            x: Mouse x position in pixels
-            y: Mouse y position in pixels
+        Parameters
+        ----------
+        x : float
+            Mouse x position in pixels
+        y : float
+            Mouse y position in pixels
 
-        Returns:
-            Tuple of (on_grid, row, col) where:
+        Returns
+        -------
+        tuple[bool, int, int]
+            (on_grid, row, col) where:
             - on_grid: True if position is within grid bounds
             - row: Grid row index (0 if off-grid)
             - col: Grid column index (0 if off-grid)
@@ -1042,18 +1132,25 @@ class CrossCosmosGame(arcade.Window):
         self.text_cursor.color = CURSOR_COLOR_1
 
     def build_button(self, name: str, texture_str: str, dim: float) -> arcade.gui.UITextureButton:
-        """Build a textured button with hover and click effects.
+        """
+        Build a textured button with hover and click effects.
 
         Creates a button with visual feedback by lightening the texture
         on hover and click events.
 
-        Args:
-            name: Button identifier (unused but kept for compatibility)
-            texture_str: Path to button texture image
-            dim: Width and height of the button in pixels
+        Parameters
+        ----------
+        name : str
+            Button identifier (unused but kept for compatibility)
+        texture_str : str
+            Path to button texture image
+        dim : float
+            Width and height of the button in pixels
 
-        Returns:
-            UITextureButton with hover and pressed states
+        Returns
+        -------
+        arcade.gui.UITextureButton
+            Button with hover and pressed states
         """
         texture = arcade.load_texture(texture_str)
 
@@ -1073,14 +1170,18 @@ class CrossCosmosGame(arcade.Window):
 
 
 def run_default(grid: xc.grid.Grid, override_config_path=None):
-    """Run the crossword creator with default configuration.
+    """
+    Run the crossword creator with default configuration.
 
     Main entry point for the application. Loads configuration,
     builds grid data structures, and launches the GUI.
 
-    Args:
-        grid: Pre-initialized crossword grid to edit
-        override_config_path: Optional path to custom config file
+    Parameters
+    ----------
+    grid : xc.grid.Grid
+        Pre-initialized crossword grid to edit
+    override_config_path : str, optional
+        Path to custom config file (default None)
     """
     config = ConfigParser()
 
@@ -1097,19 +1198,21 @@ def run_default(grid: xc.grid.Grid, override_config_path=None):
     arcade.run()
 
 
-
 if __name__ == "__main__":
     # Parse config file
-    config_path = xc.crosscosmos_root / "gui" / "gui_config.ini"
-    config = ConfigParser()
-    config.read(config_path)
+    # config_path = xc.crosscosmos_root / "gui" / "gui_config.ini"
+    # config = ConfigParser()
+    # config.read(config_path)
+
+
     
     # Load grid
     test_file = Path(xc.crosscosmos_root / "gui"  / "test_grid.json")
-    xc_grid = xc.grid.Grid.load("/Users/lafarnb1/Projects/GitHub/CrossCosmos/grids/oops_again/oops_again1.json")
+    # xc_grid = xc.grid.Grid.load("/Users/lafarnb1/Projects/GitHub/CrossCosmos/grids/oops_again/oops_again1.json")
+    xc_grid = xc.grid.Grid.load("/Users/nlafarge/Repos/Personal/CrossCosmo/grids/oops_again/oops_again1.json")
     # xc_grid.corpus = xc.corpus.Corpus.from_lafarge()
     # xc_grid.build_tries()
     
     # Create and run GUI window
-    CrossCosmosGame(config, xc_grid)
+    CrossCosmosGame(xc_grid)
     arcade.run()

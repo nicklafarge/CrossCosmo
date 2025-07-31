@@ -2,7 +2,7 @@
 # ruff: noqa: F403,E402, I001
 
 # Configuration
-from .config import crosscosmos_root, project_root
+from .config import *
 
 # Logging
 import logging

@@ -21,4 +21,4 @@ grid = xc.grid.Grid.load(grid_path)
 
 cl = grid.get_word("1A")
 
-df = xc.Query(default=False).match("T???").limit(10).order_by_score().df()
+df = xc.Query(default=False, alpha_only=False).limit(10).match("T???").order_by_score().df()
