@@ -13,6 +13,7 @@ from pathlib import Path
 import numpy as np
 import polars as pl
 from numpy.typing import NDArray
+from pydantic import BaseModel
 
 from crosscosmos import constants, io_utils, query
 from crosscosmos.corpus import Corpus
@@ -27,7 +28,6 @@ from crosscosmos.enums import (
 from crosscosmos.wordlists.lafarge import LaFargeWord
 
 logger = logging.getLogger(__name__)
-
 
 class Cell:
     """Individual cell in a crossword grid.
@@ -88,10 +88,6 @@ class Cell:
         self.is_v_end: bool = False
         self.answer_number: int | None = None
 
-        # Word lengths
-        self.hlen: int = 0
-        self.vlen: int = 0
-
         # Solving state
         self.removed_words: list[tuple[str, WordDirection]] = []
         self.excluded: list[str] = []
@@ -105,11 +101,6 @@ class Cell:
 
     def __repr__(self):
         return f"Cell(val='{self.value}',loc={self.matrix_index},status={self.status})"
-
-    @property
-    def is_valid(self) -> bool:
-        """Check if cell forms valid crossing words. A cell is valid if black or has 3+ letter words in both directions"""
-        return self.status == CellStatus.BLACK or (self.hlen >= 3 and self.vlen >= 3)
 
     def shuffle(self) -> None:
         """Shuffles the letter queue."""
@@ -216,9 +207,7 @@ class Cell:
             "is_h_end": self.is_h_end,
             "is_v_start": self.is_v_start,
             "is_v_end": self.is_v_end,
-            "answer_number": self.answer_number,
-            "hlen": self.hlen,
-            "vlen": self.vlen,
+            "answer_number": self.answer_number
         }
 
     @classmethod
@@ -251,8 +240,6 @@ class Cell:
         cell.is_v_start = json_cell["is_v_start"]
         cell.is_v_end = json_cell["is_v_end"]
         cell.answer_number = json_cell["answer_number"]
-        cell.hlen = json_cell["hlen"]
-        cell.vlen = json_cell["vlen"]
         return cell
 
     @classmethod
@@ -463,7 +450,9 @@ class Grid:
     @property
     def is_valid(self) -> bool:
         """Check if all cells form valid crossings."""
-        return all(c.is_valid for c in self.grid.flatten())
+        return all(
+            self.is_cell_valid(c.x, c.y) for c in self.grid.flatten()
+        )
 
     @property
     def h_starts(self) -> pl.DataFrame:
@@ -497,6 +486,13 @@ class Grid:
         grid = cls.from_dict(io_utils.load_json(filepath), **kwargs)
         grid.save_path = filepath
         return grid
+
+    def is_cell_valid(self, i: int, j: int) -> bool:
+        """ Check if both crossings at a given cell are valid (>=3 letters) """
+        is_black = self.grid[i, j].status == CellStatus.BLACK
+        hlen = self.word_len(i, j, WordDirection.HORIZONTAL)
+        vlen = self.word_len(i, j, WordDirection.VERTICAL)
+        return is_black or (hlen >= 3 and vlen >= 3)
 
     def clone(self):
         """Clone (deepcopy) this grid"""
@@ -641,12 +637,6 @@ class Grid:
                     answer_counter += 1
                 else:
                     cell.answer_number = None
-
-        # Second pass: calculate word lengths
-        for i in range(self.row_count):
-            for j in range(self.col_count):
-                self[i, j].hlen = self.word_len(i, j, WordDirection.HORIZONTAL)
-                self[i, j].vlen = self.word_len(i, j, WordDirection.VERTICAL)
 
     def clear(self) -> None:
         """Clear all non-locked, non-black cells."""
@@ -1197,10 +1187,7 @@ class Grid:
         for i in range(self.row_count):
             row_vals = []
             for j in range(self.col_count):
-                if direction == WordDirection.HORIZONTAL:
-                    row_vals.append(str(self[i, j].hlen))
-                else:
-                    row_vals.append(str(self[i, j].vlen))
+                row_vals.append(str(self.word_len(i, j, direction)))
             print(" ".join(row_vals))
 
     def to_json(self) -> dict:

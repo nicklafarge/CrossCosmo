@@ -382,7 +382,9 @@ class CrossCosmosGame(arcade.Window):
 
             logger.info(f"Searching for answers with length = {value}")
             for cell in self.grid.grid.flatten():
-                if cell.hlen == value or cell.vlen == value:
+                hlen = self.grid.word_len(cell.i, cell.j, WordDirection.HORIZONTAL)
+                vlen = self.grid.word_len(cell.i, cell.j, WordDirection.VERTICAL)
+                if hlen == value or vlen == value:
                     self.grid_sprites[cell.gui_row, cell.gui_col].color = SEARCH_LEN_COLOR
 
             logger.info(f"Numbers: {key}")
@@ -688,7 +690,7 @@ class CrossCosmosGame(arcade.Window):
                 # Do nothing if black
                 if cell.status == CellStatus.BLACK:
                     continue
-                elif not cell.is_valid:
+                elif not self.grid.is_cell_valid(cell.x, cell.y):
                     self.grid_sprites[gui_x][gui_y].color = INVALID_CELL_COLOR
                 else:
                     self.grid_sprites[gui_x][gui_y].color = DEFAULT_CELL_COLOR
@@ -729,7 +731,7 @@ class CrossCosmosGame(arcade.Window):
 
         # Update the cell based on its status, and whether it is selected
         for cell in active_word_cells:
-            if cell.status == CellStatus.BLACK or not cell.is_valid:
+            if cell.status == CellStatus.BLACK or not self.grid.is_cell_valid(cell.x, cell.y):
                 continue
             elif cell.x == self.selected_grid_cell.x and cell.y == self.selected_grid_cell.y:
                 self.grid_sprites[cell.gui_row][cell.gui_col].color = SELECTED_CELL_COLOR
