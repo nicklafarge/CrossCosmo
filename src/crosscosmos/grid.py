@@ -481,7 +481,7 @@ class Grid:
         return grid
 
     @classmethod
-    def load(cls, filepath: Path, **kwargs) -> "Grid":
+    def load(cls, filepath: Path | str, **kwargs) -> "Grid":
         """Load grid from JSON file."""
         grid = cls.from_dict(io_utils.load_json(filepath), **kwargs)
         grid.save_path = filepath

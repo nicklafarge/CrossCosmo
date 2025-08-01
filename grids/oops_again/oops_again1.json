@@ -24,9 +24,7 @@
         "is_h_end": false,
         "is_v_start": true,
         "is_v_end": false,
-        "answer_number": 1,
-        "hlen": 5,
-        "vlen": 6
+        "answer_number": 1
       },
       {
         "status": 1,
@@ -47,9 +45,7 @@
         "is_h_end": false,
         "is_v_start": true,
         "is_v_end": false,
-        "answer_number": 2,
-        "hlen": 5,
-        "vlen": 6
+        "answer_number": 2
       },
       {
         "status": 1,
@@ -70,9 +66,7 @@
         "is_h_end": false,
         "is_v_start": true,
         "is_v_end": false,
-        "answer_number": 3,
-        "hlen": 5,
-        "vlen": 11
+        "answer_number": 3
       },
       {
         "status": 1,
@@ -93,9 +87,7 @@
         "is_h_end": false,
         "is_v_start": true,
         "is_v_end": false,
-        "answer_number": 4,
-        "hlen": 5,
-        "vlen": 3
+        "answer_number": 4
       },
       {
         "status": 1,
@@ -116,9 +108,7 @@
         "is_h_end": true,
         "is_v_start": true,
         "is_v_end": false,
-        "answer_number": 5,
-        "hlen": 5,
-        "vlen": 5
+        "answer_number": 5
       },
       {
         "status": 3,
@@ -139,9 +129,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 0,
-        "vlen": 0
+        "answer_number": null
       },
       {
         "status": 0,
@@ -162,9 +150,7 @@
         "is_h_end": false,
         "is_v_start": true,
         "is_v_end": false,
-        "answer_number": 6,
-        "hlen": 11,
-        "vlen": 6
+        "answer_number": 6
       },
       {
         "status": 0,
@@ -185,9 +171,7 @@
         "is_h_end": false,
         "is_v_start": true,
         "is_v_end": false,
-        "answer_number": 7,
-        "hlen": 11,
-        "vlen": 10
+        "answer_number": 7
       },
       {
         "status": 0,
@@ -208,9 +192,7 @@
         "is_h_end": false,
         "is_v_start": true,
         "is_v_end": false,
-        "answer_number": 8,
-        "hlen": 11,
-        "vlen": 21
+        "answer_number": 8
       },
       {
         "status": 0,
@@ -231,9 +213,7 @@
         "is_h_end": false,
         "is_v_start": true,
         "is_v_end": false,
-        "answer_number": 9,
-        "hlen": 11,
-        "vlen": 9
+        "answer_number": 9
       },
       {
         "status": 0,
@@ -254,9 +234,7 @@
         "is_h_end": false,
         "is_v_start": true,
         "is_v_end": false,
-        "answer_number": 10,
-        "hlen": 11,
-        "vlen": 21
+        "answer_number": 10
       },
       {
         "status": 0,
@@ -277,9 +255,7 @@
         "is_h_end": false,
         "is_v_start": true,
         "is_v_end": false,
-        "answer_number": 11,
-        "hlen": 11,
-        "vlen": 11
+        "answer_number": 11
       },
       {
         "status": 0,
@@ -300,9 +276,7 @@
         "is_h_end": false,
         "is_v_start": true,
         "is_v_end": false,
-        "answer_number": 12,
-        "hlen": 11,
-        "vlen": 21
+        "answer_number": 12
       },
       {
         "status": 0,
@@ -323,9 +297,7 @@
         "is_h_end": false,
         "is_v_start": true,
         "is_v_end": false,
-        "answer_number": 13,
-        "hlen": 11,
-        "vlen": 10
+        "answer_number": 13
       },
       {
         "status": 1,
@@ -346,9 +318,7 @@
         "is_h_end": false,
         "is_v_start": true,
         "is_v_end": false,
-        "answer_number": 14,
-        "hlen": 11,
-        "vlen": 14
+        "answer_number": 14
       },
       {
         "status": 0,
@@ -369,9 +339,7 @@
         "is_h_end": false,
         "is_v_start": true,
         "is_v_end": false,
-        "answer_number": 15,
-        "hlen": 11,
-        "vlen": 12
+        "answer_number": 15
       },
       {
         "status": 0,
@@ -392,9 +360,7 @@
         "is_h_end": true,
         "is_v_start": true,
         "is_v_end": false,
-        "answer_number": 16,
-        "hlen": 11,
-        "vlen": 11
+        "answer_number": 16
       },
       {
         "status": 3,
@@ -415,9 +381,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 0,
-        "vlen": 0
+        "answer_number": null
       },
       {
         "status": 0,
@@ -438,9 +402,7 @@
         "is_h_end": false,
         "is_v_start": true,
         "is_v_end": false,
-        "answer_number": 17,
-        "hlen": 3,
-        "vlen": 4
+        "answer_number": 17
       },
       {
         "status": 0,
@@ -461,9 +423,7 @@
         "is_h_end": false,
         "is_v_start": true,
         "is_v_end": false,
-        "answer_number": 18,
-        "hlen": 3,
-        "vlen": 4
+        "answer_number": 18
       },
       {
         "status": 0,
@@ -484,9 +444,7 @@
         "is_h_end": true,
         "is_v_start": true,
         "is_v_end": false,
-        "answer_number": 19,
-        "hlen": 3,
-        "vlen": 4
+        "answer_number": 19
       }
     ],
     [
@@ -509,9 +467,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": 20,
-        "hlen": 5,
-        "vlen": 6
+        "answer_number": 20
       },
       {
         "status": 1,
@@ -532,9 +488,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 5,
-        "vlen": 6
+        "answer_number": null
       },
       {
         "status": 1,
@@ -555,9 +509,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 5,
-        "vlen": 11
+        "answer_number": null
       },
       {
         "status": 1,
@@ -578,9 +530,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 5,
-        "vlen": 3
+        "answer_number": null
       },
       {
         "status": 1,
@@ -601,9 +551,7 @@
         "is_h_end": true,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 5,
-        "vlen": 5
+        "answer_number": null
       },
       {
         "status": 3,
@@ -624,9 +572,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 0,
-        "vlen": 0
+        "answer_number": null
       },
       {
         "status": 0,
@@ -647,9 +593,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": 21,
-        "hlen": 11,
-        "vlen": 6
+        "answer_number": 21
       },
       {
         "status": 0,
@@ -670,9 +614,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 11,
-        "vlen": 10
+        "answer_number": null
       },
       {
         "status": 0,
@@ -693,9 +635,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 11,
-        "vlen": 21
+        "answer_number": null
       },
       {
         "status": 0,
@@ -716,9 +656,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 11,
-        "vlen": 9
+        "answer_number": null
       },
       {
         "status": 0,
@@ -739,9 +677,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 11,
-        "vlen": 21
+        "answer_number": null
       },
       {
         "status": 0,
@@ -762,9 +698,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 11,
-        "vlen": 11
+        "answer_number": null
       },
       {
         "status": 0,
@@ -785,9 +719,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 11,
-        "vlen": 21
+        "answer_number": null
       },
       {
         "status": 0,
@@ -808,9 +740,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 11,
-        "vlen": 10
+        "answer_number": null
       },
       {
         "status": 1,
@@ -831,9 +761,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 11,
-        "vlen": 14
+        "answer_number": null
       },
       {
         "status": 0,
@@ -854,9 +782,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 11,
-        "vlen": 12
+        "answer_number": null
       },
       {
         "status": 0,
@@ -877,9 +803,7 @@
         "is_h_end": true,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 11,
-        "vlen": 11
+        "answer_number": null
       },
       {
         "status": 3,
@@ -900,9 +824,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 0,
-        "vlen": 0
+        "answer_number": null
       },
       {
         "status": 0,
@@ -923,9 +845,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": 22,
-        "hlen": 3,
-        "vlen": 4
+        "answer_number": 22
       },
       {
         "status": 0,
@@ -946,9 +866,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 3,
-        "vlen": 4
+        "answer_number": null
       },
       {
         "status": 0,
@@ -969,9 +887,7 @@
         "is_h_end": true,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 3,
-        "vlen": 4
+        "answer_number": null
       }
     ],
     [
@@ -994,9 +910,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": 23,
-        "hlen": 5,
-        "vlen": 6
+        "answer_number": 23
       },
       {
         "status": 1,
@@ -1017,9 +931,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 5,
-        "vlen": 6
+        "answer_number": null
       },
       {
         "status": 1,
@@ -1040,9 +952,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 5,
-        "vlen": 11
+        "answer_number": null
       },
       {
         "status": 1,
@@ -1063,9 +973,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": true,
-        "answer_number": null,
-        "hlen": 5,
-        "vlen": 3
+        "answer_number": null
       },
       {
         "status": 1,
@@ -1086,9 +994,7 @@
         "is_h_end": true,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 5,
-        "vlen": 5
+        "answer_number": null
       },
       {
         "status": 3,
@@ -1109,9 +1015,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 0,
-        "vlen": 0
+        "answer_number": null
       },
       {
         "status": 1,
@@ -1132,9 +1036,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": 24,
-        "hlen": 15,
-        "vlen": 6
+        "answer_number": 24
       },
       {
         "status": 1,
@@ -1155,9 +1057,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 15,
-        "vlen": 10
+        "answer_number": null
       },
       {
         "status": 1,
@@ -1178,9 +1078,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 15,
-        "vlen": 21
+        "answer_number": null
       },
       {
         "status": 1,
@@ -1201,9 +1099,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 15,
-        "vlen": 9
+        "answer_number": null
       },
       {
         "status": 1,
@@ -1224,9 +1120,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 15,
-        "vlen": 21
+        "answer_number": null
       },
       {
         "status": 1,
@@ -1247,9 +1141,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 15,
-        "vlen": 11
+        "answer_number": null
       },
       {
         "status": 1,
@@ -1270,9 +1162,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 15,
-        "vlen": 21
+        "answer_number": null
       },
       {
         "status": 1,
@@ -1293,9 +1183,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 15,
-        "vlen": 10
+        "answer_number": null
       },
       {
         "status": 1,
@@ -1316,9 +1204,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 15,
-        "vlen": 14
+        "answer_number": null
       },
       {
         "status": 1,
@@ -1339,9 +1225,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 15,
-        "vlen": 12
+        "answer_number": null
       },
       {
         "status": 1,
@@ -1362,9 +1246,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 15,
-        "vlen": 11
+        "answer_number": null
       },
       {
         "status": 1,
@@ -1385,9 +1267,7 @@
         "is_h_end": false,
         "is_v_start": true,
         "is_v_end": false,
-        "answer_number": 25,
-        "hlen": 15,
-        "vlen": 7
+        "answer_number": 25
       },
       {
         "status": 1,
@@ -1408,9 +1288,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 15,
-        "vlen": 4
+        "answer_number": null
       },
       {
         "status": 1,
@@ -1431,9 +1309,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 15,
-        "vlen": 4
+        "answer_number": null
       },
       {
         "status": 1,
@@ -1454,9 +1330,7 @@
         "is_h_end": true,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 15,
-        "vlen": 4
+        "answer_number": null
       }
     ],
     [
@@ -1479,9 +1353,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": 26,
-        "hlen": 3,
-        "vlen": 6
+        "answer_number": 26
       },
       {
         "status": 1,
@@ -1502,9 +1374,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 3,
-        "vlen": 6
+        "answer_number": null
       },
       {
         "status": 1,
@@ -1525,9 +1395,7 @@
         "is_h_end": true,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 3,
-        "vlen": 11
+        "answer_number": null
       },
       {
         "status": 3,
@@ -1548,9 +1416,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 0,
-        "vlen": 0
+        "answer_number": null
       },
       {
         "status": 1,
@@ -1571,9 +1437,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": 27,
-        "hlen": 17,
-        "vlen": 5
+        "answer_number": 27
       },
       {
         "status": 0,
@@ -1594,9 +1458,7 @@
         "is_h_end": false,
         "is_v_start": true,
         "is_v_end": false,
-        "answer_number": 28,
-        "hlen": 17,
-        "vlen": 5
+        "answer_number": 28
       },
       {
         "status": 0,
@@ -1617,9 +1479,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 17,
-        "vlen": 6
+        "answer_number": null
       },
       {
         "status": 0,
@@ -1640,9 +1500,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 17,
-        "vlen": 10
+        "answer_number": null
       },
       {
         "status": 0,
@@ -1663,9 +1521,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 17,
-        "vlen": 21
+        "answer_number": null
       },
       {
         "status": 0,
@@ -1686,9 +1542,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 17,
-        "vlen": 9
+        "answer_number": null
       },
       {
         "status": 0,
@@ -1709,9 +1563,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 17,
-        "vlen": 21
+        "answer_number": null
       },
       {
         "status": 0,
@@ -1732,9 +1584,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 17,
-        "vlen": 11
+        "answer_number": null
       },
       {
         "status": 0,
@@ -1755,9 +1605,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 17,
-        "vlen": 21
+        "answer_number": null
       },
       {
         "status": 0,
@@ -1778,9 +1626,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 17,
-        "vlen": 10
+        "answer_number": null
       },
       {
         "status": 1,
@@ -1801,9 +1647,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 17,
-        "vlen": 14
+        "answer_number": null
       },
       {
         "status": 0,
@@ -1824,9 +1668,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 17,
-        "vlen": 12
+        "answer_number": null
       },
       {
         "status": 0,
@@ -1847,9 +1689,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 17,
-        "vlen": 11
+        "answer_number": null
       },
       {
         "status": 0,
@@ -1870,9 +1710,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 17,
-        "vlen": 7
+        "answer_number": null
       },
       {
         "status": 0,
@@ -1893,9 +1731,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": true,
-        "answer_number": null,
-        "hlen": 17,
-        "vlen": 4
+        "answer_number": null
       },
       {
         "status": 0,
@@ -1916,9 +1752,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": true,
-        "answer_number": null,
-        "hlen": 17,
-        "vlen": 4
+        "answer_number": null
       },
       {
         "status": 0,
@@ -1939,9 +1773,7 @@
         "is_h_end": true,
         "is_v_start": false,
         "is_v_end": true,
-        "answer_number": null,
-        "hlen": 17,
-        "vlen": 4
+        "answer_number": null
       }
     ],
     [
@@ -1964,9 +1796,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": 29,
-        "hlen": 18,
-        "vlen": 6
+        "answer_number": 29
       },
       {
         "status": 1,
@@ -1987,9 +1817,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 18,
-        "vlen": 6
+        "answer_number": null
       },
       {
         "status": 1,
@@ -2010,9 +1838,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 18,
-        "vlen": 11
+        "answer_number": null
       },
       {
         "status": 1,
@@ -2033,9 +1859,7 @@
         "is_h_end": false,
         "is_v_start": true,
         "is_v_end": false,
-        "answer_number": 30,
-        "hlen": 18,
-        "vlen": 7
+        "answer_number": 30
       },
       {
         "status": 1,
@@ -2056,9 +1880,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": true,
-        "answer_number": null,
-        "hlen": 18,
-        "vlen": 5
+        "answer_number": null
       },
       {
         "status": 1,
@@ -2079,9 +1901,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 18,
-        "vlen": 5
+        "answer_number": null
       },
       {
         "status": 1,
@@ -2102,9 +1922,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 18,
-        "vlen": 6
+        "answer_number": null
       },
       {
         "status": 1,
@@ -2125,9 +1943,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 18,
-        "vlen": 10
+        "answer_number": null
       },
       {
         "status": 1,
@@ -2148,9 +1964,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 18,
-        "vlen": 21
+        "answer_number": null
       },
       {
         "status": 1,
@@ -2171,9 +1985,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 18,
-        "vlen": 9
+        "answer_number": null
       },
       {
         "status": 1,
@@ -2194,9 +2006,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 18,
-        "vlen": 21
+        "answer_number": null
       },
       {
         "status": 1,
@@ -2217,9 +2027,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 18,
-        "vlen": 11
+        "answer_number": null
       },
       {
         "status": 1,
@@ -2240,9 +2048,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 18,
-        "vlen": 21
+        "answer_number": null
       },
       {
         "status": 1,
@@ -2263,9 +2069,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 18,
-        "vlen": 10
+        "answer_number": null
       },
       {
         "status": 1,
@@ -2286,9 +2090,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 18,
-        "vlen": 14
+        "answer_number": null
       },
       {
         "status": 1,
@@ -2309,9 +2111,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 18,
-        "vlen": 12
+        "answer_number": null
       },
       {
         "status": 1,
@@ -2332,9 +2132,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 18,
-        "vlen": 11
+        "answer_number": null
       },
       {
         "status": 1,
@@ -2355,9 +2153,7 @@
         "is_h_end": true,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 18,
-        "vlen": 7
+        "answer_number": null
       },
       {
         "status": 3,
@@ -2378,9 +2174,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 0,
-        "vlen": 0
+        "answer_number": null
       },
       {
         "status": 3,
@@ -2401,9 +2195,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 0,
-        "vlen": 0
+        "answer_number": null
       },
       {
         "status": 3,
@@ -2424,9 +2216,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 0,
-        "vlen": 0
+        "answer_number": null
       }
     ],
     [
@@ -2449,9 +2239,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": true,
-        "answer_number": 31,
-        "hlen": 4,
-        "vlen": 6
+        "answer_number": 31
       },
       {
         "status": 1,
@@ -2472,9 +2260,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": true,
-        "answer_number": null,
-        "hlen": 4,
-        "vlen": 6
+        "answer_number": null
       },
       {
         "status": 1,
@@ -2495,13 +2281,11 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 4,
-        "vlen": 11
+        "answer_number": null
       },
       {
         "status": 1,
-        "value": "A",
+        "value": "I",
         "matrix_index": [
           5,
           3
@@ -2518,9 +2302,7 @@
         "is_h_end": true,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 4,
-        "vlen": 7
+        "answer_number": null
       },
       {
         "status": 3,
@@ -2541,9 +2323,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 0,
-        "vlen": 0
+        "answer_number": null
       },
       {
         "status": 0,
@@ -2564,9 +2344,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": 32,
-        "hlen": 16,
-        "vlen": 5
+        "answer_number": 32
       },
       {
         "status": 0,
@@ -2587,9 +2365,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": true,
-        "answer_number": null,
-        "hlen": 16,
-        "vlen": 6
+        "answer_number": null
       },
       {
         "status": 0,
@@ -2610,9 +2386,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 16,
-        "vlen": 10
+        "answer_number": null
       },
       {
         "status": 0,
@@ -2633,9 +2407,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 16,
-        "vlen": 21
+        "answer_number": null
       },
       {
         "status": 0,
@@ -2656,9 +2428,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 16,
-        "vlen": 9
+        "answer_number": null
       },
       {
         "status": 0,
@@ -2679,9 +2449,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 16,
-        "vlen": 21
+        "answer_number": null
       },
       {
         "status": 0,
@@ -2702,9 +2470,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 16,
-        "vlen": 11
+        "answer_number": null
       },
       {
         "status": 0,
@@ -2725,9 +2491,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 16,
-        "vlen": 21
+        "answer_number": null
       },
       {
         "status": 0,
@@ -2748,9 +2512,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 16,
-        "vlen": 10
+        "answer_number": null
       },
       {
         "status": 1,
@@ -2771,9 +2533,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 16,
-        "vlen": 14
+        "answer_number": null
       },
       {
         "status": 0,
@@ -2794,9 +2554,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 16,
-        "vlen": 12
+        "answer_number": null
       },
       {
         "status": 0,
@@ -2817,9 +2575,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 16,
-        "vlen": 11
+        "answer_number": null
       },
       {
         "status": 0,
@@ -2840,9 +2596,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 16,
-        "vlen": 7
+        "answer_number": null
       },
       {
         "status": 0,
@@ -2863,9 +2617,7 @@
         "is_h_end": false,
         "is_v_start": true,
         "is_v_end": false,
-        "answer_number": 33,
-        "hlen": 16,
-        "vlen": 4
+        "answer_number": 33
       },
       {
         "status": 0,
@@ -2886,9 +2638,7 @@
         "is_h_end": false,
         "is_v_start": true,
         "is_v_end": false,
-        "answer_number": 34,
-        "hlen": 16,
-        "vlen": 4
+        "answer_number": 34
       },
       {
         "status": 0,
@@ -2909,9 +2659,7 @@
         "is_h_end": true,
         "is_v_start": true,
         "is_v_end": false,
-        "answer_number": 35,
-        "hlen": 16,
-        "vlen": 4
+        "answer_number": 35
       }
     ],
     [
@@ -2934,9 +2682,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 0,
-        "vlen": 0
+        "answer_number": null
       },
       {
         "status": 3,
@@ -2957,9 +2703,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 0,
-        "vlen": 0
+        "answer_number": null
       },
       {
         "status": 1,
@@ -2980,9 +2724,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": 36,
-        "hlen": 4,
-        "vlen": 11
+        "answer_number": 36
       },
       {
         "status": 0,
@@ -3003,9 +2745,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 4,
-        "vlen": 7
+        "answer_number": null
       },
       {
         "status": 0,
@@ -3026,9 +2766,7 @@
         "is_h_end": false,
         "is_v_start": true,
         "is_v_end": false,
-        "answer_number": 37,
-        "hlen": 4,
-        "vlen": 3
+        "answer_number": 37
       },
       {
         "status": 0,
@@ -3049,9 +2787,7 @@
         "is_h_end": true,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 4,
-        "vlen": 5
+        "answer_number": null
       },
       {
         "status": 3,
@@ -3072,9 +2808,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 0,
-        "vlen": 0
+        "answer_number": null
       },
       {
         "status": 0,
@@ -3095,9 +2829,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": 38,
-        "hlen": 14,
-        "vlen": 10
+        "answer_number": 38
       },
       {
         "status": 0,
@@ -3118,9 +2850,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 14,
-        "vlen": 21
+        "answer_number": null
       },
       {
         "status": 0,
@@ -3141,9 +2871,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 14,
-        "vlen": 9
+        "answer_number": null
       },
       {
         "status": 0,
@@ -3164,9 +2892,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 14,
-        "vlen": 21
+        "answer_number": null
       },
       {
         "status": 0,
@@ -3187,9 +2913,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 14,
-        "vlen": 11
+        "answer_number": null
       },
       {
         "status": 0,
@@ -3210,9 +2934,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 14,
-        "vlen": 21
+        "answer_number": null
       },
       {
         "status": 0,
@@ -3233,9 +2955,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 14,
-        "vlen": 10
+        "answer_number": null
       },
       {
         "status": 1,
@@ -3256,9 +2976,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 14,
-        "vlen": 14
+        "answer_number": null
       },
       {
         "status": 0,
@@ -3279,9 +2997,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 14,
-        "vlen": 12
+        "answer_number": null
       },
       {
         "status": 0,
@@ -3302,9 +3018,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 14,
-        "vlen": 11
+        "answer_number": null
       },
       {
         "status": 0,
@@ -3325,9 +3039,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 14,
-        "vlen": 7
+        "answer_number": null
       },
       {
         "status": 0,
@@ -3348,9 +3060,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 14,
-        "vlen": 4
+        "answer_number": null
       },
       {
         "status": 0,
@@ -3371,9 +3081,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 14,
-        "vlen": 4
+        "answer_number": null
       },
       {
         "status": 0,
@@ -3394,9 +3102,7 @@
         "is_h_end": true,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 14,
-        "vlen": 4
+        "answer_number": null
       }
     ],
     [
@@ -3419,9 +3125,7 @@
         "is_h_end": false,
         "is_v_start": true,
         "is_v_end": false,
-        "answer_number": 39,
-        "hlen": 21,
-        "vlen": 4
+        "answer_number": 39
       },
       {
         "status": 0,
@@ -3442,9 +3146,7 @@
         "is_h_end": false,
         "is_v_start": true,
         "is_v_end": false,
-        "answer_number": 40,
-        "hlen": 21,
-        "vlen": 4
+        "answer_number": 40
       },
       {
         "status": 1,
@@ -3465,9 +3167,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 21,
-        "vlen": 11
+        "answer_number": null
       },
       {
         "status": 0,
@@ -3488,9 +3188,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 21,
-        "vlen": 7
+        "answer_number": null
       },
       {
         "status": 0,
@@ -3511,9 +3209,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 21,
-        "vlen": 3
+        "answer_number": null
       },
       {
         "status": 0,
@@ -3534,9 +3230,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": true,
-        "answer_number": null,
-        "hlen": 21,
-        "vlen": 5
+        "answer_number": null
       },
       {
         "status": 1,
@@ -3557,9 +3251,7 @@
         "is_h_end": false,
         "is_v_start": true,
         "is_v_end": false,
-        "answer_number": 41,
-        "hlen": 21,
-        "vlen": 14
+        "answer_number": 41
       },
       {
         "status": 0,
@@ -3580,9 +3272,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 21,
-        "vlen": 10
+        "answer_number": null
       },
       {
         "status": 0,
@@ -3603,9 +3293,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 21,
-        "vlen": 21
+        "answer_number": null
       },
       {
         "status": 0,
@@ -3626,9 +3314,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 21,
-        "vlen": 9
+        "answer_number": null
       },
       {
         "status": 0,
@@ -3649,9 +3335,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 21,
-        "vlen": 21
+        "answer_number": null
       },
       {
         "status": 1,
@@ -3672,9 +3356,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 21,
-        "vlen": 11
+        "answer_number": null
       },
       {
         "status": 0,
@@ -3695,9 +3377,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 21,
-        "vlen": 21
+        "answer_number": null
       },
       {
         "status": 0,
@@ -3718,9 +3398,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 21,
-        "vlen": 10
+        "answer_number": null
       },
       {
         "status": 1,
@@ -3741,9 +3419,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 21,
-        "vlen": 14
+        "answer_number": null
       },
       {
         "status": 0,
@@ -3764,9 +3440,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 21,
-        "vlen": 12
+        "answer_number": null
       },
       {
         "status": 0,
@@ -3787,9 +3461,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 21,
-        "vlen": 11
+        "answer_number": null
       },
       {
         "status": 0,
@@ -3810,9 +3482,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 21,
-        "vlen": 7
+        "answer_number": null
       },
       {
         "status": 0,
@@ -3833,9 +3503,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 21,
-        "vlen": 4
+        "answer_number": null
       },
       {
         "status": 0,
@@ -3856,9 +3524,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 21,
-        "vlen": 4
+        "answer_number": null
       },
       {
         "status": 0,
@@ -3879,9 +3545,7 @@
         "is_h_end": true,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 21,
-        "vlen": 4
+        "answer_number": null
       }
     ],
     [
@@ -3904,9 +3568,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": 42,
-        "hlen": 5,
-        "vlen": 4
+        "answer_number": 42
       },
       {
         "status": 0,
@@ -3927,9 +3589,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 5,
-        "vlen": 4
+        "answer_number": null
       },
       {
         "status": 1,
@@ -3950,9 +3610,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 5,
-        "vlen": 11
+        "answer_number": null
       },
       {
         "status": 0,
@@ -3973,9 +3631,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 5,
-        "vlen": 7
+        "answer_number": null
       },
       {
         "status": 0,
@@ -3996,9 +3652,7 @@
         "is_h_end": true,
         "is_v_start": false,
         "is_v_end": true,
-        "answer_number": null,
-        "hlen": 5,
-        "vlen": 3
+        "answer_number": null
       },
       {
         "status": 3,
@@ -4019,9 +3673,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 0,
-        "vlen": 0
+        "answer_number": null
       },
       {
         "status": 1,
@@ -4042,9 +3694,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": 43,
-        "hlen": 15,
-        "vlen": 14
+        "answer_number": 43
       },
       {
         "status": 1,
@@ -4065,9 +3715,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 15,
-        "vlen": 10
+        "answer_number": null
       },
       {
         "status": 1,
@@ -4088,9 +3736,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 15,
-        "vlen": 21
+        "answer_number": null
       },
       {
         "status": 1,
@@ -4111,9 +3757,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": true,
-        "answer_number": null,
-        "hlen": 15,
-        "vlen": 9
+        "answer_number": null
       },
       {
         "status": 1,
@@ -4134,9 +3778,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 15,
-        "vlen": 21
+        "answer_number": null
       },
       {
         "status": 1,
@@ -4157,9 +3799,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 15,
-        "vlen": 11
+        "answer_number": null
       },
       {
         "status": 1,
@@ -4180,9 +3820,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 15,
-        "vlen": 21
+        "answer_number": null
       },
       {
         "status": 1,
@@ -4203,9 +3841,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 15,
-        "vlen": 10
+        "answer_number": null
       },
       {
         "status": 1,
@@ -4226,9 +3862,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 15,
-        "vlen": 14
+        "answer_number": null
       },
       {
         "status": 1,
@@ -4249,9 +3883,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 15,
-        "vlen": 12
+        "answer_number": null
       },
       {
         "status": 1,
@@ -4272,9 +3904,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 15,
-        "vlen": 11
+        "answer_number": null
       },
       {
         "status": 1,
@@ -4295,9 +3925,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": true,
-        "answer_number": null,
-        "hlen": 15,
-        "vlen": 7
+        "answer_number": null
       },
       {
         "status": 1,
@@ -4318,9 +3946,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": true,
-        "answer_number": null,
-        "hlen": 15,
-        "vlen": 4
+        "answer_number": null
       },
       {
         "status": 1,
@@ -4341,9 +3967,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": true,
-        "answer_number": null,
-        "hlen": 15,
-        "vlen": 4
+        "answer_number": null
       },
       {
         "status": 1,
@@ -4364,9 +3988,7 @@
         "is_h_end": true,
         "is_v_start": false,
         "is_v_end": true,
-        "answer_number": null,
-        "hlen": 15,
-        "vlen": 4
+        "answer_number": null
       }
     ],
     [
@@ -4389,9 +4011,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": 44,
-        "hlen": 4,
-        "vlen": 4
+        "answer_number": 44
       },
       {
         "status": 0,
@@ -4412,9 +4032,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 4,
-        "vlen": 4
+        "answer_number": null
       },
       {
         "status": 1,
@@ -4435,9 +4053,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 4,
-        "vlen": 11
+        "answer_number": null
       },
       {
         "status": 0,
@@ -4458,9 +4074,7 @@
         "is_h_end": true,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 4,
-        "vlen": 7
+        "answer_number": null
       },
       {
         "status": 3,
@@ -4481,9 +4095,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 0,
-        "vlen": 0
+        "answer_number": null
       },
       {
         "status": 0,
@@ -4504,9 +4116,7 @@
         "is_h_end": false,
         "is_v_start": true,
         "is_v_end": false,
-        "answer_number": 45,
-        "hlen": 4,
-        "vlen": 12
+        "answer_number": 45
       },
       {
         "status": 1,
@@ -4527,9 +4137,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 4,
-        "vlen": 14
+        "answer_number": null
       },
       {
         "status": 0,
@@ -4550,9 +4158,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": true,
-        "answer_number": null,
-        "hlen": 4,
-        "vlen": 10
+        "answer_number": null
       },
       {
         "status": 0,
@@ -4573,9 +4179,7 @@
         "is_h_end": true,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 4,
-        "vlen": 21
+        "answer_number": null
       },
       {
         "status": 3,
@@ -4596,13 +4200,11 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 0,
-        "vlen": 0
+        "answer_number": null
       },
       {
-        "status": 0,
-        "value": "",
+        "status": 1,
+        "value": "W",
         "matrix_index": [
           9,
           10
@@ -4619,9 +4221,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": 46,
-        "hlen": 7,
-        "vlen": 21
+        "answer_number": 46
       },
       {
         "status": 0,
@@ -4642,9 +4242,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 7,
-        "vlen": 11
+        "answer_number": null
       },
       {
         "status": 0,
@@ -4665,9 +4263,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 7,
-        "vlen": 21
+        "answer_number": null
       },
       {
         "status": 0,
@@ -4688,9 +4284,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": true,
-        "answer_number": null,
-        "hlen": 7,
-        "vlen": 10
+        "answer_number": null
       },
       {
         "status": 1,
@@ -4711,9 +4305,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 7,
-        "vlen": 14
+        "answer_number": null
       },
       {
         "status": 0,
@@ -4734,9 +4326,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 7,
-        "vlen": 12
+        "answer_number": null
       },
       {
         "status": 0,
@@ -4757,9 +4347,7 @@
         "is_h_end": true,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 7,
-        "vlen": 11
+        "answer_number": null
       },
       {
         "status": 3,
@@ -4780,9 +4368,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 0,
-        "vlen": 0
+        "answer_number": null
       },
       {
         "status": 3,
@@ -4803,9 +4389,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 0,
-        "vlen": 0
+        "answer_number": null
       },
       {
         "status": 3,
@@ -4826,9 +4410,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 0,
-        "vlen": 0
+        "answer_number": null
       },
       {
         "status": 3,
@@ -4849,9 +4431,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 0,
-        "vlen": 0
+        "answer_number": null
       }
     ],
     [
@@ -4874,9 +4454,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": true,
-        "answer_number": 47,
-        "hlen": 7,
-        "vlen": 4
+        "answer_number": 47
       },
       {
         "status": 0,
@@ -4897,9 +4475,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": true,
-        "answer_number": null,
-        "hlen": 7,
-        "vlen": 4
+        "answer_number": null
       },
       {
         "status": 1,
@@ -4920,9 +4496,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": true,
-        "answer_number": null,
-        "hlen": 7,
-        "vlen": 11
+        "answer_number": null
       },
       {
         "status": 0,
@@ -4943,9 +4517,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": true,
-        "answer_number": null,
-        "hlen": 7,
-        "vlen": 7
+        "answer_number": null
       },
       {
         "status": 0,
@@ -4966,9 +4538,7 @@
         "is_h_end": false,
         "is_v_start": true,
         "is_v_end": false,
-        "answer_number": 48,
-        "hlen": 7,
-        "vlen": 11
+        "answer_number": 48
       },
       {
         "status": 0,
@@ -4989,9 +4559,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 7,
-        "vlen": 12
+        "answer_number": null
       },
       {
         "status": 1,
@@ -5012,9 +4580,7 @@
         "is_h_end": true,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 7,
-        "vlen": 14
+        "answer_number": null
       },
       {
         "status": 3,
@@ -5035,9 +4601,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 0,
-        "vlen": 0
+        "answer_number": null
       },
       {
         "status": 0,
@@ -5058,9 +4622,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": 49,
-        "hlen": 5,
-        "vlen": 21
+        "answer_number": 49
       },
       {
         "status": 0,
@@ -5081,9 +4643,7 @@
         "is_h_end": false,
         "is_v_start": true,
         "is_v_end": false,
-        "answer_number": 50,
-        "hlen": 5,
-        "vlen": 11
+        "answer_number": 50
       },
       {
         "status": 0,
@@ -5104,9 +4664,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 5,
-        "vlen": 21
+        "answer_number": null
       },
       {
         "status": 0,
@@ -5127,9 +4685,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": true,
-        "answer_number": null,
-        "hlen": 5,
-        "vlen": 11
+        "answer_number": null
       },
       {
         "status": 0,
@@ -5150,9 +4706,7 @@
         "is_h_end": true,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 5,
-        "vlen": 21
+        "answer_number": null
       },
       {
         "status": 3,
@@ -5173,9 +4727,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 0,
-        "vlen": 0
+        "answer_number": null
       },
       {
         "status": 1,
@@ -5196,9 +4748,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": 51,
-        "hlen": 7,
-        "vlen": 14
+        "answer_number": 51
       },
       {
         "status": 0,
@@ -5219,9 +4769,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 7,
-        "vlen": 12
+        "answer_number": null
       },
       {
         "status": 0,
@@ -5242,9 +4790,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": true,
-        "answer_number": null,
-        "hlen": 7,
-        "vlen": 11
+        "answer_number": null
       },
       {
         "status": 0,
@@ -5265,9 +4811,7 @@
         "is_h_end": false,
         "is_v_start": true,
         "is_v_end": false,
-        "answer_number": 52,
-        "hlen": 7,
-        "vlen": 7
+        "answer_number": 52
       },
       {
         "status": 1,
@@ -5288,9 +4832,7 @@
         "is_h_end": false,
         "is_v_start": true,
         "is_v_end": false,
-        "answer_number": 53,
-        "hlen": 7,
-        "vlen": 11
+        "answer_number": 53
       },
       {
         "status": 0,
@@ -5311,9 +4853,7 @@
         "is_h_end": false,
         "is_v_start": true,
         "is_v_end": false,
-        "answer_number": 54,
-        "hlen": 7,
-        "vlen": 4
+        "answer_number": 54
       },
       {
         "status": 0,
@@ -5334,9 +4874,7 @@
         "is_h_end": true,
         "is_v_start": true,
         "is_v_end": false,
-        "answer_number": 55,
-        "hlen": 7,
-        "vlen": 4
+        "answer_number": 55
       }
     ],
     [
@@ -5359,9 +4897,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 0,
-        "vlen": 0
+        "answer_number": null
       },
       {
         "status": 3,
@@ -5382,9 +4918,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 0,
-        "vlen": 0
+        "answer_number": null
       },
       {
         "status": 3,
@@ -5405,9 +4939,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 0,
-        "vlen": 0
+        "answer_number": null
       },
       {
         "status": 3,
@@ -5428,9 +4960,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 0,
-        "vlen": 0
+        "answer_number": null
       },
       {
         "status": 0,
@@ -5451,9 +4981,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": 56,
-        "hlen": 7,
-        "vlen": 11
+        "answer_number": 56
       },
       {
         "status": 0,
@@ -5474,9 +5002,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 7,
-        "vlen": 12
+        "answer_number": null
       },
       {
         "status": 1,
@@ -5497,9 +5023,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 7,
-        "vlen": 14
+        "answer_number": null
       },
       {
         "status": 0,
@@ -5520,9 +5044,7 @@
         "is_h_end": false,
         "is_v_start": true,
         "is_v_end": false,
-        "answer_number": 57,
-        "hlen": 7,
-        "vlen": 10
+        "answer_number": 57
       },
       {
         "status": 0,
@@ -5543,9 +5065,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 7,
-        "vlen": 21
+        "answer_number": null
       },
       {
         "status": 0,
@@ -5566,9 +5086,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 7,
-        "vlen": 11
+        "answer_number": null
       },
       {
         "status": 0,
@@ -5589,9 +5107,7 @@
         "is_h_end": true,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 7,
-        "vlen": 21
+        "answer_number": null
       },
       {
         "status": 3,
@@ -5612,9 +5128,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 0,
-        "vlen": 0
+        "answer_number": null
       },
       {
         "status": 0,
@@ -5635,9 +5149,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": 58,
-        "hlen": 4,
-        "vlen": 21
+        "answer_number": 58
       },
       {
         "status": 0,
@@ -5658,9 +5170,7 @@
         "is_h_end": false,
         "is_v_start": true,
         "is_v_end": false,
-        "answer_number": 59,
-        "hlen": 4,
-        "vlen": 10
+        "answer_number": 59
       },
       {
         "status": 1,
@@ -5681,9 +5191,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 4,
-        "vlen": 14
+        "answer_number": null
       },
       {
         "status": 0,
@@ -5704,9 +5212,7 @@
         "is_h_end": true,
         "is_v_start": false,
         "is_v_end": true,
-        "answer_number": null,
-        "hlen": 4,
-        "vlen": 12
+        "answer_number": null
       },
       {
         "status": 3,
@@ -5727,9 +5233,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 0,
-        "vlen": 0
+        "answer_number": null
       },
       {
         "status": 0,
@@ -5750,9 +5254,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": 60,
-        "hlen": 4,
-        "vlen": 7
+        "answer_number": 60
       },
       {
         "status": 1,
@@ -5773,9 +5275,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 4,
-        "vlen": 11
+        "answer_number": null
       },
       {
         "status": 0,
@@ -5796,9 +5296,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 4,
-        "vlen": 4
+        "answer_number": null
       },
       {
         "status": 0,
@@ -5819,9 +5317,7 @@
         "is_h_end": true,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 4,
-        "vlen": 4
+        "answer_number": null
       }
     ],
     [
@@ -5844,9 +5340,7 @@
         "is_h_end": false,
         "is_v_start": true,
         "is_v_end": false,
-        "answer_number": 61,
-        "hlen": 15,
-        "vlen": 4
+        "answer_number": 61
       },
       {
         "status": 0,
@@ -5867,9 +5361,7 @@
         "is_h_end": false,
         "is_v_start": true,
         "is_v_end": false,
-        "answer_number": 62,
-        "hlen": 15,
-        "vlen": 4
+        "answer_number": 62
       },
       {
         "status": 0,
@@ -5890,9 +5382,7 @@
         "is_h_end": false,
         "is_v_start": true,
         "is_v_end": false,
-        "answer_number": 63,
-        "hlen": 15,
-        "vlen": 4
+        "answer_number": 63
       },
       {
         "status": 0,
@@ -5913,9 +5403,7 @@
         "is_h_end": false,
         "is_v_start": true,
         "is_v_end": false,
-        "answer_number": 64,
-        "hlen": 15,
-        "vlen": 7
+        "answer_number": 64
       },
       {
         "status": 0,
@@ -5936,9 +5424,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 15,
-        "vlen": 11
+        "answer_number": null
       },
       {
         "status": 0,
@@ -5959,9 +5445,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 15,
-        "vlen": 12
+        "answer_number": null
       },
       {
         "status": 1,
@@ -5982,9 +5466,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 15,
-        "vlen": 14
+        "answer_number": null
       },
       {
         "status": 0,
@@ -6005,9 +5487,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 15,
-        "vlen": 10
+        "answer_number": null
       },
       {
         "status": 0,
@@ -6028,9 +5508,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 15,
-        "vlen": 21
+        "answer_number": null
       },
       {
         "status": 0,
@@ -6051,9 +5529,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 15,
-        "vlen": 11
+        "answer_number": null
       },
       {
         "status": 0,
@@ -6074,9 +5550,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 15,
-        "vlen": 21
+        "answer_number": null
       },
       {
         "status": 0,
@@ -6097,9 +5571,7 @@
         "is_h_end": false,
         "is_v_start": true,
         "is_v_end": false,
-        "answer_number": 65,
-        "hlen": 15,
-        "vlen": 9
+        "answer_number": 65
       },
       {
         "status": 0,
@@ -6120,9 +5592,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 15,
-        "vlen": 21
+        "answer_number": null
       },
       {
         "status": 0,
@@ -6143,9 +5613,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 15,
-        "vlen": 10
+        "answer_number": null
       },
       {
         "status": 1,
@@ -6166,9 +5634,7 @@
         "is_h_end": true,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 15,
-        "vlen": 14
+        "answer_number": null
       },
       {
         "status": 3,
@@ -6189,9 +5655,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 0,
-        "vlen": 0
+        "answer_number": null
       },
       {
         "status": 0,
@@ -6212,9 +5676,7 @@
         "is_h_end": false,
         "is_v_start": true,
         "is_v_end": false,
-        "answer_number": 66,
-        "hlen": 5,
-        "vlen": 3
+        "answer_number": 66
       },
       {
         "status": 0,
@@ -6235,9 +5697,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 5,
-        "vlen": 7
+        "answer_number": null
       },
       {
         "status": 1,
@@ -6258,9 +5718,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 5,
-        "vlen": 11
+        "answer_number": null
       },
       {
         "status": 0,
@@ -6281,9 +5739,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 5,
-        "vlen": 4
+        "answer_number": null
       },
       {
         "status": 0,
@@ -6304,9 +5760,7 @@
         "is_h_end": true,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 5,
-        "vlen": 4
+        "answer_number": null
       }
     ],
     [
@@ -6329,9 +5783,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": 67,
-        "hlen": 21,
-        "vlen": 4
+        "answer_number": 67
       },
       {
         "status": 0,
@@ -6352,9 +5804,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 21,
-        "vlen": 4
+        "answer_number": null
       },
       {
         "status": 0,
@@ -6375,9 +5825,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 21,
-        "vlen": 4
+        "answer_number": null
       },
       {
         "status": 0,
@@ -6398,9 +5846,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 21,
-        "vlen": 7
+        "answer_number": null
       },
       {
         "status": 0,
@@ -6421,9 +5867,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 21,
-        "vlen": 11
+        "answer_number": null
       },
       {
         "status": 0,
@@ -6444,9 +5888,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 21,
-        "vlen": 12
+        "answer_number": null
       },
       {
         "status": 1,
@@ -6467,9 +5909,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 21,
-        "vlen": 14
+        "answer_number": null
       },
       {
         "status": 0,
@@ -6490,9 +5930,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 21,
-        "vlen": 10
+        "answer_number": null
       },
       {
         "status": 0,
@@ -6513,9 +5951,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 21,
-        "vlen": 21
+        "answer_number": null
       },
       {
         "status": 0,
@@ -6536,9 +5972,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 21,
-        "vlen": 11
+        "answer_number": null
       },
       {
         "status": 0,
@@ -6559,9 +5993,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 21,
-        "vlen": 21
+        "answer_number": null
       },
       {
         "status": 0,
@@ -6582,9 +6014,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 21,
-        "vlen": 9
+        "answer_number": null
       },
       {
         "status": 0,
@@ -6605,9 +6035,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 21,
-        "vlen": 21
+        "answer_number": null
       },
       {
         "status": 0,
@@ -6628,9 +6056,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 21,
-        "vlen": 10
+        "answer_number": null
       },
       {
         "status": 1,
@@ -6651,9 +6077,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": true,
-        "answer_number": null,
-        "hlen": 21,
-        "vlen": 14
+        "answer_number": null
       },
       {
         "status": 0,
@@ -6674,9 +6098,7 @@
         "is_h_end": false,
         "is_v_start": true,
         "is_v_end": false,
-        "answer_number": 68,
-        "hlen": 21,
-        "vlen": 5
+        "answer_number": 68
       },
       {
         "status": 0,
@@ -6697,9 +6119,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 21,
-        "vlen": 3
+        "answer_number": null
       },
       {
         "status": 0,
@@ -6720,9 +6140,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 21,
-        "vlen": 7
+        "answer_number": null
       },
       {
         "status": 1,
@@ -6743,9 +6161,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 21,
-        "vlen": 11
+        "answer_number": null
       },
       {
         "status": 0,
@@ -6766,9 +6182,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": true,
-        "answer_number": null,
-        "hlen": 21,
-        "vlen": 4
+        "answer_number": null
       },
       {
         "status": 0,
@@ -6789,9 +6203,7 @@
         "is_h_end": true,
         "is_v_start": false,
         "is_v_end": true,
-        "answer_number": null,
-        "hlen": 21,
-        "vlen": 4
+        "answer_number": null
       }
     ],
     [
@@ -6814,9 +6226,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": 69,
-        "hlen": 14,
-        "vlen": 4
+        "answer_number": 69
       },
       {
         "status": 0,
@@ -6837,9 +6247,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 14,
-        "vlen": 4
+        "answer_number": null
       },
       {
         "status": 0,
@@ -6860,9 +6268,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 14,
-        "vlen": 4
+        "answer_number": null
       },
       {
         "status": 0,
@@ -6883,9 +6289,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 14,
-        "vlen": 7
+        "answer_number": null
       },
       {
         "status": 0,
@@ -6906,9 +6310,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 14,
-        "vlen": 11
+        "answer_number": null
       },
       {
         "status": 0,
@@ -6929,9 +6331,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 14,
-        "vlen": 12
+        "answer_number": null
       },
       {
         "status": 1,
@@ -6952,9 +6352,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 14,
-        "vlen": 14
+        "answer_number": null
       },
       {
         "status": 0,
@@ -6975,9 +6373,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 14,
-        "vlen": 10
+        "answer_number": null
       },
       {
         "status": 0,
@@ -6998,9 +6394,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 14,
-        "vlen": 21
+        "answer_number": null
       },
       {
         "status": 0,
@@ -7021,9 +6415,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 14,
-        "vlen": 11
+        "answer_number": null
       },
       {
         "status": 0,
@@ -7044,9 +6436,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 14,
-        "vlen": 21
+        "answer_number": null
       },
       {
         "status": 0,
@@ -7067,9 +6457,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 14,
-        "vlen": 9
+        "answer_number": null
       },
       {
         "status": 0,
@@ -7090,9 +6478,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 14,
-        "vlen": 21
+        "answer_number": null
       },
       {
         "status": 0,
@@ -7113,9 +6499,7 @@
         "is_h_end": true,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 14,
-        "vlen": 10
+        "answer_number": null
       },
       {
         "status": 3,
@@ -7136,9 +6520,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 0,
-        "vlen": 0
+        "answer_number": null
       },
       {
         "status": 0,
@@ -7159,9 +6541,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": 70,
-        "hlen": 4,
-        "vlen": 5
+        "answer_number": 70
       },
       {
         "status": 0,
@@ -7182,9 +6562,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": true,
-        "answer_number": null,
-        "hlen": 4,
-        "vlen": 3
+        "answer_number": null
       },
       {
         "status": 0,
@@ -7205,9 +6583,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 4,
-        "vlen": 7
+        "answer_number": null
       },
       {
         "status": 1,
@@ -7228,9 +6604,7 @@
         "is_h_end": true,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 4,
-        "vlen": 11
+        "answer_number": null
       },
       {
         "status": 3,
@@ -7251,9 +6625,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 0,
-        "vlen": 0
+        "answer_number": null
       },
       {
         "status": 3,
@@ -7274,9 +6646,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 0,
-        "vlen": 0
+        "answer_number": null
       }
     ],
     [
@@ -7299,9 +6669,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": true,
-        "answer_number": 71,
-        "hlen": 16,
-        "vlen": 4
+        "answer_number": 71
       },
       {
         "status": 0,
@@ -7322,9 +6690,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": true,
-        "answer_number": null,
-        "hlen": 16,
-        "vlen": 4
+        "answer_number": null
       },
       {
         "status": 0,
@@ -7345,9 +6711,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": true,
-        "answer_number": null,
-        "hlen": 16,
-        "vlen": 4
+        "answer_number": null
       },
       {
         "status": 0,
@@ -7368,9 +6732,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 16,
-        "vlen": 7
+        "answer_number": null
       },
       {
         "status": 0,
@@ -7391,9 +6753,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 16,
-        "vlen": 11
+        "answer_number": null
       },
       {
         "status": 0,
@@ -7414,9 +6774,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 16,
-        "vlen": 12
+        "answer_number": null
       },
       {
         "status": 1,
@@ -7437,9 +6795,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 16,
-        "vlen": 14
+        "answer_number": null
       },
       {
         "status": 0,
@@ -7460,9 +6816,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 16,
-        "vlen": 10
+        "answer_number": null
       },
       {
         "status": 0,
@@ -7483,9 +6837,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 16,
-        "vlen": 21
+        "answer_number": null
       },
       {
         "status": 0,
@@ -7506,9 +6858,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 16,
-        "vlen": 11
+        "answer_number": null
       },
       {
         "status": 0,
@@ -7529,9 +6879,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 16,
-        "vlen": 21
+        "answer_number": null
       },
       {
         "status": 0,
@@ -7552,9 +6900,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 16,
-        "vlen": 9
+        "answer_number": null
       },
       {
         "status": 0,
@@ -7575,9 +6921,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 16,
-        "vlen": 21
+        "answer_number": null
       },
       {
         "status": 0,
@@ -7598,9 +6942,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 16,
-        "vlen": 10
+        "answer_number": null
       },
       {
         "status": 0,
@@ -7621,9 +6963,7 @@
         "is_h_end": false,
         "is_v_start": true,
         "is_v_end": false,
-        "answer_number": 72,
-        "hlen": 16,
-        "vlen": 6
+        "answer_number": 72
       },
       {
         "status": 0,
@@ -7644,9 +6984,7 @@
         "is_h_end": true,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 16,
-        "vlen": 5
+        "answer_number": null
       },
       {
         "status": 3,
@@ -7667,9 +7005,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 0,
-        "vlen": 0
+        "answer_number": null
       },
       {
         "status": 0,
@@ -7690,9 +7026,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": 73,
-        "hlen": 4,
-        "vlen": 7
+        "answer_number": 73
       },
       {
         "status": 1,
@@ -7713,9 +7047,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 4,
-        "vlen": 11
+        "answer_number": null
       },
       {
         "status": 0,
@@ -7736,9 +7068,7 @@
         "is_h_end": false,
         "is_v_start": true,
         "is_v_end": false,
-        "answer_number": 74,
-        "hlen": 4,
-        "vlen": 6
+        "answer_number": 74
       },
       {
         "status": 0,
@@ -7759,9 +7089,7 @@
         "is_h_end": true,
         "is_v_start": true,
         "is_v_end": false,
-        "answer_number": 75,
-        "hlen": 4,
-        "vlen": 6
+        "answer_number": 75
       }
     ],
     [
@@ -7784,9 +7112,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 0,
-        "vlen": 0
+        "answer_number": null
       },
       {
         "status": 3,
@@ -7807,9 +7133,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 0,
-        "vlen": 0
+        "answer_number": null
       },
       {
         "status": 3,
@@ -7830,9 +7154,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 0,
-        "vlen": 0
+        "answer_number": null
       },
       {
         "status": 1,
@@ -7853,9 +7175,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": 76,
-        "hlen": 18,
-        "vlen": 7
+        "answer_number": 76
       },
       {
         "status": 1,
@@ -7876,9 +7196,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 18,
-        "vlen": 11
+        "answer_number": null
       },
       {
         "status": 1,
@@ -7899,9 +7217,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 18,
-        "vlen": 12
+        "answer_number": null
       },
       {
         "status": 1,
@@ -7922,9 +7238,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 18,
-        "vlen": 14
+        "answer_number": null
       },
       {
         "status": 1,
@@ -7945,9 +7259,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 18,
-        "vlen": 10
+        "answer_number": null
       },
       {
         "status": 1,
@@ -7968,9 +7280,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 18,
-        "vlen": 21
+        "answer_number": null
       },
       {
         "status": 1,
@@ -7991,9 +7301,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 18,
-        "vlen": 11
+        "answer_number": null
       },
       {
         "status": 1,
@@ -8014,9 +7322,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 18,
-        "vlen": 21
+        "answer_number": null
       },
       {
         "status": 1,
@@ -8037,9 +7343,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 18,
-        "vlen": 9
+        "answer_number": null
       },
       {
         "status": 1,
@@ -8060,9 +7364,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 18,
-        "vlen": 21
+        "answer_number": null
       },
       {
         "status": 1,
@@ -8083,9 +7385,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 18,
-        "vlen": 10
+        "answer_number": null
       },
       {
         "status": 1,
@@ -8106,9 +7406,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 18,
-        "vlen": 6
+        "answer_number": null
       },
       {
         "status": 1,
@@ -8129,9 +7427,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 18,
-        "vlen": 5
+        "answer_number": null
       },
       {
         "status": 1,
@@ -8152,9 +7448,7 @@
         "is_h_end": false,
         "is_v_start": true,
         "is_v_end": false,
-        "answer_number": 77,
-        "hlen": 18,
-        "vlen": 5
+        "answer_number": 77
       },
       {
         "status": 1,
@@ -8175,9 +7469,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": true,
-        "answer_number": null,
-        "hlen": 18,
-        "vlen": 7
+        "answer_number": null
       },
       {
         "status": 1,
@@ -8198,9 +7490,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 18,
-        "vlen": 11
+        "answer_number": null
       },
       {
         "status": 1,
@@ -8221,9 +7511,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 18,
-        "vlen": 6
+        "answer_number": null
       },
       {
         "status": 1,
@@ -8244,9 +7532,7 @@
         "is_h_end": true,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 18,
-        "vlen": 6
+        "answer_number": null
       }
     ],
     [
@@ -8269,9 +7555,7 @@
         "is_h_end": false,
         "is_v_start": true,
         "is_v_end": false,
-        "answer_number": 78,
-        "hlen": 17,
-        "vlen": 4
+        "answer_number": 78
       },
       {
         "status": 0,
@@ -8292,9 +7576,7 @@
         "is_h_end": false,
         "is_v_start": true,
         "is_v_end": false,
-        "answer_number": 79,
-        "hlen": 17,
-        "vlen": 4
+        "answer_number": 79
       },
       {
         "status": 0,
@@ -8315,9 +7597,7 @@
         "is_h_end": false,
         "is_v_start": true,
         "is_v_end": false,
-        "answer_number": 80,
-        "hlen": 17,
-        "vlen": 4
+        "answer_number": 80
       },
       {
         "status": 0,
@@ -8338,9 +7618,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 17,
-        "vlen": 7
+        "answer_number": null
       },
       {
         "status": 0,
@@ -8361,9 +7639,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 17,
-        "vlen": 11
+        "answer_number": null
       },
       {
         "status": 0,
@@ -8384,9 +7660,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 17,
-        "vlen": 12
+        "answer_number": null
       },
       {
         "status": 1,
@@ -8407,9 +7681,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 17,
-        "vlen": 14
+        "answer_number": null
       },
       {
         "status": 0,
@@ -8430,9 +7702,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 17,
-        "vlen": 10
+        "answer_number": null
       },
       {
         "status": 0,
@@ -8453,9 +7723,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 17,
-        "vlen": 21
+        "answer_number": null
       },
       {
         "status": 0,
@@ -8476,9 +7744,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 17,
-        "vlen": 11
+        "answer_number": null
       },
       {
         "status": 0,
@@ -8499,9 +7765,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 17,
-        "vlen": 21
+        "answer_number": null
       },
       {
         "status": 0,
@@ -8522,9 +7786,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 17,
-        "vlen": 9
+        "answer_number": null
       },
       {
         "status": 0,
@@ -8545,9 +7807,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 17,
-        "vlen": 21
+        "answer_number": null
       },
       {
         "status": 0,
@@ -8568,9 +7828,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 17,
-        "vlen": 10
+        "answer_number": null
       },
       {
         "status": 0,
@@ -8591,9 +7849,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 17,
-        "vlen": 6
+        "answer_number": null
       },
       {
         "status": 0,
@@ -8614,9 +7870,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": true,
-        "answer_number": null,
-        "hlen": 17,
-        "vlen": 5
+        "answer_number": null
       },
       {
         "status": 0,
@@ -8637,9 +7891,7 @@
         "is_h_end": true,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 17,
-        "vlen": 5
+        "answer_number": null
       },
       {
         "status": 3,
@@ -8660,9 +7912,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 0,
-        "vlen": 0
+        "answer_number": null
       },
       {
         "status": 1,
@@ -8683,9 +7933,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": 81,
-        "hlen": 3,
-        "vlen": 11
+        "answer_number": 81
       },
       {
         "status": 0,
@@ -8706,9 +7954,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 3,
-        "vlen": 6
+        "answer_number": null
       },
       {
         "status": 0,
@@ -8729,9 +7975,7 @@
         "is_h_end": true,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 3,
-        "vlen": 6
+        "answer_number": null
       }
     ],
     [
@@ -8754,9 +7998,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": 82,
-        "hlen": 15,
-        "vlen": 4
+        "answer_number": 82
       },
       {
         "status": 1,
@@ -8777,9 +8019,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 15,
-        "vlen": 4
+        "answer_number": null
       },
       {
         "status": 1,
@@ -8800,9 +8040,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 15,
-        "vlen": 4
+        "answer_number": null
       },
       {
         "status": 1,
@@ -8823,9 +8061,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": true,
-        "answer_number": null,
-        "hlen": 15,
-        "vlen": 7
+        "answer_number": null
       },
       {
         "status": 1,
@@ -8846,9 +8082,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 15,
-        "vlen": 11
+        "answer_number": null
       },
       {
         "status": 1,
@@ -8869,9 +8103,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 15,
-        "vlen": 12
+        "answer_number": null
       },
       {
         "status": 1,
@@ -8892,9 +8124,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 15,
-        "vlen": 14
+        "answer_number": null
       },
       {
         "status": 1,
@@ -8915,9 +8145,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 15,
-        "vlen": 10
+        "answer_number": null
       },
       {
         "status": 1,
@@ -8938,9 +8166,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 15,
-        "vlen": 21
+        "answer_number": null
       },
       {
         "status": 1,
@@ -8961,9 +8187,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 15,
-        "vlen": 11
+        "answer_number": null
       },
       {
         "status": 1,
@@ -8984,9 +8208,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 15,
-        "vlen": 21
+        "answer_number": null
       },
       {
         "status": 1,
@@ -9007,9 +8229,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 15,
-        "vlen": 9
+        "answer_number": null
       },
       {
         "status": 1,
@@ -9030,9 +8250,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 15,
-        "vlen": 21
+        "answer_number": null
       },
       {
         "status": 1,
@@ -9053,9 +8271,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 15,
-        "vlen": 10
+        "answer_number": null
       },
       {
         "status": 1,
@@ -9076,9 +8292,7 @@
         "is_h_end": true,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 15,
-        "vlen": 6
+        "answer_number": null
       },
       {
         "status": 3,
@@ -9099,9 +8313,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 0,
-        "vlen": 0
+        "answer_number": null
       },
       {
         "status": 0,
@@ -9122,9 +8334,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": 83,
-        "hlen": 5,
-        "vlen": 5
+        "answer_number": 83
       },
       {
         "status": 0,
@@ -9145,9 +8355,7 @@
         "is_h_end": false,
         "is_v_start": true,
         "is_v_end": false,
-        "answer_number": 84,
-        "hlen": 5,
-        "vlen": 3
+        "answer_number": 84
       },
       {
         "status": 1,
@@ -9168,9 +8376,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 5,
-        "vlen": 11
+        "answer_number": null
       },
       {
         "status": 0,
@@ -9191,9 +8397,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 5,
-        "vlen": 6
+        "answer_number": null
       },
       {
         "status": 0,
@@ -9214,9 +8418,7 @@
         "is_h_end": true,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 5,
-        "vlen": 6
+        "answer_number": null
       }
     ],
     [
@@ -9239,9 +8441,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": 85,
-        "hlen": 3,
-        "vlen": 4
+        "answer_number": 85
       },
       {
         "status": 0,
@@ -9262,9 +8462,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 3,
-        "vlen": 4
+        "answer_number": null
       },
       {
         "status": 0,
@@ -9285,9 +8483,7 @@
         "is_h_end": true,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 3,
-        "vlen": 4
+        "answer_number": null
       },
       {
         "status": 3,
@@ -9308,9 +8504,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 0,
-        "vlen": 0
+        "answer_number": null
       },
       {
         "status": 0,
@@ -9331,9 +8525,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": 86,
-        "hlen": 11,
-        "vlen": 11
+        "answer_number": 86
       },
       {
         "status": 0,
@@ -9354,9 +8546,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 11,
-        "vlen": 12
+        "answer_number": null
       },
       {
         "status": 1,
@@ -9377,9 +8567,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 11,
-        "vlen": 14
+        "answer_number": null
       },
       {
         "status": 0,
@@ -9400,9 +8588,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 11,
-        "vlen": 10
+        "answer_number": null
       },
       {
         "status": 0,
@@ -9423,9 +8609,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 11,
-        "vlen": 21
+        "answer_number": null
       },
       {
         "status": 0,
@@ -9446,9 +8630,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 11,
-        "vlen": 11
+        "answer_number": null
       },
       {
         "status": 0,
@@ -9469,9 +8651,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 11,
-        "vlen": 21
+        "answer_number": null
       },
       {
         "status": 0,
@@ -9492,9 +8672,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 11,
-        "vlen": 9
+        "answer_number": null
       },
       {
         "status": 0,
@@ -9515,9 +8693,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 11,
-        "vlen": 21
+        "answer_number": null
       },
       {
         "status": 0,
@@ -9538,9 +8714,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 11,
-        "vlen": 10
+        "answer_number": null
       },
       {
         "status": 0,
@@ -9561,9 +8735,7 @@
         "is_h_end": true,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 11,
-        "vlen": 6
+        "answer_number": null
       },
       {
         "status": 3,
@@ -9584,9 +8756,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 0,
-        "vlen": 0
+        "answer_number": null
       },
       {
         "status": 0,
@@ -9607,9 +8777,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": 87,
-        "hlen": 5,
-        "vlen": 5
+        "answer_number": 87
       },
       {
         "status": 0,
@@ -9630,9 +8798,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 5,
-        "vlen": 3
+        "answer_number": null
       },
       {
         "status": 1,
@@ -9653,9 +8819,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 5,
-        "vlen": 11
+        "answer_number": null
       },
       {
         "status": 0,
@@ -9676,9 +8840,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 5,
-        "vlen": 6
+        "answer_number": null
       },
       {
         "status": 0,
@@ -9699,9 +8861,7 @@
         "is_h_end": true,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 5,
-        "vlen": 6
+        "answer_number": null
       }
     ],
     [
@@ -9724,9 +8884,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": true,
-        "answer_number": 88,
-        "hlen": 3,
-        "vlen": 4
+        "answer_number": 88
       },
       {
         "status": 0,
@@ -9747,9 +8905,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": true,
-        "answer_number": null,
-        "hlen": 3,
-        "vlen": 4
+        "answer_number": null
       },
       {
         "status": 0,
@@ -9770,9 +8926,7 @@
         "is_h_end": true,
         "is_v_start": false,
         "is_v_end": true,
-        "answer_number": null,
-        "hlen": 3,
-        "vlen": 4
+        "answer_number": null
       },
       {
         "status": 3,
@@ -9793,9 +8947,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 0,
-        "vlen": 0
+        "answer_number": null
       },
       {
         "status": 0,
@@ -9816,9 +8968,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": true,
-        "answer_number": 89,
-        "hlen": 11,
-        "vlen": 11
+        "answer_number": 89
       },
       {
         "status": 0,
@@ -9839,9 +8989,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": true,
-        "answer_number": null,
-        "hlen": 11,
-        "vlen": 12
+        "answer_number": null
       },
       {
         "status": 1,
@@ -9862,9 +9010,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": true,
-        "answer_number": null,
-        "hlen": 11,
-        "vlen": 14
+        "answer_number": null
       },
       {
         "status": 0,
@@ -9885,9 +9031,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": true,
-        "answer_number": null,
-        "hlen": 11,
-        "vlen": 10
+        "answer_number": null
       },
       {
         "status": 0,
@@ -9908,9 +9052,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": true,
-        "answer_number": null,
-        "hlen": 11,
-        "vlen": 21
+        "answer_number": null
       },
       {
         "status": 0,
@@ -9931,9 +9073,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": true,
-        "answer_number": null,
-        "hlen": 11,
-        "vlen": 11
+        "answer_number": null
       },
       {
         "status": 0,
@@ -9954,9 +9094,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": true,
-        "answer_number": null,
-        "hlen": 11,
-        "vlen": 21
+        "answer_number": null
       },
       {
         "status": 0,
@@ -9977,9 +9115,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": true,
-        "answer_number": null,
-        "hlen": 11,
-        "vlen": 9
+        "answer_number": null
       },
       {
         "status": 0,
@@ -10000,9 +9136,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": true,
-        "answer_number": null,
-        "hlen": 11,
-        "vlen": 21
+        "answer_number": null
       },
       {
         "status": 0,
@@ -10023,9 +9157,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": true,
-        "answer_number": null,
-        "hlen": 11,
-        "vlen": 10
+        "answer_number": null
       },
       {
         "status": 0,
@@ -10046,9 +9178,7 @@
         "is_h_end": true,
         "is_v_start": false,
         "is_v_end": true,
-        "answer_number": null,
-        "hlen": 11,
-        "vlen": 6
+        "answer_number": null
       },
       {
         "status": 3,
@@ -10069,9 +9199,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": false,
-        "answer_number": null,
-        "hlen": 0,
-        "vlen": 0
+        "answer_number": null
       },
       {
         "status": 0,
@@ -10092,9 +9220,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": true,
-        "answer_number": 90,
-        "hlen": 5,
-        "vlen": 5
+        "answer_number": 90
       },
       {
         "status": 0,
@@ -10115,9 +9241,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": true,
-        "answer_number": null,
-        "hlen": 5,
-        "vlen": 3
+        "answer_number": null
       },
       {
         "status": 1,
@@ -10138,9 +9262,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": true,
-        "answer_number": null,
-        "hlen": 5,
-        "vlen": 11
+        "answer_number": null
       },
       {
         "status": 0,
@@ -10161,9 +9283,7 @@
         "is_h_end": false,
         "is_v_start": false,
         "is_v_end": true,
-        "answer_number": null,
-        "hlen": 5,
-        "vlen": 6
+        "answer_number": null
       },
       {
         "status": 0,
@@ -10184,9 +9304,7 @@
         "is_h_end": true,
         "is_v_start": false,
         "is_v_end": true,
-        "answer_number": null,
-        "hlen": 5,
-        "vlen": 6
+        "answer_number": null
       }
     ]
   ],

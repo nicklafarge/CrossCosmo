@@ -10,7 +10,7 @@ import numpy as np
 import pyperclip
 
 import crosscosmos as xc
-from crosscosmos import bot
+from crosscosmos.gui.config import LayoutConfig
 from crosscosmos.grid import (
     Cell,
     CellStatus,
@@ -200,26 +200,34 @@ class CrossCosmosGame(arcade.Window):
         larger_dim = max(self.grid.row_count, self.grid.col_count)
         vertical_inner_margin_sum = (larger_dim - 1) * self.inner_margin
 
-        # Reserve space for right panel (30% of window width)
+        # Reserve space for right panel (Split 50/50 between the two columns on the right)
         right_panel_width_pct = float(config["grid"]["width_pct"]["right_panel"])
         self.right_panel_width: int = int(self.width * right_panel_width_pct)
         self.right_panel_column_width = self.right_panel_width/2.0
 
+        #################################################################################
+        # Calculate grid dimensions
+        #################################################################################
+        larger_dim = max(self.grid.row_count, self.grid.col_count)
+        vertical_inner_margin_sum = (larger_dim - 1) * self.inner_margin
+
+        # Total available width/height
         available_width = self.width - self.right_panel_width - 2 * self.outer_margin
         available_height = self.height - 2 * self.outer_margin - vertical_inner_margin_sum
 
         # Use the smaller dimension to ensure square cells
         self.grid_edge_dimension = min(available_width, available_height)
         self.square_size = int(self.grid_edge_dimension // larger_dim)
+        self.half_square = self.square_size / 2
 
         # Recalculate grid dimension based on actual square size
         self.grid_edge_dimension = self.square_size * larger_dim + vertical_inner_margin_sum
 
-        # Calculate font sizes based on square size
+        #################################################################################
+        # Font size (based on square cell)
+        #################################################################################
         self.cell_font_size = max(12, int(self.square_size * 0.4))
         self.number_font_size = max(8, int(self.square_size * 0.2))
-
-        self.half_square = self.square_size / 2
 
     def _init_data_structures(self):
         """Initialize data structures for sprites and text.
@@ -332,13 +340,14 @@ class CrossCosmosGame(arcade.Window):
 
         # Create right panel
         self.right_panel1 = self._create_right_panel()
-        self.right_panel2 = self._create_right_panel()
+        self.words_panel = self._create_words_panel()
 
         # Test multiple panels
         self.right_column = arcade.gui.UIBoxLayout(
             vertical=False,
             space_between=0,
-            children = [self.right_panel1, self.right_panel2]
+            size_hint=(0.2, 0.8),
+            # children = [self.right_panel1, self.words_panel]
         )
         # self.right_column.add(self.right_panel1)
         # self.right_column.add(self.right_panel2)
@@ -354,6 +363,44 @@ class CrossCosmosGame(arcade.Window):
         )
 
         self.manager.add(anchor_layout)
+
+    def _create_words_panel(self) -> arcade.gui.UIWidget:
+        """
+        Create the right panel with info and controls.
+
+        Builds a vertical panel containing:
+        - Title header
+        - Dynamic text displays for position, word info, and direction
+        - Control buttons for auto-solve, clear, and save
+
+        Returns
+        -------
+        arcade.gui.UIWidget
+            UIWidget with dark background containing all panel elements
+        """
+        from arcade.gui.experimental import UIScrollArea
+        from arcade.gui.experimental.scroll_area import UIScrollBar
+
+        content = arcade.gui.UIAnchorLayout(size_hint=(0.5, 1))
+
+        # Create vertical layout for content
+        word_list = arcade.gui.UIBoxLayout(
+            vertical=True,
+            size_hint=(1, .2),
+            space_between=1
+        )
+        for i in range(100):
+            button = arcade.gui.UIFlatButton(height=30, size_hint=(1, None), text=f"Button {i}")
+            word_list.add(button)
+
+        v_scroll_area = arcade.gui.UIBoxLayout(vertical=False, size_hint=(0.8, 0.8))
+        content.add(v_scroll_area, anchor_x="center", anchor_y="center")
+        scroll_layout = v_scroll_area.add(UIScrollArea(size_hint=(1, 1)))
+        scroll_layout.with_border(color=arcade.uicolor.WHITE_CLOUDS)
+        scroll_layout.add(word_list)
+
+        v_scroll_area.add(UIScrollBar(scroll_layout))
+        return content
 
     def _create_right_panel(self) -> arcade.gui.UIWidget:
         """
@@ -373,120 +420,39 @@ class CrossCosmosGame(arcade.Window):
         panel_width = self.right_panel_column_width - 20
 
         # Create vertical layout for content
-        panel_content = arcade.gui.UIBoxLayout(vertical=True, space_between=10)
+        panel_content = arcade.gui.UIBoxLayout(vertical=True, space_between=10, size_hint=(0.2, 1))
 
-        # Title - keep as static text
-        title_text = arcade.gui.UITextArea(
-            text="Crossword Creator",
-            width=panel_width - 40,
-            height=40,
-            font_size=20,
-            font_name="Arial",
-            text_color=arcade.color.WHITE
-        )
-        title_text.read_only = True  # Make it read-only
-        panel_content.add(title_text)
-
-        # Add spacer
-        panel_content.add(arcade.gui.UISpace(height=20))
-
-        # Add placeholder spaces for dynamic text
         # We'll draw these separately using arcade.Text
         panel_content.add(arcade.gui.UISpace(height=25))  # Position label space
         panel_content.add(arcade.gui.UISpace(height=25))  # Word info space
         panel_content.add(arcade.gui.UISpace(height=25))  # Direction label space
-
-        # Add spacer before buttons
-        panel_content.add(arcade.gui.UISpace(height=20))
-
-        # Buttons
-        button_width = panel_width - 40
-        button_height = 40
-
-        # Bot solve button
-        bot_button = arcade.gui.UIFlatButton(
-            text="Auto Solve",
-            width=button_width,
-            height=button_height
-        )
-
-        @bot_button.event("on_click")
-        def on_click_bot(event):
-            self.grid.clear()
-            bot.solve(self.grid)
-            self.sync_gui_grid()
-            self.grid.save()
-            self._update_info_panel()
-
-        panel_content.add(bot_button)
-
-        # Clear button
-        clear_button = arcade.gui.UIFlatButton(
-            text="Clear Grid",
-            width=button_width,
-            height=button_height
-        )
-
-        @clear_button.event("on_click")
-        def on_click_clear(event):
-            self.grid.clear()
-            self.sync_gui_grid()
-            self.grid.save()
-            self._update_info_panel()
-
-        panel_content.add(clear_button)
-
-        # Save button
-        save_button = arcade.gui.UIFlatButton(
-            text="Save Grid",
-            width=button_width,
-            height=button_height
-        )
-
-        @save_button.event("on_click")
-        def on_click_save(event):
-            self.grid.save()
-            logger.info("Grid saved")
-
-        panel_content.add(save_button)
-
         # Add padding to the content
         padded_content = panel_content.with_padding(all=20)
 
         # Create regular arcade.Text objects for dynamic labels
         # Position them manually in the right panel area
-        panel_x = self.width - self.right_panel_column_width + 40
-        base_y = self.height - 120  # Start below title
+        panel_x = self.width - self.right_panel_width + 20
+        base_y = self.height - 40  # Start below title
 
-        self.position_text = arcade.Text(
-            text="Position: (0, 0)",
-            x=panel_x,
-            y=base_y,
-            color=arcade.color.WHITE,
-            font_size=14,
-            font_name="Arial"
+
+        panel = arcade.gui.UIGridLayout(
+            column_count=1,
+            row_count=3,
+            align_horizontal="left",
+            background_color=arcade.color.DARK_SLATE_GRAY,
+            size_hint=(1, .2),
         )
 
-        self.word_info_text = arcade.Text(
-            text="Word: - (0 letters)",
-            x=panel_x,
-            y=base_y - 30,
-            color=arcade.color.WHITE,
-            font_size=14,
-            font_name="Arial"
-        )
+        self.position_text = arcade.gui.UILabel(text="Position: (0, 0)", font_size=14)
+        self.word_info_text = arcade.gui.UILabel(text="Word: - (0 letters)", font_size=14)
+        self.direction_text = arcade.gui.UILabel(text="Direction: Horizontal", font_size=14)
 
-        self.direction_text = arcade.Text(
-            text="Direction: Horizontal",
-            x=panel_x,
-            y=base_y - 60,
-            color=arcade.color.WHITE,
-            font_size=14,
-            font_name="Arial"
-        )
-
+        panel.add(self.position_text)
+        panel.add(self.word_info_text)
+        panel.add(self.word_info_text)
+        return panel
         # Return the panel with background
-        return padded_content.with_background(color=(40, 40, 40, 255))
+        # return padded_content.with_background(color=arcade.color.Color(40, 40, 40, 255))
 
     def _update_info_panel(self):
         """Update the information displayed in the right panel.
@@ -1185,14 +1151,13 @@ def run_default(grid: xc.grid.Grid, override_config_path=None):
     override_config_path : str, optional
         Path to custom config file (default None)
     """
-    config = ConfigParser()
 
-    config_path = xc.crosscosmos_root / "gui" / "gui_config.ini"
+    config_path = xc.crosscosmos_root / "gui" / "gui_config.toml"
 
     if override_config_path:
         config_path = override_config_path
 
-    config.read(config_path)
+    config = LayoutConfig.from_toml(config_path)
     grid.build_tries()
 
     # Create and run GUI window
@@ -1202,7 +1167,7 @@ def run_default(grid: xc.grid.Grid, override_config_path=None):
 
 if __name__ == "__main__":
     # Parse config file
-    # config_path = xc.crosscosmos_root / "gui" / "gui_config.ini"
+    # config_path = xc.crosscosmos_root / "gui" / "gui_config.toml"
     # config = ConfigParser()
     # config.read(config_path)
 
@@ -1210,8 +1175,8 @@ if __name__ == "__main__":
     
     # Load grid
     test_file = Path(xc.crosscosmos_root / "gui"  / "test_grid.json")
-    # xc_grid = xc.grid.Grid.load("/Users/lafarnb1/Projects/GitHub/CrossCosmos/grids/oops_again/oops_again1.json")
-    xc_grid = xc.grid.Grid.load("/Users/nlafarge/Repos/Personal/CrossCosmo/grids/oops_again/oops_again1.json")
+    xc_grid = xc.grid.Grid.load("/Users/lafarnb1/Projects/GitHub/CrossCosmos/grids/oops_again/oops_again1.json")
+    # xc_grid = xc.grid.Grid.load("/Users/nlafarge/Repos/Personal/CrossCosmo/grids/oops_again/oops_again1.json")
     # xc_grid.corpus = xc.corpus.Corpus.from_lafarge()
     # xc_grid.build_tries()
     

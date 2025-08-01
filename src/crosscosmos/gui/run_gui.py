@@ -11,7 +11,7 @@ import arcade
 import crosscosmos as xc
 
 # Parse config file
-config_path = xc.crosscosmos_root / "gui" / "gui_config.ini"
+config_path = xc.crosscosmos_root / "gui" / "gui_config.toml"
 config = ConfigParser()
 config.read(config_path)
 

@@ -19,6 +19,7 @@ from crosscosmos.grid import (
     MoveDirection,
     WordDirection,
 )
+from crosscosmos.gui.config import LayoutConfig
 from crosscosmos.gui.image_transform import RGBTransform
 
 logger = logging.getLogger(__name__)
@@ -74,12 +75,13 @@ class CrossCosmosGame(arcade.Window):
         Tracks whether the grave key is activated; used for highlighting words with length greater than 9
     """
 
-    def __init__(self, config_in: ConfigParser, grid_in: Grid):
+    def __init__(self, config: LayoutConfig, grid_in: Grid):
         super().__init__(
-            config_in.getint("window", "width"),
-            config_in.getint("window", "height"),
-            config_in["window"]["title"],
+            config.window.width,
+            config.window.height,
+            config.window.title,
         )
+        self.layout_config: LayoutConfig = config
 
         self.grid:Grid = grid_in
         self.frame_update_count: int = 0
@@ -89,8 +91,8 @@ class CrossCosmosGame(arcade.Window):
         # Size computations -------------------------------------------------------------------------------------------#
 
         # Set GUI layout parameters based on the inputted configuration
-        self.inner_margin = config_in.getint("grid", "inner_margin")  # space between each grid cell
-        self.outer_margin = config_in.getint("grid", "outer_margin")  # space between grid and edge of GUI
+        self.inner_margin = self.layout_config.grid.inner_margin # space between each grid cell
+        self.outer_margin = self.layout_config.grid.outer_margin # space between grid and edge of GUI
 
         # The sum of all inner margins
         larger_dim = max(self.grid.row_count, self.grid.col_count)
@@ -122,7 +124,7 @@ class CrossCosmosGame(arcade.Window):
         # GUI Objects -------------------------------------------------------------------------------------------------#
 
         # Create the text cursor
-        self.text_curser_blink_frequency = config_in.getint("advanced", "text_curser_blink_frequency")
+        self.text_curser_blink_frequency = self.layout_config.advanced.text_cursor_blink_frequency
         text_curser = arcade.SpriteSolidColor(width=2, height=int(self.square_size * 0.37), color=arcade.color.WHITE)
         self.text_curser: arcade.SpriteSolidColor = text_curser
         self.curser_visible: bool = True
@@ -259,10 +261,10 @@ class CrossCosmosGame(arcade.Window):
         # Sync with grid
         self.sync_gui_grid()
 
-    def _init_layout_parameters(self, config: ConfigParser):
+    def _init_layout_parameters(self):
         """Initialize layout parameters with responsive sizing."""
-        self.inner_margin = config.getint("grid", "inner_margin")
-        self.outer_margin = config.getint("grid", "outer_margin")
+        self.inner_margin = self.layout_config.grid.inner_margin
+        self.outer_margin = self.layout_config.grid.outer_margin
 
         # Calculate grid dimensions
         larger_dim = max(self.grid.row_count, self.grid.col_count)
@@ -812,14 +814,14 @@ class CrossCosmosGame(arcade.Window):
 
 
 def run_default(grid: Grid, override_config_path=None):
-    config = ConfigParser()
 
-    config_path = xc.crosscosmos_root / "gui" / "gui_config.ini"
+
+    config_path = xc.crosscosmos_root / "gui" / "gui_config.toml"
 
     if override_config_path:
         config_path = override_config_path
 
-    config.read(config_path)
+    config = LayoutConfig.from_toml(config_path)
 
     grid.build_tries()
 
@@ -830,9 +832,6 @@ def run_default(grid: Grid, override_config_path=None):
 
 if __name__ == "__main__":
     # Parse config file
-    config_path = xc.crosscosmos_root / "gui" / "gui_config.ini"
-    config = ConfigParser()
-    config.read(config_path)
 
     # Load grid
 
