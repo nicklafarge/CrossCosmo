@@ -92,7 +92,7 @@ class CrossCosmosGame(arcade.Window):
 
         # Set GUI layout parameters based on the inputted configuration
         self.inner_margin = self.layout_config.grid.inner_margin # space between each grid cell
-        self.outer_margin = self.layout_config.grid.outer_margin # space between grid and edge of GUI
+        self.outer_margin = self.layout_config.grid.top_margin # space between grid and edge of GUI
 
         # The sum of all inner margins
         larger_dim = max(self.grid.row_count, self.grid.col_count)

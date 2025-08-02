@@ -1,14 +1,17 @@
 [window]
-width=1400
+width=1500
 height=900
 title="CrossCosmos"
 
 [grid]
-outer_margin=20
+left_margin=40
+right_margin=40
+top_margin=15
+bottom_margin=65
 inner_margin=2
-grid_background_color="DARK_GRAY"
-cell_background_color="WHITE"
-blacked_text_color="BLACK"
+#grid_background_color="DARK_GRAY"
+#cell_background_color="WHITE"
+#blacked_text_color="BLACK"
 
 [text]
 normal_color="BLACK"

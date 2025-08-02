@@ -49,9 +49,13 @@ class WindowConfig:
 @dataclass(frozen=True)
 class GridConfig:
     """Grid layout settings."""
-    outer_margin: int = 20
+    top_margin: int = 20
+    right_margin: int = 20
+    left_margin: int = 20
+    bottom_margin: int = 60
     inner_margin: int = 2
-    grid_background_color: arcade.color.Color = arcade.color.GREEN_YELLOW
+    grid_border_color: arcade.color.Color = arcade.color.WHITE
+    grid_background_color: arcade.color.Color = arcade.color.DIM_GRAY
     cell_background_color: arcade.color.Color = arcade.color.WHITE
     blacked_text_color: arcade.color.Color = arcade.color.BLACK
 
