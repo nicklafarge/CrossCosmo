@@ -1029,7 +1029,8 @@ if __name__ == "__main__":
     # grid = Grid((21, 21))
     # "oops_again1.json"
     grid_path = "/Users/lafarnb1/Projects/GitHub/CrossCosmos/grids/oops_again/oops_again1.json"
-    grid_path = "/Users/lafarnb1/Projects/GitHub/CrossCosmos/scratch/matiss.json"
+    # grid_path = "/Users/lafarnb1/Projects/GitHub/CrossCosmos/scratch/matiss/monster_floopy_kleeky.json"
+    grid_path = "/Users/lafarnb1/Projects/GitHub/CrossCosmos/scratch/matiss/lantern_monster.json"
     grid = Grid.load(grid_path)
 
     # config_path = "/Users/lafarnb1/Projects/GitHub/CrossCosmos/src/crosscosmos/gui/gui_config.toml"
