@@ -1,0 +1,9313 @@
+{
+  "grid_size": [
+    21,
+    21
+  ],
+  "grid_letters": [
+    [
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          0,
+          0
+        ],
+        "x": 0,
+        "y": 0,
+        "gui_coordinates": [
+          34.5,
+          854.5
+        ],
+        "gui_row": 20,
+        "gui_col": 0,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          0,
+          1
+        ],
+        "x": 0,
+        "y": 1,
+        "gui_coordinates": [
+          75.5,
+          854.5
+        ],
+        "gui_row": 20,
+        "gui_col": 1,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 1
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          0,
+          2
+        ],
+        "x": 0,
+        "y": 2,
+        "gui_coordinates": [
+          116.5,
+          854.5
+        ],
+        "gui_row": 20,
+        "gui_col": 2,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 2
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          0,
+          3
+        ],
+        "x": 0,
+        "y": 3,
+        "gui_coordinates": [
+          157.5,
+          854.5
+        ],
+        "gui_row": 20,
+        "gui_col": 3,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 3
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          0,
+          4
+        ],
+        "x": 0,
+        "y": 4,
+        "gui_coordinates": [
+          198.5,
+          854.5
+        ],
+        "gui_row": 20,
+        "gui_col": 4,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          0,
+          5
+        ],
+        "x": 0,
+        "y": 5,
+        "gui_coordinates": [
+          239.5,
+          854.5
+        ],
+        "gui_row": 20,
+        "gui_col": 5,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 4
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          0,
+          6
+        ],
+        "x": 0,
+        "y": 6,
+        "gui_coordinates": [
+          280.5,
+          854.5
+        ],
+        "gui_row": 20,
+        "gui_col": 6,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 5
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          0,
+          7
+        ],
+        "x": 0,
+        "y": 7,
+        "gui_coordinates": [
+          321.5,
+          854.5
+        ],
+        "gui_row": 20,
+        "gui_col": 7,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 6
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          0,
+          8
+        ],
+        "x": 0,
+        "y": 8,
+        "gui_coordinates": [
+          362.5,
+          854.5
+        ],
+        "gui_row": 20,
+        "gui_col": 8,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 7
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          0,
+          9
+        ],
+        "x": 0,
+        "y": 9,
+        "gui_coordinates": [
+          403.5,
+          854.5
+        ],
+        "gui_row": 20,
+        "gui_col": 9,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 8
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          0,
+          10
+        ],
+        "x": 0,
+        "y": 10,
+        "gui_coordinates": [
+          444.5,
+          854.5
+        ],
+        "gui_row": 20,
+        "gui_col": 10,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          0,
+          11
+        ],
+        "x": 0,
+        "y": 11,
+        "gui_coordinates": [
+          485.5,
+          854.5
+        ],
+        "gui_row": 20,
+        "gui_col": 11,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 9
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          0,
+          12
+        ],
+        "x": 0,
+        "y": 12,
+        "gui_coordinates": [
+          526.5,
+          854.5
+        ],
+        "gui_row": 20,
+        "gui_col": 12,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 10
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          0,
+          13
+        ],
+        "x": 0,
+        "y": 13,
+        "gui_coordinates": [
+          567.5,
+          854.5
+        ],
+        "gui_row": 20,
+        "gui_col": 13,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 11
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          0,
+          14
+        ],
+        "x": 0,
+        "y": 14,
+        "gui_coordinates": [
+          608.5,
+          854.5
+        ],
+        "gui_row": 20,
+        "gui_col": 14,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 12
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          0,
+          15
+        ],
+        "x": 0,
+        "y": 15,
+        "gui_coordinates": [
+          649.5,
+          854.5
+        ],
+        "gui_row": 20,
+        "gui_col": 15,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 13
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          0,
+          16
+        ],
+        "x": 0,
+        "y": 16,
+        "gui_coordinates": [
+          690.5,
+          854.5
+        ],
+        "gui_row": 20,
+        "gui_col": 16,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          0,
+          17
+        ],
+        "x": 0,
+        "y": 17,
+        "gui_coordinates": [
+          731.5,
+          854.5
+        ],
+        "gui_row": 20,
+        "gui_col": 17,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 14
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          0,
+          18
+        ],
+        "x": 0,
+        "y": 18,
+        "gui_coordinates": [
+          772.5,
+          854.5
+        ],
+        "gui_row": 20,
+        "gui_col": 18,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 15
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          0,
+          19
+        ],
+        "x": 0,
+        "y": 19,
+        "gui_coordinates": [
+          813.5,
+          854.5
+        ],
+        "gui_row": 20,
+        "gui_col": 19,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 16
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          0,
+          20
+        ],
+        "x": 0,
+        "y": 20,
+        "gui_coordinates": [
+          854.5,
+          854.5
+        ],
+        "gui_row": 20,
+        "gui_col": 20,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 17
+      }
+    ],
+    [
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          1,
+          0
+        ],
+        "x": 1,
+        "y": 0,
+        "gui_coordinates": [
+          34.5,
+          813.5
+        ],
+        "gui_row": 19,
+        "gui_col": 0,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 18
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          1,
+          1
+        ],
+        "x": 1,
+        "y": 1,
+        "gui_coordinates": [
+          75.5,
+          813.5
+        ],
+        "gui_row": 19,
+        "gui_col": 1,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          1,
+          2
+        ],
+        "x": 1,
+        "y": 2,
+        "gui_coordinates": [
+          116.5,
+          813.5
+        ],
+        "gui_row": 19,
+        "gui_col": 2,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          1,
+          3
+        ],
+        "x": 1,
+        "y": 3,
+        "gui_coordinates": [
+          157.5,
+          813.5
+        ],
+        "gui_row": 19,
+        "gui_col": 3,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          1,
+          4
+        ],
+        "x": 1,
+        "y": 4,
+        "gui_coordinates": [
+          198.5,
+          813.5
+        ],
+        "gui_row": 19,
+        "gui_col": 4,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          1,
+          5
+        ],
+        "x": 1,
+        "y": 5,
+        "gui_coordinates": [
+          239.5,
+          813.5
+        ],
+        "gui_row": 19,
+        "gui_col": 5,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": 19
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          1,
+          6
+        ],
+        "x": 1,
+        "y": 6,
+        "gui_coordinates": [
+          280.5,
+          813.5
+        ],
+        "gui_row": 19,
+        "gui_col": 6,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          1,
+          7
+        ],
+        "x": 1,
+        "y": 7,
+        "gui_coordinates": [
+          321.5,
+          813.5
+        ],
+        "gui_row": 19,
+        "gui_col": 7,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          1,
+          8
+        ],
+        "x": 1,
+        "y": 8,
+        "gui_coordinates": [
+          362.5,
+          813.5
+        ],
+        "gui_row": 19,
+        "gui_col": 8,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          1,
+          9
+        ],
+        "x": 1,
+        "y": 9,
+        "gui_coordinates": [
+          403.5,
+          813.5
+        ],
+        "gui_row": 19,
+        "gui_col": 9,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          1,
+          10
+        ],
+        "x": 1,
+        "y": 10,
+        "gui_coordinates": [
+          444.5,
+          813.5
+        ],
+        "gui_row": 19,
+        "gui_col": 10,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          1,
+          11
+        ],
+        "x": 1,
+        "y": 11,
+        "gui_coordinates": [
+          485.5,
+          813.5
+        ],
+        "gui_row": 19,
+        "gui_col": 11,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": 20
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          1,
+          12
+        ],
+        "x": 1,
+        "y": 12,
+        "gui_coordinates": [
+          526.5,
+          813.5
+        ],
+        "gui_row": 19,
+        "gui_col": 12,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          1,
+          13
+        ],
+        "x": 1,
+        "y": 13,
+        "gui_coordinates": [
+          567.5,
+          813.5
+        ],
+        "gui_row": 19,
+        "gui_col": 13,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          1,
+          14
+        ],
+        "x": 1,
+        "y": 14,
+        "gui_coordinates": [
+          608.5,
+          813.5
+        ],
+        "gui_row": 19,
+        "gui_col": 14,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          1,
+          15
+        ],
+        "x": 1,
+        "y": 15,
+        "gui_coordinates": [
+          649.5,
+          813.5
+        ],
+        "gui_row": 19,
+        "gui_col": 15,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          1,
+          16
+        ],
+        "x": 1,
+        "y": 16,
+        "gui_coordinates": [
+          690.5,
+          813.5
+        ],
+        "gui_row": 19,
+        "gui_col": 16,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          1,
+          17
+        ],
+        "x": 1,
+        "y": 17,
+        "gui_coordinates": [
+          731.5,
+          813.5
+        ],
+        "gui_row": 19,
+        "gui_col": 17,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": 21
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          1,
+          18
+        ],
+        "x": 1,
+        "y": 18,
+        "gui_coordinates": [
+          772.5,
+          813.5
+        ],
+        "gui_row": 19,
+        "gui_col": 18,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          1,
+          19
+        ],
+        "x": 1,
+        "y": 19,
+        "gui_coordinates": [
+          813.5,
+          813.5
+        ],
+        "gui_row": 19,
+        "gui_col": 19,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          1,
+          20
+        ],
+        "x": 1,
+        "y": 20,
+        "gui_coordinates": [
+          854.5,
+          813.5
+        ],
+        "gui_row": 19,
+        "gui_col": 20,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      }
+    ],
+    [
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          2,
+          0
+        ],
+        "x": 2,
+        "y": 0,
+        "gui_coordinates": [
+          34.5,
+          772.5
+        ],
+        "gui_row": 18,
+        "gui_col": 0,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": 22
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          2,
+          1
+        ],
+        "x": 2,
+        "y": 1,
+        "gui_coordinates": [
+          75.5,
+          772.5
+        ],
+        "gui_row": 18,
+        "gui_col": 1,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          2,
+          2
+        ],
+        "x": 2,
+        "y": 2,
+        "gui_coordinates": [
+          116.5,
+          772.5
+        ],
+        "gui_row": 18,
+        "gui_col": 2,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          2,
+          3
+        ],
+        "x": 2,
+        "y": 3,
+        "gui_coordinates": [
+          157.5,
+          772.5
+        ],
+        "gui_row": 18,
+        "gui_col": 3,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          2,
+          4
+        ],
+        "x": 2,
+        "y": 4,
+        "gui_coordinates": [
+          198.5,
+          772.5
+        ],
+        "gui_row": 18,
+        "gui_col": 4,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          2,
+          5
+        ],
+        "x": 2,
+        "y": 5,
+        "gui_coordinates": [
+          239.5,
+          772.5
+        ],
+        "gui_row": 18,
+        "gui_col": 5,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": 23
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          2,
+          6
+        ],
+        "x": 2,
+        "y": 6,
+        "gui_coordinates": [
+          280.5,
+          772.5
+        ],
+        "gui_row": 18,
+        "gui_col": 6,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          2,
+          7
+        ],
+        "x": 2,
+        "y": 7,
+        "gui_coordinates": [
+          321.5,
+          772.5
+        ],
+        "gui_row": 18,
+        "gui_col": 7,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          2,
+          8
+        ],
+        "x": 2,
+        "y": 8,
+        "gui_coordinates": [
+          362.5,
+          772.5
+        ],
+        "gui_row": 18,
+        "gui_col": 8,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          2,
+          9
+        ],
+        "x": 2,
+        "y": 9,
+        "gui_coordinates": [
+          403.5,
+          772.5
+        ],
+        "gui_row": 18,
+        "gui_col": 9,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": null
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          2,
+          10
+        ],
+        "x": 2,
+        "y": 10,
+        "gui_coordinates": [
+          444.5,
+          772.5
+        ],
+        "gui_row": 18,
+        "gui_col": 10,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          2,
+          11
+        ],
+        "x": 2,
+        "y": 11,
+        "gui_coordinates": [
+          485.5,
+          772.5
+        ],
+        "gui_row": 18,
+        "gui_col": 11,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": 24
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          2,
+          12
+        ],
+        "x": 2,
+        "y": 12,
+        "gui_coordinates": [
+          526.5,
+          772.5
+        ],
+        "gui_row": 18,
+        "gui_col": 12,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          2,
+          13
+        ],
+        "x": 2,
+        "y": 13,
+        "gui_coordinates": [
+          567.5,
+          772.5
+        ],
+        "gui_row": 18,
+        "gui_col": 13,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          2,
+          14
+        ],
+        "x": 2,
+        "y": 14,
+        "gui_coordinates": [
+          608.5,
+          772.5
+        ],
+        "gui_row": 18,
+        "gui_col": 14,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          2,
+          15
+        ],
+        "x": 2,
+        "y": 15,
+        "gui_coordinates": [
+          649.5,
+          772.5
+        ],
+        "gui_row": 18,
+        "gui_col": 15,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          2,
+          16
+        ],
+        "x": 2,
+        "y": 16,
+        "gui_coordinates": [
+          690.5,
+          772.5
+        ],
+        "gui_row": 18,
+        "gui_col": 16,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          2,
+          17
+        ],
+        "x": 2,
+        "y": 17,
+        "gui_coordinates": [
+          731.5,
+          772.5
+        ],
+        "gui_row": 18,
+        "gui_col": 17,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": 25
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          2,
+          18
+        ],
+        "x": 2,
+        "y": 18,
+        "gui_coordinates": [
+          772.5,
+          772.5
+        ],
+        "gui_row": 18,
+        "gui_col": 18,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          2,
+          19
+        ],
+        "x": 2,
+        "y": 19,
+        "gui_coordinates": [
+          813.5,
+          772.5
+        ],
+        "gui_row": 18,
+        "gui_col": 19,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          2,
+          20
+        ],
+        "x": 2,
+        "y": 20,
+        "gui_coordinates": [
+          854.5,
+          772.5
+        ],
+        "gui_row": 18,
+        "gui_col": 20,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      }
+    ],
+    [
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          3,
+          0
+        ],
+        "x": 3,
+        "y": 0,
+        "gui_coordinates": [
+          34.5,
+          731.5
+        ],
+        "gui_row": 17,
+        "gui_col": 0,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": 26
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          3,
+          1
+        ],
+        "x": 3,
+        "y": 1,
+        "gui_coordinates": [
+          75.5,
+          731.5
+        ],
+        "gui_row": 17,
+        "gui_col": 1,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          3,
+          2
+        ],
+        "x": 3,
+        "y": 2,
+        "gui_coordinates": [
+          116.5,
+          731.5
+        ],
+        "gui_row": 17,
+        "gui_col": 2,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          3,
+          3
+        ],
+        "x": 3,
+        "y": 3,
+        "gui_coordinates": [
+          157.5,
+          731.5
+        ],
+        "gui_row": 17,
+        "gui_col": 3,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          3,
+          4
+        ],
+        "x": 3,
+        "y": 4,
+        "gui_coordinates": [
+          198.5,
+          731.5
+        ],
+        "gui_row": 17,
+        "gui_col": 4,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 27
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          3,
+          5
+        ],
+        "x": 3,
+        "y": 5,
+        "gui_coordinates": [
+          239.5,
+          731.5
+        ],
+        "gui_row": 17,
+        "gui_col": 5,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          3,
+          6
+        ],
+        "x": 3,
+        "y": 6,
+        "gui_coordinates": [
+          280.5,
+          731.5
+        ],
+        "gui_row": 17,
+        "gui_col": 6,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          3,
+          7
+        ],
+        "x": 3,
+        "y": 7,
+        "gui_coordinates": [
+          321.5,
+          731.5
+        ],
+        "gui_row": 17,
+        "gui_col": 7,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": null
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          3,
+          8
+        ],
+        "x": 3,
+        "y": 8,
+        "gui_coordinates": [
+          362.5,
+          731.5
+        ],
+        "gui_row": 17,
+        "gui_col": 8,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          3,
+          9
+        ],
+        "x": 3,
+        "y": 9,
+        "gui_coordinates": [
+          403.5,
+          731.5
+        ],
+        "gui_row": 17,
+        "gui_col": 9,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          3,
+          10
+        ],
+        "x": 3,
+        "y": 10,
+        "gui_coordinates": [
+          444.5,
+          731.5
+        ],
+        "gui_row": 17,
+        "gui_col": 10,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          3,
+          11
+        ],
+        "x": 3,
+        "y": 11,
+        "gui_coordinates": [
+          485.5,
+          731.5
+        ],
+        "gui_row": 17,
+        "gui_col": 11,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          3,
+          12
+        ],
+        "x": 3,
+        "y": 12,
+        "gui_coordinates": [
+          526.5,
+          731.5
+        ],
+        "gui_row": 17,
+        "gui_col": 12,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          3,
+          13
+        ],
+        "x": 3,
+        "y": 13,
+        "gui_coordinates": [
+          567.5,
+          731.5
+        ],
+        "gui_row": 17,
+        "gui_col": 13,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": 28
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          3,
+          14
+        ],
+        "x": 3,
+        "y": 14,
+        "gui_coordinates": [
+          608.5,
+          731.5
+        ],
+        "gui_row": 17,
+        "gui_col": 14,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          3,
+          15
+        ],
+        "x": 3,
+        "y": 15,
+        "gui_coordinates": [
+          649.5,
+          731.5
+        ],
+        "gui_row": 17,
+        "gui_col": 15,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          3,
+          16
+        ],
+        "x": 3,
+        "y": 16,
+        "gui_coordinates": [
+          690.5,
+          731.5
+        ],
+        "gui_row": 17,
+        "gui_col": 16,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 29
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          3,
+          17
+        ],
+        "x": 3,
+        "y": 17,
+        "gui_coordinates": [
+          731.5,
+          731.5
+        ],
+        "gui_row": 17,
+        "gui_col": 17,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          3,
+          18
+        ],
+        "x": 3,
+        "y": 18,
+        "gui_coordinates": [
+          772.5,
+          731.5
+        ],
+        "gui_row": 17,
+        "gui_col": 18,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          3,
+          19
+        ],
+        "x": 3,
+        "y": 19,
+        "gui_coordinates": [
+          813.5,
+          731.5
+        ],
+        "gui_row": 17,
+        "gui_col": 19,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          3,
+          20
+        ],
+        "x": 3,
+        "y": 20,
+        "gui_coordinates": [
+          854.5,
+          731.5
+        ],
+        "gui_row": 17,
+        "gui_col": 20,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      }
+    ],
+    [
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          4,
+          0
+        ],
+        "x": 4,
+        "y": 0,
+        "gui_coordinates": [
+          34.5,
+          690.5
+        ],
+        "gui_row": 16,
+        "gui_col": 0,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": 30
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          4,
+          1
+        ],
+        "x": 4,
+        "y": 1,
+        "gui_coordinates": [
+          75.5,
+          690.5
+        ],
+        "gui_row": 16,
+        "gui_col": 1,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          4,
+          2
+        ],
+        "x": 4,
+        "y": 2,
+        "gui_coordinates": [
+          116.5,
+          690.5
+        ],
+        "gui_row": 16,
+        "gui_col": 2,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          4,
+          3
+        ],
+        "x": 4,
+        "y": 3,
+        "gui_coordinates": [
+          157.5,
+          690.5
+        ],
+        "gui_row": 16,
+        "gui_col": 3,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          4,
+          4
+        ],
+        "x": 4,
+        "y": 4,
+        "gui_coordinates": [
+          198.5,
+          690.5
+        ],
+        "gui_row": 16,
+        "gui_col": 4,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          4,
+          5
+        ],
+        "x": 4,
+        "y": 5,
+        "gui_coordinates": [
+          239.5,
+          690.5
+        ],
+        "gui_row": 16,
+        "gui_col": 5,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          4,
+          6
+        ],
+        "x": 4,
+        "y": 6,
+        "gui_coordinates": [
+          280.5,
+          690.5
+        ],
+        "gui_row": 16,
+        "gui_col": 6,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": null
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          4,
+          7
+        ],
+        "x": 4,
+        "y": 7,
+        "gui_coordinates": [
+          321.5,
+          690.5
+        ],
+        "gui_row": 16,
+        "gui_col": 7,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          4,
+          8
+        ],
+        "x": 4,
+        "y": 8,
+        "gui_coordinates": [
+          362.5,
+          690.5
+        ],
+        "gui_row": 16,
+        "gui_col": 8,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 31
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          4,
+          9
+        ],
+        "x": 4,
+        "y": 9,
+        "gui_coordinates": [
+          403.5,
+          690.5
+        ],
+        "gui_row": 16,
+        "gui_col": 9,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 32
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          4,
+          10
+        ],
+        "x": 4,
+        "y": 10,
+        "gui_coordinates": [
+          444.5,
+          690.5
+        ],
+        "gui_row": 16,
+        "gui_col": 10,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 33
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          4,
+          11
+        ],
+        "x": 4,
+        "y": 11,
+        "gui_coordinates": [
+          485.5,
+          690.5
+        ],
+        "gui_row": 16,
+        "gui_col": 11,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 34
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          4,
+          12
+        ],
+        "x": 4,
+        "y": 12,
+        "gui_coordinates": [
+          526.5,
+          690.5
+        ],
+        "gui_row": 16,
+        "gui_col": 12,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 35
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          4,
+          13
+        ],
+        "x": 4,
+        "y": 13,
+        "gui_coordinates": [
+          567.5,
+          690.5
+        ],
+        "gui_row": 16,
+        "gui_col": 13,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          4,
+          14
+        ],
+        "x": 4,
+        "y": 14,
+        "gui_coordinates": [
+          608.5,
+          690.5
+        ],
+        "gui_row": 16,
+        "gui_col": 14,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": 36
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          4,
+          15
+        ],
+        "x": 4,
+        "y": 15,
+        "gui_coordinates": [
+          649.5,
+          690.5
+        ],
+        "gui_row": 16,
+        "gui_col": 15,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          4,
+          16
+        ],
+        "x": 4,
+        "y": 16,
+        "gui_coordinates": [
+          690.5,
+          690.5
+        ],
+        "gui_row": 16,
+        "gui_col": 16,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          4,
+          17
+        ],
+        "x": 4,
+        "y": 17,
+        "gui_coordinates": [
+          731.5,
+          690.5
+        ],
+        "gui_row": 16,
+        "gui_col": 17,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          4,
+          18
+        ],
+        "x": 4,
+        "y": 18,
+        "gui_coordinates": [
+          772.5,
+          690.5
+        ],
+        "gui_row": 16,
+        "gui_col": 18,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          4,
+          19
+        ],
+        "x": 4,
+        "y": 19,
+        "gui_coordinates": [
+          813.5,
+          690.5
+        ],
+        "gui_row": 16,
+        "gui_col": 19,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          4,
+          20
+        ],
+        "x": 4,
+        "y": 20,
+        "gui_coordinates": [
+          854.5,
+          690.5
+        ],
+        "gui_row": 16,
+        "gui_col": 20,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": null
+      }
+    ],
+    [
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          5,
+          0
+        ],
+        "x": 5,
+        "y": 0,
+        "gui_coordinates": [
+          34.5,
+          649.5
+        ],
+        "gui_row": 15,
+        "gui_col": 0,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          5,
+          1
+        ],
+        "x": 5,
+        "y": 1,
+        "gui_coordinates": [
+          75.5,
+          649.5
+        ],
+        "gui_row": 15,
+        "gui_col": 1,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          5,
+          2
+        ],
+        "x": 5,
+        "y": 2,
+        "gui_coordinates": [
+          116.5,
+          649.5
+        ],
+        "gui_row": 15,
+        "gui_col": 2,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": 37
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          5,
+          3
+        ],
+        "x": 5,
+        "y": 3,
+        "gui_coordinates": [
+          157.5,
+          649.5
+        ],
+        "gui_row": 15,
+        "gui_col": 3,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          5,
+          4
+        ],
+        "x": 5,
+        "y": 4,
+        "gui_coordinates": [
+          198.5,
+          649.5
+        ],
+        "gui_row": 15,
+        "gui_col": 4,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          5,
+          5
+        ],
+        "x": 5,
+        "y": 5,
+        "gui_coordinates": [
+          239.5,
+          649.5
+        ],
+        "gui_row": 15,
+        "gui_col": 5,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          5,
+          6
+        ],
+        "x": 5,
+        "y": 6,
+        "gui_coordinates": [
+          280.5,
+          649.5
+        ],
+        "gui_row": 15,
+        "gui_col": 6,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          5,
+          7
+        ],
+        "x": 5,
+        "y": 7,
+        "gui_coordinates": [
+          321.5,
+          649.5
+        ],
+        "gui_row": 15,
+        "gui_col": 7,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 38
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          5,
+          8
+        ],
+        "x": 5,
+        "y": 8,
+        "gui_coordinates": [
+          362.5,
+          649.5
+        ],
+        "gui_row": 15,
+        "gui_col": 8,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          5,
+          9
+        ],
+        "x": 5,
+        "y": 9,
+        "gui_coordinates": [
+          403.5,
+          649.5
+        ],
+        "gui_row": 15,
+        "gui_col": 9,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          5,
+          10
+        ],
+        "x": 5,
+        "y": 10,
+        "gui_coordinates": [
+          444.5,
+          649.5
+        ],
+        "gui_row": 15,
+        "gui_col": 10,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          5,
+          11
+        ],
+        "x": 5,
+        "y": 11,
+        "gui_coordinates": [
+          485.5,
+          649.5
+        ],
+        "gui_row": 15,
+        "gui_col": 11,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          5,
+          12
+        ],
+        "x": 5,
+        "y": 12,
+        "gui_coordinates": [
+          526.5,
+          649.5
+        ],
+        "gui_row": 15,
+        "gui_col": 12,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          5,
+          13
+        ],
+        "x": 5,
+        "y": 13,
+        "gui_coordinates": [
+          567.5,
+          649.5
+        ],
+        "gui_row": 15,
+        "gui_col": 13,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 39
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          5,
+          14
+        ],
+        "x": 5,
+        "y": 14,
+        "gui_coordinates": [
+          608.5,
+          649.5
+        ],
+        "gui_row": 15,
+        "gui_col": 14,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          5,
+          15
+        ],
+        "x": 5,
+        "y": 15,
+        "gui_coordinates": [
+          649.5,
+          649.5
+        ],
+        "gui_row": 15,
+        "gui_col": 15,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": 40
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          5,
+          16
+        ],
+        "x": 5,
+        "y": 16,
+        "gui_coordinates": [
+          690.5,
+          649.5
+        ],
+        "gui_row": 15,
+        "gui_col": 16,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          5,
+          17
+        ],
+        "x": 5,
+        "y": 17,
+        "gui_coordinates": [
+          731.5,
+          649.5
+        ],
+        "gui_row": 15,
+        "gui_col": 17,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          5,
+          18
+        ],
+        "x": 5,
+        "y": 18,
+        "gui_coordinates": [
+          772.5,
+          649.5
+        ],
+        "gui_row": 15,
+        "gui_col": 18,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          5,
+          19
+        ],
+        "x": 5,
+        "y": 19,
+        "gui_coordinates": [
+          813.5,
+          649.5
+        ],
+        "gui_row": 15,
+        "gui_col": 19,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          5,
+          20
+        ],
+        "x": 5,
+        "y": 20,
+        "gui_coordinates": [
+          854.5,
+          649.5
+        ],
+        "gui_row": 15,
+        "gui_col": 20,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      }
+    ],
+    [
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          6,
+          0
+        ],
+        "x": 6,
+        "y": 0,
+        "gui_coordinates": [
+          34.5,
+          608.5
+        ],
+        "gui_row": 14,
+        "gui_col": 0,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 41
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          6,
+          1
+        ],
+        "x": 6,
+        "y": 1,
+        "gui_coordinates": [
+          75.5,
+          608.5
+        ],
+        "gui_row": 14,
+        "gui_col": 1,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 42
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          6,
+          2
+        ],
+        "x": 6,
+        "y": 2,
+        "gui_coordinates": [
+          116.5,
+          608.5
+        ],
+        "gui_row": 14,
+        "gui_col": 2,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          6,
+          3
+        ],
+        "x": 6,
+        "y": 3,
+        "gui_coordinates": [
+          157.5,
+          608.5
+        ],
+        "gui_row": 14,
+        "gui_col": 3,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": null
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          6,
+          4
+        ],
+        "x": 6,
+        "y": 4,
+        "gui_coordinates": [
+          198.5,
+          608.5
+        ],
+        "gui_row": 14,
+        "gui_col": 4,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          6,
+          5
+        ],
+        "x": 6,
+        "y": 5,
+        "gui_coordinates": [
+          239.5,
+          608.5
+        ],
+        "gui_row": 14,
+        "gui_col": 5,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": 43
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          6,
+          6
+        ],
+        "x": 6,
+        "y": 6,
+        "gui_coordinates": [
+          280.5,
+          608.5
+        ],
+        "gui_row": 14,
+        "gui_col": 6,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 44
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          6,
+          7
+        ],
+        "x": 6,
+        "y": 7,
+        "gui_coordinates": [
+          321.5,
+          608.5
+        ],
+        "gui_row": 14,
+        "gui_col": 7,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 1,
+        "value": "M",
+        "matrix_index": [
+          6,
+          8
+        ],
+        "x": 6,
+        "y": 8,
+        "gui_coordinates": [
+          362.5,
+          608.5
+        ],
+        "gui_row": 14,
+        "gui_col": 8,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 1,
+        "value": "I",
+        "matrix_index": [
+          6,
+          9
+        ],
+        "x": 6,
+        "y": 9,
+        "gui_coordinates": [
+          403.5,
+          608.5
+        ],
+        "gui_row": 14,
+        "gui_col": 9,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 1,
+        "value": "G",
+        "matrix_index": [
+          6,
+          10
+        ],
+        "x": 6,
+        "y": 10,
+        "gui_coordinates": [
+          444.5,
+          608.5
+        ],
+        "gui_row": 14,
+        "gui_col": 10,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 1,
+        "value": "H",
+        "matrix_index": [
+          6,
+          11
+        ],
+        "x": 6,
+        "y": 11,
+        "gui_coordinates": [
+          485.5,
+          608.5
+        ],
+        "gui_row": 14,
+        "gui_col": 11,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 1,
+        "value": "T",
+        "matrix_index": [
+          6,
+          12
+        ],
+        "x": 6,
+        "y": 12,
+        "gui_coordinates": [
+          526.5,
+          608.5
+        ],
+        "gui_row": 14,
+        "gui_col": 12,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 1,
+        "value": "Y",
+        "matrix_index": [
+          6,
+          13
+        ],
+        "x": 6,
+        "y": 13,
+        "gui_coordinates": [
+          567.5,
+          608.5
+        ],
+        "gui_row": 14,
+        "gui_col": 13,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          6,
+          14
+        ],
+        "x": 6,
+        "y": 14,
+        "gui_coordinates": [
+          608.5,
+          608.5
+        ],
+        "gui_row": 14,
+        "gui_col": 14,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 45
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          6,
+          15
+        ],
+        "x": 6,
+        "y": 15,
+        "gui_coordinates": [
+          649.5,
+          608.5
+        ],
+        "gui_row": 14,
+        "gui_col": 15,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": null
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          6,
+          16
+        ],
+        "x": 6,
+        "y": 16,
+        "gui_coordinates": [
+          690.5,
+          608.5
+        ],
+        "gui_row": 14,
+        "gui_col": 16,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          6,
+          17
+        ],
+        "x": 6,
+        "y": 17,
+        "gui_coordinates": [
+          731.5,
+          608.5
+        ],
+        "gui_row": 14,
+        "gui_col": 17,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": 46
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          6,
+          18
+        ],
+        "x": 6,
+        "y": 18,
+        "gui_coordinates": [
+          772.5,
+          608.5
+        ],
+        "gui_row": 14,
+        "gui_col": 18,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          6,
+          19
+        ],
+        "x": 6,
+        "y": 19,
+        "gui_coordinates": [
+          813.5,
+          608.5
+        ],
+        "gui_row": 14,
+        "gui_col": 19,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 47
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          6,
+          20
+        ],
+        "x": 6,
+        "y": 20,
+        "gui_coordinates": [
+          854.5,
+          608.5
+        ],
+        "gui_row": 14,
+        "gui_col": 20,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 48
+      }
+    ],
+    [
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          7,
+          0
+        ],
+        "x": 7,
+        "y": 0,
+        "gui_coordinates": [
+          34.5,
+          567.5
+        ],
+        "gui_row": 13,
+        "gui_col": 0,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": 49
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          7,
+          1
+        ],
+        "x": 7,
+        "y": 1,
+        "gui_coordinates": [
+          75.5,
+          567.5
+        ],
+        "gui_row": 13,
+        "gui_col": 1,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          7,
+          2
+        ],
+        "x": 7,
+        "y": 2,
+        "gui_coordinates": [
+          116.5,
+          567.5
+        ],
+        "gui_row": 13,
+        "gui_col": 2,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          7,
+          3
+        ],
+        "x": 7,
+        "y": 3,
+        "gui_coordinates": [
+          157.5,
+          567.5
+        ],
+        "gui_row": 13,
+        "gui_col": 3,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          7,
+          4
+        ],
+        "x": 7,
+        "y": 4,
+        "gui_coordinates": [
+          198.5,
+          567.5
+        ],
+        "gui_row": 13,
+        "gui_col": 4,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          7,
+          5
+        ],
+        "x": 7,
+        "y": 5,
+        "gui_coordinates": [
+          239.5,
+          567.5
+        ],
+        "gui_row": 13,
+        "gui_col": 5,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          7,
+          6
+        ],
+        "x": 7,
+        "y": 6,
+        "gui_coordinates": [
+          280.5,
+          567.5
+        ],
+        "gui_row": 13,
+        "gui_col": 6,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": 50
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          7,
+          7
+        ],
+        "x": 7,
+        "y": 7,
+        "gui_coordinates": [
+          321.5,
+          567.5
+        ],
+        "gui_row": 13,
+        "gui_col": 7,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          7,
+          8
+        ],
+        "x": 7,
+        "y": 8,
+        "gui_coordinates": [
+          362.5,
+          567.5
+        ],
+        "gui_row": 13,
+        "gui_col": 8,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          7,
+          9
+        ],
+        "x": 7,
+        "y": 9,
+        "gui_coordinates": [
+          403.5,
+          567.5
+        ],
+        "gui_row": 13,
+        "gui_col": 9,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          7,
+          10
+        ],
+        "x": 7,
+        "y": 10,
+        "gui_coordinates": [
+          444.5,
+          567.5
+        ],
+        "gui_row": 13,
+        "gui_col": 10,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          7,
+          11
+        ],
+        "x": 7,
+        "y": 11,
+        "gui_coordinates": [
+          485.5,
+          567.5
+        ],
+        "gui_row": 13,
+        "gui_col": 11,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          7,
+          12
+        ],
+        "x": 7,
+        "y": 12,
+        "gui_coordinates": [
+          526.5,
+          567.5
+        ],
+        "gui_row": 13,
+        "gui_col": 12,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          7,
+          13
+        ],
+        "x": 7,
+        "y": 13,
+        "gui_coordinates": [
+          567.5,
+          567.5
+        ],
+        "gui_row": 13,
+        "gui_col": 13,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          7,
+          14
+        ],
+        "x": 7,
+        "y": 14,
+        "gui_coordinates": [
+          608.5,
+          567.5
+        ],
+        "gui_row": 13,
+        "gui_col": 14,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          7,
+          15
+        ],
+        "x": 7,
+        "y": 15,
+        "gui_coordinates": [
+          649.5,
+          567.5
+        ],
+        "gui_row": 13,
+        "gui_col": 15,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          7,
+          16
+        ],
+        "x": 7,
+        "y": 16,
+        "gui_coordinates": [
+          690.5,
+          567.5
+        ],
+        "gui_row": 13,
+        "gui_col": 16,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          7,
+          17
+        ],
+        "x": 7,
+        "y": 17,
+        "gui_coordinates": [
+          731.5,
+          567.5
+        ],
+        "gui_row": 13,
+        "gui_col": 17,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          7,
+          18
+        ],
+        "x": 7,
+        "y": 18,
+        "gui_coordinates": [
+          772.5,
+          567.5
+        ],
+        "gui_row": 13,
+        "gui_col": 18,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": 51
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          7,
+          19
+        ],
+        "x": 7,
+        "y": 19,
+        "gui_coordinates": [
+          813.5,
+          567.5
+        ],
+        "gui_row": 13,
+        "gui_col": 19,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          7,
+          20
+        ],
+        "x": 7,
+        "y": 20,
+        "gui_coordinates": [
+          854.5,
+          567.5
+        ],
+        "gui_row": 13,
+        "gui_col": 20,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      }
+    ],
+    [
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          8,
+          0
+        ],
+        "x": 8,
+        "y": 0,
+        "gui_coordinates": [
+          34.5,
+          526.5
+        ],
+        "gui_row": 12,
+        "gui_col": 0,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": 52
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          8,
+          1
+        ],
+        "x": 8,
+        "y": 1,
+        "gui_coordinates": [
+          75.5,
+          526.5
+        ],
+        "gui_row": 12,
+        "gui_col": 1,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          8,
+          2
+        ],
+        "x": 8,
+        "y": 2,
+        "gui_coordinates": [
+          116.5,
+          526.5
+        ],
+        "gui_row": 12,
+        "gui_col": 2,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          8,
+          3
+        ],
+        "x": 8,
+        "y": 3,
+        "gui_coordinates": [
+          157.5,
+          526.5
+        ],
+        "gui_row": 12,
+        "gui_col": 3,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 53
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          8,
+          4
+        ],
+        "x": 8,
+        "y": 4,
+        "gui_coordinates": [
+          198.5,
+          526.5
+        ],
+        "gui_row": 12,
+        "gui_col": 4,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          8,
+          5
+        ],
+        "x": 8,
+        "y": 5,
+        "gui_coordinates": [
+          239.5,
+          526.5
+        ],
+        "gui_row": 12,
+        "gui_col": 5,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 54
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          8,
+          6
+        ],
+        "x": 8,
+        "y": 6,
+        "gui_coordinates": [
+          280.5,
+          526.5
+        ],
+        "gui_row": 12,
+        "gui_col": 6,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          8,
+          7
+        ],
+        "x": 8,
+        "y": 7,
+        "gui_coordinates": [
+          321.5,
+          526.5
+        ],
+        "gui_row": 12,
+        "gui_col": 7,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          8,
+          8
+        ],
+        "x": 8,
+        "y": 8,
+        "gui_coordinates": [
+          362.5,
+          526.5
+        ],
+        "gui_row": 12,
+        "gui_col": 8,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          8,
+          9
+        ],
+        "x": 8,
+        "y": 9,
+        "gui_coordinates": [
+          403.5,
+          526.5
+        ],
+        "gui_row": 12,
+        "gui_col": 9,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": 55
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          8,
+          10
+        ],
+        "x": 8,
+        "y": 10,
+        "gui_coordinates": [
+          444.5,
+          526.5
+        ],
+        "gui_row": 12,
+        "gui_col": 10,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          8,
+          11
+        ],
+        "x": 8,
+        "y": 11,
+        "gui_coordinates": [
+          485.5,
+          526.5
+        ],
+        "gui_row": 12,
+        "gui_col": 11,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          8,
+          12
+        ],
+        "x": 8,
+        "y": 12,
+        "gui_coordinates": [
+          526.5,
+          526.5
+        ],
+        "gui_row": 12,
+        "gui_col": 12,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          8,
+          13
+        ],
+        "x": 8,
+        "y": 13,
+        "gui_coordinates": [
+          567.5,
+          526.5
+        ],
+        "gui_row": 12,
+        "gui_col": 13,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": 56
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          8,
+          14
+        ],
+        "x": 8,
+        "y": 14,
+        "gui_coordinates": [
+          608.5,
+          526.5
+        ],
+        "gui_row": 12,
+        "gui_col": 14,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          8,
+          15
+        ],
+        "x": 8,
+        "y": 15,
+        "gui_coordinates": [
+          649.5,
+          526.5
+        ],
+        "gui_row": 12,
+        "gui_col": 15,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 57
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          8,
+          16
+        ],
+        "x": 8,
+        "y": 16,
+        "gui_coordinates": [
+          690.5,
+          526.5
+        ],
+        "gui_row": 12,
+        "gui_col": 16,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          8,
+          17
+        ],
+        "x": 8,
+        "y": 17,
+        "gui_coordinates": [
+          731.5,
+          526.5
+        ],
+        "gui_row": 12,
+        "gui_col": 17,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 58
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          8,
+          18
+        ],
+        "x": 8,
+        "y": 18,
+        "gui_coordinates": [
+          772.5,
+          526.5
+        ],
+        "gui_row": 12,
+        "gui_col": 18,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          8,
+          19
+        ],
+        "x": 8,
+        "y": 19,
+        "gui_coordinates": [
+          813.5,
+          526.5
+        ],
+        "gui_row": 12,
+        "gui_col": 19,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          8,
+          20
+        ],
+        "x": 8,
+        "y": 20,
+        "gui_coordinates": [
+          854.5,
+          526.5
+        ],
+        "gui_row": 12,
+        "gui_col": 20,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      }
+    ],
+    [
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          9,
+          0
+        ],
+        "x": 9,
+        "y": 0,
+        "gui_coordinates": [
+          34.5,
+          485.5
+        ],
+        "gui_row": 11,
+        "gui_col": 0,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": 59
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          9,
+          1
+        ],
+        "x": 9,
+        "y": 1,
+        "gui_coordinates": [
+          75.5,
+          485.5
+        ],
+        "gui_row": 11,
+        "gui_col": 1,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          9,
+          2
+        ],
+        "x": 9,
+        "y": 2,
+        "gui_coordinates": [
+          116.5,
+          485.5
+        ],
+        "gui_row": 11,
+        "gui_col": 2,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          9,
+          3
+        ],
+        "x": 9,
+        "y": 3,
+        "gui_coordinates": [
+          157.5,
+          485.5
+        ],
+        "gui_row": 11,
+        "gui_col": 3,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          9,
+          4
+        ],
+        "x": 9,
+        "y": 4,
+        "gui_coordinates": [
+          198.5,
+          485.5
+        ],
+        "gui_row": 11,
+        "gui_col": 4,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 60
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          9,
+          5
+        ],
+        "x": 9,
+        "y": 5,
+        "gui_coordinates": [
+          239.5,
+          485.5
+        ],
+        "gui_row": 11,
+        "gui_col": 5,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          9,
+          6
+        ],
+        "x": 9,
+        "y": 6,
+        "gui_coordinates": [
+          280.5,
+          485.5
+        ],
+        "gui_row": 11,
+        "gui_col": 6,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          9,
+          7
+        ],
+        "x": 9,
+        "y": 7,
+        "gui_coordinates": [
+          321.5,
+          485.5
+        ],
+        "gui_row": 11,
+        "gui_col": 7,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          9,
+          8
+        ],
+        "x": 9,
+        "y": 8,
+        "gui_coordinates": [
+          362.5,
+          485.5
+        ],
+        "gui_row": 11,
+        "gui_col": 8,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 61
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          9,
+          9
+        ],
+        "x": 9,
+        "y": 9,
+        "gui_coordinates": [
+          403.5,
+          485.5
+        ],
+        "gui_row": 11,
+        "gui_col": 9,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": null
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          9,
+          10
+        ],
+        "x": 9,
+        "y": 10,
+        "gui_coordinates": [
+          444.5,
+          485.5
+        ],
+        "gui_row": 11,
+        "gui_col": 10,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          9,
+          11
+        ],
+        "x": 9,
+        "y": 11,
+        "gui_coordinates": [
+          485.5,
+          485.5
+        ],
+        "gui_row": 11,
+        "gui_col": 11,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": 62
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          9,
+          12
+        ],
+        "x": 9,
+        "y": 12,
+        "gui_coordinates": [
+          526.5,
+          485.5
+        ],
+        "gui_row": 11,
+        "gui_col": 12,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 63
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          9,
+          13
+        ],
+        "x": 9,
+        "y": 13,
+        "gui_coordinates": [
+          567.5,
+          485.5
+        ],
+        "gui_row": 11,
+        "gui_col": 13,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          9,
+          14
+        ],
+        "x": 9,
+        "y": 14,
+        "gui_coordinates": [
+          608.5,
+          485.5
+        ],
+        "gui_row": 11,
+        "gui_col": 14,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          9,
+          15
+        ],
+        "x": 9,
+        "y": 15,
+        "gui_coordinates": [
+          649.5,
+          485.5
+        ],
+        "gui_row": 11,
+        "gui_col": 15,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": 64
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          9,
+          16
+        ],
+        "x": 9,
+        "y": 16,
+        "gui_coordinates": [
+          690.5,
+          485.5
+        ],
+        "gui_row": 11,
+        "gui_col": 16,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 65
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          9,
+          17
+        ],
+        "x": 9,
+        "y": 17,
+        "gui_coordinates": [
+          731.5,
+          485.5
+        ],
+        "gui_row": 11,
+        "gui_col": 17,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          9,
+          18
+        ],
+        "x": 9,
+        "y": 18,
+        "gui_coordinates": [
+          772.5,
+          485.5
+        ],
+        "gui_row": 11,
+        "gui_col": 18,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          9,
+          19
+        ],
+        "x": 9,
+        "y": 19,
+        "gui_coordinates": [
+          813.5,
+          485.5
+        ],
+        "gui_row": 11,
+        "gui_col": 19,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          9,
+          20
+        ],
+        "x": 9,
+        "y": 20,
+        "gui_coordinates": [
+          854.5,
+          485.5
+        ],
+        "gui_row": 11,
+        "gui_col": 20,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": null
+      }
+    ],
+    [
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          10,
+          0
+        ],
+        "x": 10,
+        "y": 0,
+        "gui_coordinates": [
+          34.5,
+          444.5
+        ],
+        "gui_row": 10,
+        "gui_col": 0,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          10,
+          1
+        ],
+        "x": 10,
+        "y": 1,
+        "gui_coordinates": [
+          75.5,
+          444.5
+        ],
+        "gui_row": 10,
+        "gui_col": 1,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          10,
+          2
+        ],
+        "x": 10,
+        "y": 2,
+        "gui_coordinates": [
+          116.5,
+          444.5
+        ],
+        "gui_row": 10,
+        "gui_col": 2,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          10,
+          3
+        ],
+        "x": 10,
+        "y": 3,
+        "gui_coordinates": [
+          157.5,
+          444.5
+        ],
+        "gui_row": 10,
+        "gui_col": 3,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": 66
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          10,
+          4
+        ],
+        "x": 10,
+        "y": 4,
+        "gui_coordinates": [
+          198.5,
+          444.5
+        ],
+        "gui_row": 10,
+        "gui_col": 4,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          10,
+          5
+        ],
+        "x": 10,
+        "y": 5,
+        "gui_coordinates": [
+          239.5,
+          444.5
+        ],
+        "gui_row": 10,
+        "gui_col": 5,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          10,
+          6
+        ],
+        "x": 10,
+        "y": 6,
+        "gui_coordinates": [
+          280.5,
+          444.5
+        ],
+        "gui_row": 10,
+        "gui_col": 6,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          10,
+          7
+        ],
+        "x": 10,
+        "y": 7,
+        "gui_coordinates": [
+          321.5,
+          444.5
+        ],
+        "gui_row": 10,
+        "gui_col": 7,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          10,
+          8
+        ],
+        "x": 10,
+        "y": 8,
+        "gui_coordinates": [
+          362.5,
+          444.5
+        ],
+        "gui_row": 10,
+        "gui_col": 8,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          10,
+          9
+        ],
+        "x": 10,
+        "y": 9,
+        "gui_coordinates": [
+          403.5,
+          444.5
+        ],
+        "gui_row": 10,
+        "gui_col": 9,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          10,
+          10
+        ],
+        "x": 10,
+        "y": 10,
+        "gui_coordinates": [
+          444.5,
+          444.5
+        ],
+        "gui_row": 10,
+        "gui_col": 10,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          10,
+          11
+        ],
+        "x": 10,
+        "y": 11,
+        "gui_coordinates": [
+          485.5,
+          444.5
+        ],
+        "gui_row": 10,
+        "gui_col": 11,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          10,
+          12
+        ],
+        "x": 10,
+        "y": 12,
+        "gui_coordinates": [
+          526.5,
+          444.5
+        ],
+        "gui_row": 10,
+        "gui_col": 12,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": 67
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          10,
+          13
+        ],
+        "x": 10,
+        "y": 13,
+        "gui_coordinates": [
+          567.5,
+          444.5
+        ],
+        "gui_row": 10,
+        "gui_col": 13,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          10,
+          14
+        ],
+        "x": 10,
+        "y": 14,
+        "gui_coordinates": [
+          608.5,
+          444.5
+        ],
+        "gui_row": 10,
+        "gui_col": 14,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 68
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          10,
+          15
+        ],
+        "x": 10,
+        "y": 15,
+        "gui_coordinates": [
+          649.5,
+          444.5
+        ],
+        "gui_row": 10,
+        "gui_col": 15,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          10,
+          16
+        ],
+        "x": 10,
+        "y": 16,
+        "gui_coordinates": [
+          690.5,
+          444.5
+        ],
+        "gui_row": 10,
+        "gui_col": 16,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          10,
+          17
+        ],
+        "x": 10,
+        "y": 17,
+        "gui_coordinates": [
+          731.5,
+          444.5
+        ],
+        "gui_row": 10,
+        "gui_col": 17,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          10,
+          18
+        ],
+        "x": 10,
+        "y": 18,
+        "gui_coordinates": [
+          772.5,
+          444.5
+        ],
+        "gui_row": 10,
+        "gui_col": 18,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          10,
+          19
+        ],
+        "x": 10,
+        "y": 19,
+        "gui_coordinates": [
+          813.5,
+          444.5
+        ],
+        "gui_row": 10,
+        "gui_col": 19,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          10,
+          20
+        ],
+        "x": 10,
+        "y": 20,
+        "gui_coordinates": [
+          854.5,
+          444.5
+        ],
+        "gui_row": 10,
+        "gui_col": 20,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      }
+    ],
+    [
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          11,
+          0
+        ],
+        "x": 11,
+        "y": 0,
+        "gui_coordinates": [
+          34.5,
+          403.5
+        ],
+        "gui_row": 9,
+        "gui_col": 0,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 69
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          11,
+          1
+        ],
+        "x": 11,
+        "y": 1,
+        "gui_coordinates": [
+          75.5,
+          403.5
+        ],
+        "gui_row": 9,
+        "gui_col": 1,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 70
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          11,
+          2
+        ],
+        "x": 11,
+        "y": 2,
+        "gui_coordinates": [
+          116.5,
+          403.5
+        ],
+        "gui_row": 9,
+        "gui_col": 2,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 71
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          11,
+          3
+        ],
+        "x": 11,
+        "y": 3,
+        "gui_coordinates": [
+          157.5,
+          403.5
+        ],
+        "gui_row": 9,
+        "gui_col": 3,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          11,
+          4
+        ],
+        "x": 11,
+        "y": 4,
+        "gui_coordinates": [
+          198.5,
+          403.5
+        ],
+        "gui_row": 9,
+        "gui_col": 4,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          11,
+          5
+        ],
+        "x": 11,
+        "y": 5,
+        "gui_coordinates": [
+          239.5,
+          403.5
+        ],
+        "gui_row": 9,
+        "gui_col": 5,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          11,
+          6
+        ],
+        "x": 11,
+        "y": 6,
+        "gui_coordinates": [
+          280.5,
+          403.5
+        ],
+        "gui_row": 9,
+        "gui_col": 6,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          11,
+          7
+        ],
+        "x": 11,
+        "y": 7,
+        "gui_coordinates": [
+          321.5,
+          403.5
+        ],
+        "gui_row": 9,
+        "gui_col": 7,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": 72
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          11,
+          8
+        ],
+        "x": 11,
+        "y": 8,
+        "gui_coordinates": [
+          362.5,
+          403.5
+        ],
+        "gui_row": 9,
+        "gui_col": 8,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          11,
+          9
+        ],
+        "x": 11,
+        "y": 9,
+        "gui_coordinates": [
+          403.5,
+          403.5
+        ],
+        "gui_row": 9,
+        "gui_col": 9,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 73
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          11,
+          10
+        ],
+        "x": 11,
+        "y": 10,
+        "gui_coordinates": [
+          444.5,
+          403.5
+        ],
+        "gui_row": 9,
+        "gui_col": 10,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          11,
+          11
+        ],
+        "x": 11,
+        "y": 11,
+        "gui_coordinates": [
+          485.5,
+          403.5
+        ],
+        "gui_row": 9,
+        "gui_col": 11,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 74
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          11,
+          12
+        ],
+        "x": 11,
+        "y": 12,
+        "gui_coordinates": [
+          526.5,
+          403.5
+        ],
+        "gui_row": 9,
+        "gui_col": 12,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          11,
+          13
+        ],
+        "x": 11,
+        "y": 13,
+        "gui_coordinates": [
+          567.5,
+          403.5
+        ],
+        "gui_row": 9,
+        "gui_col": 13,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          11,
+          14
+        ],
+        "x": 11,
+        "y": 14,
+        "gui_coordinates": [
+          608.5,
+          403.5
+        ],
+        "gui_row": 9,
+        "gui_col": 14,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          11,
+          15
+        ],
+        "x": 11,
+        "y": 15,
+        "gui_coordinates": [
+          649.5,
+          403.5
+        ],
+        "gui_row": 9,
+        "gui_col": 15,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          11,
+          16
+        ],
+        "x": 11,
+        "y": 16,
+        "gui_coordinates": [
+          690.5,
+          403.5
+        ],
+        "gui_row": 9,
+        "gui_col": 16,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          11,
+          17
+        ],
+        "x": 11,
+        "y": 17,
+        "gui_coordinates": [
+          731.5,
+          403.5
+        ],
+        "gui_row": 9,
+        "gui_col": 17,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          11,
+          18
+        ],
+        "x": 11,
+        "y": 18,
+        "gui_coordinates": [
+          772.5,
+          403.5
+        ],
+        "gui_row": 9,
+        "gui_col": 18,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 75
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          11,
+          19
+        ],
+        "x": 11,
+        "y": 19,
+        "gui_coordinates": [
+          813.5,
+          403.5
+        ],
+        "gui_row": 9,
+        "gui_col": 19,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 76
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          11,
+          20
+        ],
+        "x": 11,
+        "y": 20,
+        "gui_coordinates": [
+          854.5,
+          403.5
+        ],
+        "gui_row": 9,
+        "gui_col": 20,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 77
+      }
+    ],
+    [
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          12,
+          0
+        ],
+        "x": 12,
+        "y": 0,
+        "gui_coordinates": [
+          34.5,
+          362.5
+        ],
+        "gui_row": 8,
+        "gui_col": 0,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": 78
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          12,
+          1
+        ],
+        "x": 12,
+        "y": 1,
+        "gui_coordinates": [
+          75.5,
+          362.5
+        ],
+        "gui_row": 8,
+        "gui_col": 1,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          12,
+          2
+        ],
+        "x": 12,
+        "y": 2,
+        "gui_coordinates": [
+          116.5,
+          362.5
+        ],
+        "gui_row": 8,
+        "gui_col": 2,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          12,
+          3
+        ],
+        "x": 12,
+        "y": 3,
+        "gui_coordinates": [
+          157.5,
+          362.5
+        ],
+        "gui_row": 8,
+        "gui_col": 3,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": null
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          12,
+          4
+        ],
+        "x": 12,
+        "y": 4,
+        "gui_coordinates": [
+          198.5,
+          362.5
+        ],
+        "gui_row": 8,
+        "gui_col": 4,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          12,
+          5
+        ],
+        "x": 12,
+        "y": 5,
+        "gui_coordinates": [
+          239.5,
+          362.5
+        ],
+        "gui_row": 8,
+        "gui_col": 5,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": 79
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          12,
+          6
+        ],
+        "x": 12,
+        "y": 6,
+        "gui_coordinates": [
+          280.5,
+          362.5
+        ],
+        "gui_row": 8,
+        "gui_col": 6,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 80
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          12,
+          7
+        ],
+        "x": 12,
+        "y": 7,
+        "gui_coordinates": [
+          321.5,
+          362.5
+        ],
+        "gui_row": 8,
+        "gui_col": 7,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          12,
+          8
+        ],
+        "x": 12,
+        "y": 8,
+        "gui_coordinates": [
+          362.5,
+          362.5
+        ],
+        "gui_row": 8,
+        "gui_col": 8,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          12,
+          9
+        ],
+        "x": 12,
+        "y": 9,
+        "gui_coordinates": [
+          403.5,
+          362.5
+        ],
+        "gui_row": 8,
+        "gui_col": 9,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": 81
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          12,
+          10
+        ],
+        "x": 12,
+        "y": 10,
+        "gui_coordinates": [
+          444.5,
+          362.5
+        ],
+        "gui_row": 8,
+        "gui_col": 10,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 82
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          12,
+          11
+        ],
+        "x": 12,
+        "y": 11,
+        "gui_coordinates": [
+          485.5,
+          362.5
+        ],
+        "gui_row": 8,
+        "gui_col": 11,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          12,
+          12
+        ],
+        "x": 12,
+        "y": 12,
+        "gui_coordinates": [
+          526.5,
+          362.5
+        ],
+        "gui_row": 8,
+        "gui_col": 12,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          12,
+          13
+        ],
+        "x": 12,
+        "y": 13,
+        "gui_coordinates": [
+          567.5,
+          362.5
+        ],
+        "gui_row": 8,
+        "gui_col": 13,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": 83
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          12,
+          14
+        ],
+        "x": 12,
+        "y": 14,
+        "gui_coordinates": [
+          608.5,
+          362.5
+        ],
+        "gui_row": 8,
+        "gui_col": 14,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          12,
+          15
+        ],
+        "x": 12,
+        "y": 15,
+        "gui_coordinates": [
+          649.5,
+          362.5
+        ],
+        "gui_row": 8,
+        "gui_col": 15,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": null
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          12,
+          16
+        ],
+        "x": 12,
+        "y": 16,
+        "gui_coordinates": [
+          690.5,
+          362.5
+        ],
+        "gui_row": 8,
+        "gui_col": 16,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          12,
+          17
+        ],
+        "x": 12,
+        "y": 17,
+        "gui_coordinates": [
+          731.5,
+          362.5
+        ],
+        "gui_row": 8,
+        "gui_col": 17,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": 84
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          12,
+          18
+        ],
+        "x": 12,
+        "y": 18,
+        "gui_coordinates": [
+          772.5,
+          362.5
+        ],
+        "gui_row": 8,
+        "gui_col": 18,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          12,
+          19
+        ],
+        "x": 12,
+        "y": 19,
+        "gui_coordinates": [
+          813.5,
+          362.5
+        ],
+        "gui_row": 8,
+        "gui_col": 19,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          12,
+          20
+        ],
+        "x": 12,
+        "y": 20,
+        "gui_coordinates": [
+          854.5,
+          362.5
+        ],
+        "gui_row": 8,
+        "gui_col": 20,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      }
+    ],
+    [
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          13,
+          0
+        ],
+        "x": 13,
+        "y": 0,
+        "gui_coordinates": [
+          34.5,
+          321.5
+        ],
+        "gui_row": 7,
+        "gui_col": 0,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": 85
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          13,
+          1
+        ],
+        "x": 13,
+        "y": 1,
+        "gui_coordinates": [
+          75.5,
+          321.5
+        ],
+        "gui_row": 7,
+        "gui_col": 1,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          13,
+          2
+        ],
+        "x": 13,
+        "y": 2,
+        "gui_coordinates": [
+          116.5,
+          321.5
+        ],
+        "gui_row": 7,
+        "gui_col": 2,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          13,
+          3
+        ],
+        "x": 13,
+        "y": 3,
+        "gui_coordinates": [
+          157.5,
+          321.5
+        ],
+        "gui_row": 7,
+        "gui_col": 3,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          13,
+          4
+        ],
+        "x": 13,
+        "y": 4,
+        "gui_coordinates": [
+          198.5,
+          321.5
+        ],
+        "gui_row": 7,
+        "gui_col": 4,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          13,
+          5
+        ],
+        "x": 13,
+        "y": 5,
+        "gui_coordinates": [
+          239.5,
+          321.5
+        ],
+        "gui_row": 7,
+        "gui_col": 5,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          13,
+          6
+        ],
+        "x": 13,
+        "y": 6,
+        "gui_coordinates": [
+          280.5,
+          321.5
+        ],
+        "gui_row": 7,
+        "gui_col": 6,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": 86
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          13,
+          7
+        ],
+        "x": 13,
+        "y": 7,
+        "gui_coordinates": [
+          321.5,
+          321.5
+        ],
+        "gui_row": 7,
+        "gui_col": 7,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          13,
+          8
+        ],
+        "x": 13,
+        "y": 8,
+        "gui_coordinates": [
+          362.5,
+          321.5
+        ],
+        "gui_row": 7,
+        "gui_col": 8,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 87
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          13,
+          9
+        ],
+        "x": 13,
+        "y": 9,
+        "gui_coordinates": [
+          403.5,
+          321.5
+        ],
+        "gui_row": 7,
+        "gui_col": 9,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          13,
+          10
+        ],
+        "x": 13,
+        "y": 10,
+        "gui_coordinates": [
+          444.5,
+          321.5
+        ],
+        "gui_row": 7,
+        "gui_col": 10,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          13,
+          11
+        ],
+        "x": 13,
+        "y": 11,
+        "gui_coordinates": [
+          485.5,
+          321.5
+        ],
+        "gui_row": 7,
+        "gui_col": 11,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          13,
+          12
+        ],
+        "x": 13,
+        "y": 12,
+        "gui_coordinates": [
+          526.5,
+          321.5
+        ],
+        "gui_row": 7,
+        "gui_col": 12,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 88
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          13,
+          13
+        ],
+        "x": 13,
+        "y": 13,
+        "gui_coordinates": [
+          567.5,
+          321.5
+        ],
+        "gui_row": 7,
+        "gui_col": 13,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          13,
+          14
+        ],
+        "x": 13,
+        "y": 14,
+        "gui_coordinates": [
+          608.5,
+          321.5
+        ],
+        "gui_row": 7,
+        "gui_col": 14,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          13,
+          15
+        ],
+        "x": 13,
+        "y": 15,
+        "gui_coordinates": [
+          649.5,
+          321.5
+        ],
+        "gui_row": 7,
+        "gui_col": 15,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          13,
+          16
+        ],
+        "x": 13,
+        "y": 16,
+        "gui_coordinates": [
+          690.5,
+          321.5
+        ],
+        "gui_row": 7,
+        "gui_col": 16,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          13,
+          17
+        ],
+        "x": 13,
+        "y": 17,
+        "gui_coordinates": [
+          731.5,
+          321.5
+        ],
+        "gui_row": 7,
+        "gui_col": 17,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          13,
+          18
+        ],
+        "x": 13,
+        "y": 18,
+        "gui_coordinates": [
+          772.5,
+          321.5
+        ],
+        "gui_row": 7,
+        "gui_col": 18,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": 89
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          13,
+          19
+        ],
+        "x": 13,
+        "y": 19,
+        "gui_coordinates": [
+          813.5,
+          321.5
+        ],
+        "gui_row": 7,
+        "gui_col": 19,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          13,
+          20
+        ],
+        "x": 13,
+        "y": 20,
+        "gui_coordinates": [
+          854.5,
+          321.5
+        ],
+        "gui_row": 7,
+        "gui_col": 20,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      }
+    ],
+    [
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          14,
+          0
+        ],
+        "x": 14,
+        "y": 0,
+        "gui_coordinates": [
+          34.5,
+          280.5
+        ],
+        "gui_row": 6,
+        "gui_col": 0,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": 90
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          14,
+          1
+        ],
+        "x": 14,
+        "y": 1,
+        "gui_coordinates": [
+          75.5,
+          280.5
+        ],
+        "gui_row": 6,
+        "gui_col": 1,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          14,
+          2
+        ],
+        "x": 14,
+        "y": 2,
+        "gui_coordinates": [
+          116.5,
+          280.5
+        ],
+        "gui_row": 6,
+        "gui_col": 2,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          14,
+          3
+        ],
+        "x": 14,
+        "y": 3,
+        "gui_coordinates": [
+          157.5,
+          280.5
+        ],
+        "gui_row": 6,
+        "gui_col": 3,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 91
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          14,
+          4
+        ],
+        "x": 14,
+        "y": 4,
+        "gui_coordinates": [
+          198.5,
+          280.5
+        ],
+        "gui_row": 6,
+        "gui_col": 4,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          14,
+          5
+        ],
+        "x": 14,
+        "y": 5,
+        "gui_coordinates": [
+          239.5,
+          280.5
+        ],
+        "gui_row": 6,
+        "gui_col": 5,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 92
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          14,
+          6
+        ],
+        "x": 14,
+        "y": 6,
+        "gui_coordinates": [
+          280.5,
+          280.5
+        ],
+        "gui_row": 6,
+        "gui_col": 6,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          14,
+          7
+        ],
+        "x": 14,
+        "y": 7,
+        "gui_coordinates": [
+          321.5,
+          280.5
+        ],
+        "gui_row": 6,
+        "gui_col": 7,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 1,
+        "value": "M",
+        "matrix_index": [
+          14,
+          8
+        ],
+        "x": 14,
+        "y": 8,
+        "gui_coordinates": [
+          362.5,
+          280.5
+        ],
+        "gui_row": 6,
+        "gui_col": 8,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 1,
+        "value": "A",
+        "matrix_index": [
+          14,
+          9
+        ],
+        "x": 14,
+        "y": 9,
+        "gui_coordinates": [
+          403.5,
+          280.5
+        ],
+        "gui_row": 6,
+        "gui_col": 9,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 1,
+        "value": "T",
+        "matrix_index": [
+          14,
+          10
+        ],
+        "x": 14,
+        "y": 10,
+        "gui_coordinates": [
+          444.5,
+          280.5
+        ],
+        "gui_row": 6,
+        "gui_col": 10,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 1,
+        "value": "I",
+        "matrix_index": [
+          14,
+          11
+        ],
+        "x": 14,
+        "y": 11,
+        "gui_coordinates": [
+          485.5,
+          280.5
+        ],
+        "gui_row": 6,
+        "gui_col": 11,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 1,
+        "value": "S",
+        "matrix_index": [
+          14,
+          12
+        ],
+        "x": 14,
+        "y": 12,
+        "gui_coordinates": [
+          526.5,
+          280.5
+        ],
+        "gui_row": 6,
+        "gui_col": 12,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 1,
+        "value": "S",
+        "matrix_index": [
+          14,
+          13
+        ],
+        "x": 14,
+        "y": 13,
+        "gui_coordinates": [
+          567.5,
+          280.5
+        ],
+        "gui_row": 6,
+        "gui_col": 13,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          14,
+          14
+        ],
+        "x": 14,
+        "y": 14,
+        "gui_coordinates": [
+          608.5,
+          280.5
+        ],
+        "gui_row": 6,
+        "gui_col": 14,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          14,
+          15
+        ],
+        "x": 14,
+        "y": 15,
+        "gui_coordinates": [
+          649.5,
+          280.5
+        ],
+        "gui_row": 6,
+        "gui_col": 15,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 93
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          14,
+          16
+        ],
+        "x": 14,
+        "y": 16,
+        "gui_coordinates": [
+          690.5,
+          280.5
+        ],
+        "gui_row": 6,
+        "gui_col": 16,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          14,
+          17
+        ],
+        "x": 14,
+        "y": 17,
+        "gui_coordinates": [
+          731.5,
+          280.5
+        ],
+        "gui_row": 6,
+        "gui_col": 17,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 94
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          14,
+          18
+        ],
+        "x": 14,
+        "y": 18,
+        "gui_coordinates": [
+          772.5,
+          280.5
+        ],
+        "gui_row": 6,
+        "gui_col": 18,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          14,
+          19
+        ],
+        "x": 14,
+        "y": 19,
+        "gui_coordinates": [
+          813.5,
+          280.5
+        ],
+        "gui_row": 6,
+        "gui_col": 19,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          14,
+          20
+        ],
+        "x": 14,
+        "y": 20,
+        "gui_coordinates": [
+          854.5,
+          280.5
+        ],
+        "gui_row": 6,
+        "gui_col": 20,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": null
+      }
+    ],
+    [
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          15,
+          0
+        ],
+        "x": 15,
+        "y": 0,
+        "gui_coordinates": [
+          34.5,
+          239.5
+        ],
+        "gui_row": 5,
+        "gui_col": 0,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          15,
+          1
+        ],
+        "x": 15,
+        "y": 1,
+        "gui_coordinates": [
+          75.5,
+          239.5
+        ],
+        "gui_row": 5,
+        "gui_col": 1,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          15,
+          2
+        ],
+        "x": 15,
+        "y": 2,
+        "gui_coordinates": [
+          116.5,
+          239.5
+        ],
+        "gui_row": 5,
+        "gui_col": 2,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": 95
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          15,
+          3
+        ],
+        "x": 15,
+        "y": 3,
+        "gui_coordinates": [
+          157.5,
+          239.5
+        ],
+        "gui_row": 5,
+        "gui_col": 3,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          15,
+          4
+        ],
+        "x": 15,
+        "y": 4,
+        "gui_coordinates": [
+          198.5,
+          239.5
+        ],
+        "gui_row": 5,
+        "gui_col": 4,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 96
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          15,
+          5
+        ],
+        "x": 15,
+        "y": 5,
+        "gui_coordinates": [
+          239.5,
+          239.5
+        ],
+        "gui_row": 5,
+        "gui_col": 5,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          15,
+          6
+        ],
+        "x": 15,
+        "y": 6,
+        "gui_coordinates": [
+          280.5,
+          239.5
+        ],
+        "gui_row": 5,
+        "gui_col": 6,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          15,
+          7
+        ],
+        "x": 15,
+        "y": 7,
+        "gui_coordinates": [
+          321.5,
+          239.5
+        ],
+        "gui_row": 5,
+        "gui_col": 7,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": 97
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          15,
+          8
+        ],
+        "x": 15,
+        "y": 8,
+        "gui_coordinates": [
+          362.5,
+          239.5
+        ],
+        "gui_row": 5,
+        "gui_col": 8,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          15,
+          9
+        ],
+        "x": 15,
+        "y": 9,
+        "gui_coordinates": [
+          403.5,
+          239.5
+        ],
+        "gui_row": 5,
+        "gui_col": 9,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          15,
+          10
+        ],
+        "x": 15,
+        "y": 10,
+        "gui_coordinates": [
+          444.5,
+          239.5
+        ],
+        "gui_row": 5,
+        "gui_col": 10,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          15,
+          11
+        ],
+        "x": 15,
+        "y": 11,
+        "gui_coordinates": [
+          485.5,
+          239.5
+        ],
+        "gui_row": 5,
+        "gui_col": 11,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          15,
+          12
+        ],
+        "x": 15,
+        "y": 12,
+        "gui_coordinates": [
+          526.5,
+          239.5
+        ],
+        "gui_row": 5,
+        "gui_col": 12,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          15,
+          13
+        ],
+        "x": 15,
+        "y": 13,
+        "gui_coordinates": [
+          567.5,
+          239.5
+        ],
+        "gui_row": 5,
+        "gui_col": 13,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": null
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          15,
+          14
+        ],
+        "x": 15,
+        "y": 14,
+        "gui_coordinates": [
+          608.5,
+          239.5
+        ],
+        "gui_row": 5,
+        "gui_col": 14,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          15,
+          15
+        ],
+        "x": 15,
+        "y": 15,
+        "gui_coordinates": [
+          649.5,
+          239.5
+        ],
+        "gui_row": 5,
+        "gui_col": 15,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": 98
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          15,
+          16
+        ],
+        "x": 15,
+        "y": 16,
+        "gui_coordinates": [
+          690.5,
+          239.5
+        ],
+        "gui_row": 5,
+        "gui_col": 16,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 99
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          15,
+          17
+        ],
+        "x": 15,
+        "y": 17,
+        "gui_coordinates": [
+          731.5,
+          239.5
+        ],
+        "gui_row": 5,
+        "gui_col": 17,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          15,
+          18
+        ],
+        "x": 15,
+        "y": 18,
+        "gui_coordinates": [
+          772.5,
+          239.5
+        ],
+        "gui_row": 5,
+        "gui_col": 18,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          15,
+          19
+        ],
+        "x": 15,
+        "y": 19,
+        "gui_coordinates": [
+          813.5,
+          239.5
+        ],
+        "gui_row": 5,
+        "gui_col": 19,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          15,
+          20
+        ],
+        "x": 15,
+        "y": 20,
+        "gui_coordinates": [
+          854.5,
+          239.5
+        ],
+        "gui_row": 5,
+        "gui_col": 20,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      }
+    ],
+    [
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          16,
+          0
+        ],
+        "x": 16,
+        "y": 0,
+        "gui_coordinates": [
+          34.5,
+          198.5
+        ],
+        "gui_row": 4,
+        "gui_col": 0,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 100
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          16,
+          1
+        ],
+        "x": 16,
+        "y": 1,
+        "gui_coordinates": [
+          75.5,
+          198.5
+        ],
+        "gui_row": 4,
+        "gui_col": 1,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 101
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          16,
+          2
+        ],
+        "x": 16,
+        "y": 2,
+        "gui_coordinates": [
+          116.5,
+          198.5
+        ],
+        "gui_row": 4,
+        "gui_col": 2,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          16,
+          3
+        ],
+        "x": 16,
+        "y": 3,
+        "gui_coordinates": [
+          157.5,
+          198.5
+        ],
+        "gui_row": 4,
+        "gui_col": 3,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          16,
+          4
+        ],
+        "x": 16,
+        "y": 4,
+        "gui_coordinates": [
+          198.5,
+          198.5
+        ],
+        "gui_row": 4,
+        "gui_col": 4,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          16,
+          5
+        ],
+        "x": 16,
+        "y": 5,
+        "gui_coordinates": [
+          239.5,
+          198.5
+        ],
+        "gui_row": 4,
+        "gui_col": 5,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          16,
+          6
+        ],
+        "x": 16,
+        "y": 6,
+        "gui_coordinates": [
+          280.5,
+          198.5
+        ],
+        "gui_row": 4,
+        "gui_col": 6,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 102
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          16,
+          7
+        ],
+        "x": 16,
+        "y": 7,
+        "gui_coordinates": [
+          321.5,
+          198.5
+        ],
+        "gui_row": 4,
+        "gui_col": 7,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          16,
+          8
+        ],
+        "x": 16,
+        "y": 8,
+        "gui_coordinates": [
+          362.5,
+          198.5
+        ],
+        "gui_row": 4,
+        "gui_col": 8,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": 103
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          16,
+          9
+        ],
+        "x": 16,
+        "y": 9,
+        "gui_coordinates": [
+          403.5,
+          198.5
+        ],
+        "gui_row": 4,
+        "gui_col": 9,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          16,
+          10
+        ],
+        "x": 16,
+        "y": 10,
+        "gui_coordinates": [
+          444.5,
+          198.5
+        ],
+        "gui_row": 4,
+        "gui_col": 10,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          16,
+          11
+        ],
+        "x": 16,
+        "y": 11,
+        "gui_coordinates": [
+          485.5,
+          198.5
+        ],
+        "gui_row": 4,
+        "gui_col": 11,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          16,
+          12
+        ],
+        "x": 16,
+        "y": 12,
+        "gui_coordinates": [
+          526.5,
+          198.5
+        ],
+        "gui_row": 4,
+        "gui_col": 12,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": null
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          16,
+          13
+        ],
+        "x": 16,
+        "y": 13,
+        "gui_coordinates": [
+          567.5,
+          198.5
+        ],
+        "gui_row": 4,
+        "gui_col": 13,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          16,
+          14
+        ],
+        "x": 16,
+        "y": 14,
+        "gui_coordinates": [
+          608.5,
+          198.5
+        ],
+        "gui_row": 4,
+        "gui_col": 14,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 104
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          16,
+          15
+        ],
+        "x": 16,
+        "y": 15,
+        "gui_coordinates": [
+          649.5,
+          198.5
+        ],
+        "gui_row": 4,
+        "gui_col": 15,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          16,
+          16
+        ],
+        "x": 16,
+        "y": 16,
+        "gui_coordinates": [
+          690.5,
+          198.5
+        ],
+        "gui_row": 4,
+        "gui_col": 16,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          16,
+          17
+        ],
+        "x": 16,
+        "y": 17,
+        "gui_coordinates": [
+          731.5,
+          198.5
+        ],
+        "gui_row": 4,
+        "gui_col": 17,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          16,
+          18
+        ],
+        "x": 16,
+        "y": 18,
+        "gui_coordinates": [
+          772.5,
+          198.5
+        ],
+        "gui_row": 4,
+        "gui_col": 18,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          16,
+          19
+        ],
+        "x": 16,
+        "y": 19,
+        "gui_coordinates": [
+          813.5,
+          198.5
+        ],
+        "gui_row": 4,
+        "gui_col": 19,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 105
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          16,
+          20
+        ],
+        "x": 16,
+        "y": 20,
+        "gui_coordinates": [
+          854.5,
+          198.5
+        ],
+        "gui_row": 4,
+        "gui_col": 20,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 106
+      }
+    ],
+    [
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          17,
+          0
+        ],
+        "x": 17,
+        "y": 0,
+        "gui_coordinates": [
+          34.5,
+          157.5
+        ],
+        "gui_row": 3,
+        "gui_col": 0,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": 107
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          17,
+          1
+        ],
+        "x": 17,
+        "y": 1,
+        "gui_coordinates": [
+          75.5,
+          157.5
+        ],
+        "gui_row": 3,
+        "gui_col": 1,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          17,
+          2
+        ],
+        "x": 17,
+        "y": 2,
+        "gui_coordinates": [
+          116.5,
+          157.5
+        ],
+        "gui_row": 3,
+        "gui_col": 2,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          17,
+          3
+        ],
+        "x": 17,
+        "y": 3,
+        "gui_coordinates": [
+          157.5,
+          157.5
+        ],
+        "gui_row": 3,
+        "gui_col": 3,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          17,
+          4
+        ],
+        "x": 17,
+        "y": 4,
+        "gui_coordinates": [
+          198.5,
+          157.5
+        ],
+        "gui_row": 3,
+        "gui_col": 4,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          17,
+          5
+        ],
+        "x": 17,
+        "y": 5,
+        "gui_coordinates": [
+          239.5,
+          157.5
+        ],
+        "gui_row": 3,
+        "gui_col": 5,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          17,
+          6
+        ],
+        "x": 17,
+        "y": 6,
+        "gui_coordinates": [
+          280.5,
+          157.5
+        ],
+        "gui_row": 3,
+        "gui_col": 6,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          17,
+          7
+        ],
+        "x": 17,
+        "y": 7,
+        "gui_coordinates": [
+          321.5,
+          157.5
+        ],
+        "gui_row": 3,
+        "gui_col": 7,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 108
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          17,
+          8
+        ],
+        "x": 17,
+        "y": 8,
+        "gui_coordinates": [
+          362.5,
+          157.5
+        ],
+        "gui_row": 3,
+        "gui_col": 8,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          17,
+          9
+        ],
+        "x": 17,
+        "y": 9,
+        "gui_coordinates": [
+          403.5,
+          157.5
+        ],
+        "gui_row": 3,
+        "gui_col": 9,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          17,
+          10
+        ],
+        "x": 17,
+        "y": 10,
+        "gui_coordinates": [
+          444.5,
+          157.5
+        ],
+        "gui_row": 3,
+        "gui_col": 10,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          17,
+          11
+        ],
+        "x": 17,
+        "y": 11,
+        "gui_coordinates": [
+          485.5,
+          157.5
+        ],
+        "gui_row": 3,
+        "gui_col": 11,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          17,
+          12
+        ],
+        "x": 17,
+        "y": 12,
+        "gui_coordinates": [
+          526.5,
+          157.5
+        ],
+        "gui_row": 3,
+        "gui_col": 12,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          17,
+          13
+        ],
+        "x": 17,
+        "y": 13,
+        "gui_coordinates": [
+          567.5,
+          157.5
+        ],
+        "gui_row": 3,
+        "gui_col": 13,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 109
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          17,
+          14
+        ],
+        "x": 17,
+        "y": 14,
+        "gui_coordinates": [
+          608.5,
+          157.5
+        ],
+        "gui_row": 3,
+        "gui_col": 14,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          17,
+          15
+        ],
+        "x": 17,
+        "y": 15,
+        "gui_coordinates": [
+          649.5,
+          157.5
+        ],
+        "gui_row": 3,
+        "gui_col": 15,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          17,
+          16
+        ],
+        "x": 17,
+        "y": 16,
+        "gui_coordinates": [
+          690.5,
+          157.5
+        ],
+        "gui_row": 3,
+        "gui_col": 16,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          17,
+          17
+        ],
+        "x": 17,
+        "y": 17,
+        "gui_coordinates": [
+          731.5,
+          157.5
+        ],
+        "gui_row": 3,
+        "gui_col": 17,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          17,
+          18
+        ],
+        "x": 17,
+        "y": 18,
+        "gui_coordinates": [
+          772.5,
+          157.5
+        ],
+        "gui_row": 3,
+        "gui_col": 18,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          17,
+          19
+        ],
+        "x": 17,
+        "y": 19,
+        "gui_coordinates": [
+          813.5,
+          157.5
+        ],
+        "gui_row": 3,
+        "gui_col": 19,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          17,
+          20
+        ],
+        "x": 17,
+        "y": 20,
+        "gui_coordinates": [
+          854.5,
+          157.5
+        ],
+        "gui_row": 3,
+        "gui_col": 20,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      }
+    ],
+    [
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          18,
+          0
+        ],
+        "x": 18,
+        "y": 0,
+        "gui_coordinates": [
+          34.5,
+          116.5
+        ],
+        "gui_row": 2,
+        "gui_col": 0,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": 110
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          18,
+          1
+        ],
+        "x": 18,
+        "y": 1,
+        "gui_coordinates": [
+          75.5,
+          116.5
+        ],
+        "gui_row": 2,
+        "gui_col": 1,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          18,
+          2
+        ],
+        "x": 18,
+        "y": 2,
+        "gui_coordinates": [
+          116.5,
+          116.5
+        ],
+        "gui_row": 2,
+        "gui_col": 2,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          18,
+          3
+        ],
+        "x": 18,
+        "y": 3,
+        "gui_coordinates": [
+          157.5,
+          116.5
+        ],
+        "gui_row": 2,
+        "gui_col": 3,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          18,
+          4
+        ],
+        "x": 18,
+        "y": 4,
+        "gui_coordinates": [
+          198.5,
+          116.5
+        ],
+        "gui_row": 2,
+        "gui_col": 4,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          18,
+          5
+        ],
+        "x": 18,
+        "y": 5,
+        "gui_coordinates": [
+          239.5,
+          116.5
+        ],
+        "gui_row": 2,
+        "gui_col": 5,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": 111
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          18,
+          6
+        ],
+        "x": 18,
+        "y": 6,
+        "gui_coordinates": [
+          280.5,
+          116.5
+        ],
+        "gui_row": 2,
+        "gui_col": 6,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          18,
+          7
+        ],
+        "x": 18,
+        "y": 7,
+        "gui_coordinates": [
+          321.5,
+          116.5
+        ],
+        "gui_row": 2,
+        "gui_col": 7,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          18,
+          8
+        ],
+        "x": 18,
+        "y": 8,
+        "gui_coordinates": [
+          362.5,
+          116.5
+        ],
+        "gui_row": 2,
+        "gui_col": 8,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 112
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          18,
+          9
+        ],
+        "x": 18,
+        "y": 9,
+        "gui_coordinates": [
+          403.5,
+          116.5
+        ],
+        "gui_row": 2,
+        "gui_col": 9,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 113
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          18,
+          10
+        ],
+        "x": 18,
+        "y": 10,
+        "gui_coordinates": [
+          444.5,
+          116.5
+        ],
+        "gui_row": 2,
+        "gui_col": 10,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          18,
+          11
+        ],
+        "x": 18,
+        "y": 11,
+        "gui_coordinates": [
+          485.5,
+          116.5
+        ],
+        "gui_row": 2,
+        "gui_col": 11,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 114
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          18,
+          12
+        ],
+        "x": 18,
+        "y": 12,
+        "gui_coordinates": [
+          526.5,
+          116.5
+        ],
+        "gui_row": 2,
+        "gui_col": 12,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": true,
+        "is_v_end": false,
+        "answer_number": 115
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          18,
+          13
+        ],
+        "x": 18,
+        "y": 13,
+        "gui_coordinates": [
+          567.5,
+          116.5
+        ],
+        "gui_row": 2,
+        "gui_col": 13,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          18,
+          14
+        ],
+        "x": 18,
+        "y": 14,
+        "gui_coordinates": [
+          608.5,
+          116.5
+        ],
+        "gui_row": 2,
+        "gui_col": 14,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          18,
+          15
+        ],
+        "x": 18,
+        "y": 15,
+        "gui_coordinates": [
+          649.5,
+          116.5
+        ],
+        "gui_row": 2,
+        "gui_col": 15,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          18,
+          16
+        ],
+        "x": 18,
+        "y": 16,
+        "gui_coordinates": [
+          690.5,
+          116.5
+        ],
+        "gui_row": 2,
+        "gui_col": 16,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          18,
+          17
+        ],
+        "x": 18,
+        "y": 17,
+        "gui_coordinates": [
+          731.5,
+          116.5
+        ],
+        "gui_row": 2,
+        "gui_col": 17,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": 116
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          18,
+          18
+        ],
+        "x": 18,
+        "y": 18,
+        "gui_coordinates": [
+          772.5,
+          116.5
+        ],
+        "gui_row": 2,
+        "gui_col": 18,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          18,
+          19
+        ],
+        "x": 18,
+        "y": 19,
+        "gui_coordinates": [
+          813.5,
+          116.5
+        ],
+        "gui_row": 2,
+        "gui_col": 19,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          18,
+          20
+        ],
+        "x": 18,
+        "y": 20,
+        "gui_coordinates": [
+          854.5,
+          116.5
+        ],
+        "gui_row": 2,
+        "gui_col": 20,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      }
+    ],
+    [
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          19,
+          0
+        ],
+        "x": 19,
+        "y": 0,
+        "gui_coordinates": [
+          34.5,
+          75.5
+        ],
+        "gui_row": 1,
+        "gui_col": 0,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": 117
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          19,
+          1
+        ],
+        "x": 19,
+        "y": 1,
+        "gui_coordinates": [
+          75.5,
+          75.5
+        ],
+        "gui_row": 1,
+        "gui_col": 1,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          19,
+          2
+        ],
+        "x": 19,
+        "y": 2,
+        "gui_coordinates": [
+          116.5,
+          75.5
+        ],
+        "gui_row": 1,
+        "gui_col": 2,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          19,
+          3
+        ],
+        "x": 19,
+        "y": 3,
+        "gui_coordinates": [
+          157.5,
+          75.5
+        ],
+        "gui_row": 1,
+        "gui_col": 3,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          19,
+          4
+        ],
+        "x": 19,
+        "y": 4,
+        "gui_coordinates": [
+          198.5,
+          75.5
+        ],
+        "gui_row": 1,
+        "gui_col": 4,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          19,
+          5
+        ],
+        "x": 19,
+        "y": 5,
+        "gui_coordinates": [
+          239.5,
+          75.5
+        ],
+        "gui_row": 1,
+        "gui_col": 5,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": 118
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          19,
+          6
+        ],
+        "x": 19,
+        "y": 6,
+        "gui_coordinates": [
+          280.5,
+          75.5
+        ],
+        "gui_row": 1,
+        "gui_col": 6,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          19,
+          7
+        ],
+        "x": 19,
+        "y": 7,
+        "gui_coordinates": [
+          321.5,
+          75.5
+        ],
+        "gui_row": 1,
+        "gui_col": 7,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          19,
+          8
+        ],
+        "x": 19,
+        "y": 8,
+        "gui_coordinates": [
+          362.5,
+          75.5
+        ],
+        "gui_row": 1,
+        "gui_col": 8,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          19,
+          9
+        ],
+        "x": 19,
+        "y": 9,
+        "gui_coordinates": [
+          403.5,
+          75.5
+        ],
+        "gui_row": 1,
+        "gui_col": 9,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          19,
+          10
+        ],
+        "x": 19,
+        "y": 10,
+        "gui_coordinates": [
+          444.5,
+          75.5
+        ],
+        "gui_row": 1,
+        "gui_col": 10,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          19,
+          11
+        ],
+        "x": 19,
+        "y": 11,
+        "gui_coordinates": [
+          485.5,
+          75.5
+        ],
+        "gui_row": 1,
+        "gui_col": 11,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": 119
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          19,
+          12
+        ],
+        "x": 19,
+        "y": 12,
+        "gui_coordinates": [
+          526.5,
+          75.5
+        ],
+        "gui_row": 1,
+        "gui_col": 12,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          19,
+          13
+        ],
+        "x": 19,
+        "y": 13,
+        "gui_coordinates": [
+          567.5,
+          75.5
+        ],
+        "gui_row": 1,
+        "gui_col": 13,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          19,
+          14
+        ],
+        "x": 19,
+        "y": 14,
+        "gui_coordinates": [
+          608.5,
+          75.5
+        ],
+        "gui_row": 1,
+        "gui_col": 14,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          19,
+          15
+        ],
+        "x": 19,
+        "y": 15,
+        "gui_coordinates": [
+          649.5,
+          75.5
+        ],
+        "gui_row": 1,
+        "gui_col": 15,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          19,
+          16
+        ],
+        "x": 19,
+        "y": 16,
+        "gui_coordinates": [
+          690.5,
+          75.5
+        ],
+        "gui_row": 1,
+        "gui_col": 16,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          19,
+          17
+        ],
+        "x": 19,
+        "y": 17,
+        "gui_coordinates": [
+          731.5,
+          75.5
+        ],
+        "gui_row": 1,
+        "gui_col": 17,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": 120
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          19,
+          18
+        ],
+        "x": 19,
+        "y": 18,
+        "gui_coordinates": [
+          772.5,
+          75.5
+        ],
+        "gui_row": 1,
+        "gui_col": 18,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          19,
+          19
+        ],
+        "x": 19,
+        "y": 19,
+        "gui_coordinates": [
+          813.5,
+          75.5
+        ],
+        "gui_row": 1,
+        "gui_col": 19,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          19,
+          20
+        ],
+        "x": 19,
+        "y": 20,
+        "gui_coordinates": [
+          854.5,
+          75.5
+        ],
+        "gui_row": 1,
+        "gui_col": 20,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": null
+      }
+    ],
+    [
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          20,
+          0
+        ],
+        "x": 20,
+        "y": 0,
+        "gui_coordinates": [
+          34.5,
+          34.5
+        ],
+        "gui_row": 0,
+        "gui_col": 0,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": 121
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          20,
+          1
+        ],
+        "x": 20,
+        "y": 1,
+        "gui_coordinates": [
+          75.5,
+          34.5
+        ],
+        "gui_row": 0,
+        "gui_col": 1,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          20,
+          2
+        ],
+        "x": 20,
+        "y": 2,
+        "gui_coordinates": [
+          116.5,
+          34.5
+        ],
+        "gui_row": 0,
+        "gui_col": 2,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          20,
+          3
+        ],
+        "x": 20,
+        "y": 3,
+        "gui_coordinates": [
+          157.5,
+          34.5
+        ],
+        "gui_row": 0,
+        "gui_col": 3,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": null
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          20,
+          4
+        ],
+        "x": 20,
+        "y": 4,
+        "gui_coordinates": [
+          198.5,
+          34.5
+        ],
+        "gui_row": 0,
+        "gui_col": 4,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          20,
+          5
+        ],
+        "x": 20,
+        "y": 5,
+        "gui_coordinates": [
+          239.5,
+          34.5
+        ],
+        "gui_row": 0,
+        "gui_col": 5,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": 122
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          20,
+          6
+        ],
+        "x": 20,
+        "y": 6,
+        "gui_coordinates": [
+          280.5,
+          34.5
+        ],
+        "gui_row": 0,
+        "gui_col": 6,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          20,
+          7
+        ],
+        "x": 20,
+        "y": 7,
+        "gui_coordinates": [
+          321.5,
+          34.5
+        ],
+        "gui_row": 0,
+        "gui_col": 7,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          20,
+          8
+        ],
+        "x": 20,
+        "y": 8,
+        "gui_coordinates": [
+          362.5,
+          34.5
+        ],
+        "gui_row": 0,
+        "gui_col": 8,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          20,
+          9
+        ],
+        "x": 20,
+        "y": 9,
+        "gui_coordinates": [
+          403.5,
+          34.5
+        ],
+        "gui_row": 0,
+        "gui_col": 9,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": null
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          20,
+          10
+        ],
+        "x": 20,
+        "y": 10,
+        "gui_coordinates": [
+          444.5,
+          34.5
+        ],
+        "gui_row": 0,
+        "gui_col": 10,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          20,
+          11
+        ],
+        "x": 20,
+        "y": 11,
+        "gui_coordinates": [
+          485.5,
+          34.5
+        ],
+        "gui_row": 0,
+        "gui_col": 11,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": 123
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          20,
+          12
+        ],
+        "x": 20,
+        "y": 12,
+        "gui_coordinates": [
+          526.5,
+          34.5
+        ],
+        "gui_row": 0,
+        "gui_col": 12,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          20,
+          13
+        ],
+        "x": 20,
+        "y": 13,
+        "gui_coordinates": [
+          567.5,
+          34.5
+        ],
+        "gui_row": 0,
+        "gui_col": 13,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          20,
+          14
+        ],
+        "x": 20,
+        "y": 14,
+        "gui_coordinates": [
+          608.5,
+          34.5
+        ],
+        "gui_row": 0,
+        "gui_col": 14,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          20,
+          15
+        ],
+        "x": 20,
+        "y": 15,
+        "gui_coordinates": [
+          649.5,
+          34.5
+        ],
+        "gui_row": 0,
+        "gui_col": 15,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": null
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          20,
+          16
+        ],
+        "x": 20,
+        "y": 16,
+        "gui_coordinates": [
+          690.5,
+          34.5
+        ],
+        "gui_row": 0,
+        "gui_col": 16,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          20,
+          17
+        ],
+        "x": 20,
+        "y": 17,
+        "gui_coordinates": [
+          731.5,
+          34.5
+        ],
+        "gui_row": 0,
+        "gui_col": 17,
+        "is_h_start": true,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": 124
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          20,
+          18
+        ],
+        "x": 20,
+        "y": 18,
+        "gui_coordinates": [
+          772.5,
+          34.5
+        ],
+        "gui_row": 0,
+        "gui_col": 18,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": null
+      },
+      {
+        "status": 0,
+        "value": "",
+        "matrix_index": [
+          20,
+          19
+        ],
+        "x": 20,
+        "y": 19,
+        "gui_coordinates": [
+          813.5,
+          34.5
+        ],
+        "gui_row": 0,
+        "gui_col": 19,
+        "is_h_start": false,
+        "is_h_end": true,
+        "is_v_start": false,
+        "is_v_end": true,
+        "answer_number": null
+      },
+      {
+        "status": 3,
+        "value": null,
+        "matrix_index": [
+          20,
+          20
+        ],
+        "x": 20,
+        "y": 20,
+        "gui_coordinates": [
+          854.5,
+          34.5
+        ],
+        "gui_row": 0,
+        "gui_col": 20,
+        "is_h_start": false,
+        "is_h_end": false,
+        "is_v_start": false,
+        "is_v_end": false,
+        "answer_number": null
+      }
+    ]
+  ],
+  "symmetry": 1,
+  "auto_symmetry": true
+}

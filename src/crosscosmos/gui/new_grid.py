@@ -192,7 +192,7 @@ class CrossCosmosGui(arcade.Window):
                 WordDirection.VERTICAL if self.edit_direction == WordDirection.HORIZONTAL else WordDirection.HORIZONTAL
             )
             self.update_gui_colors()
-            # self._update_info_panel()
+            self._update_info_section()
             return
 
         # If Ctrl/Cmd is held, don't process letter inputs
@@ -255,7 +255,7 @@ class CrossCosmosGui(arcade.Window):
                 self.selected_x = new_cell.x
                 self.selected_y = new_cell.y
             self.update_gui_colors()
-            # self._update_info_panel()
+            # self._update_info_section()
 
         self.grid.save()
         self.sync_gui_grid()
@@ -671,6 +671,7 @@ class CrossCosmosGui(arcade.Window):
                         cell_letter.text = ""
 
         self.update_gui_colors()
+        self._update_info_section()
 
     def _init_layout_parameters(self):
         """
@@ -1006,11 +1007,29 @@ class CrossCosmosGui(arcade.Window):
         logger.info(f"Updating cell {self.selected_x}, {self.selected_y} to {new_value}")
         self.grid.set_grid(self.selected_x, self.selected_y, new_value)
 
+    def _update_info_section(self):
+        active_entry = self.grid.full_word_from_cell(
+            self.selected_grid_cell.x, self.selected_grid_cell.y, self.edit_direction
+        )
+        self.grid_location_label.text = f"({self.selected_grid_cell.x},{self.selected_grid_cell.y})"
+        # self.ans_combo_label.text = ""  TODO
+        self.current_value_label.text = f'"{active_entry}"'
+        self.n_letters_label.text = len(active_entry)
+        self.n_entries_label.text = len(self.grid.h_starts) + len(self.grid.v_starts)
+
+        n_blocks = len([c for c in self.grid.grid.flatten() if c.status == CellStatus.BLACK])
+        blocks_pct = 100*(n_blocks / len(self.grid.grid.flatten()))
+        self.n_blocks_label.text = f"{n_blocks} ({blocks_pct:.1f}%)"
+
+        # avg_length = self.grid.word_lengths()
+        # pass
+
 if __name__ == "__main__":
     """Main function to run the application."""
     # grid = Grid((21, 21))
     # "oops_again1.json"
     grid_path = "/Users/lafarnb1/Projects/GitHub/CrossCosmos/grids/oops_again/oops_again1.json"
+    grid_path = "/Users/lafarnb1/Projects/GitHub/CrossCosmos/scratch/matiss.json"
     grid = Grid.load(grid_path)
 
     # config_path = "/Users/lafarnb1/Projects/GitHub/CrossCosmos/src/crosscosmos/gui/gui_config.toml"
