@@ -29,6 +29,7 @@ from crosscosmos.wordlists.lafarge import LaFargeWord
 
 logger = logging.getLogger(__name__)
 
+
 class Cell:
     """Individual cell in a crossword grid.
 
@@ -207,7 +208,7 @@ class Cell:
             "is_h_end": self.is_h_end,
             "is_v_start": self.is_v_start,
             "is_v_end": self.is_v_end,
-            "answer_number": self.answer_number
+            "answer_number": self.answer_number,
         }
 
     @classmethod
@@ -450,9 +451,7 @@ class Grid:
     @property
     def is_valid(self) -> bool:
         """Check if all cells form valid crossings."""
-        return all(
-            self.is_cell_valid(c.x, c.y) for c in self.grid.flatten()
-        )
+        return all(self.is_cell_valid(c.x, c.y) for c in self.grid.flatten())
 
     @property
     def h_starts(self) -> pl.DataFrame:
@@ -488,7 +487,7 @@ class Grid:
         return grid
 
     def is_cell_valid(self, i: int, j: int) -> bool:
-        """ Check if both crossings at a given cell are valid (>=3 letters) """
+        """Check if both crossings at a given cell are valid (>=3 letters)"""
         is_black = self.grid[i, j].status == CellStatus.BLACK
         hlen = self.word_len(i, j, WordDirection.HORIZONTAL)
         vlen = self.word_len(i, j, WordDirection.VERTICAL)
@@ -1225,7 +1224,7 @@ class Grid:
         return self.word_len(i, j, WordDirection.VERTICAL)
 
     def get_possible_words(
-        self,  entry_id: str, db=LaFargeWord, exclude: dict[int, list[str] | str] | None = None, **kwargs
+        self, entry_id: str, db=LaFargeWord, exclude: dict[int, list[str] | str] | None = None, **kwargs
     ) -> pl.DataFrame:
         """Get all possible words for a given entry given a data source and minimum score threshold
 

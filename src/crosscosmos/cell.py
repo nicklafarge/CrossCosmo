@@ -2,6 +2,7 @@
 Defines a crossword Grid class, interfacing between the data and gui laters
 
 """
+
 from dataclasses import dataclass
 import copy
 import logging
@@ -28,6 +29,7 @@ from crosscosmos.enums import (
 from crosscosmos.wordlists.lafarge import LaFargeWord
 
 logger = logging.getLogger(__name__)
+
 
 @dataclass
 class Cell:
@@ -225,4 +227,3 @@ class Cell:
     def save(self, filename: Path) -> None:
         """Save cell to JSON file."""
         io_utils.save_json_dict(filename, self.to_json())
-

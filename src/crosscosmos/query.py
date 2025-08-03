@@ -38,9 +38,7 @@ def query_to_df(query, filter_fn: Callable | None = None) -> pl.DataFrame:
         return df
 
     df = df.sort(by="score", descending=True)
-    df = df.with_columns(
-        length=pl.col("word").str.len_chars().cast(pl.Int64)
-    )
+    df = df.with_columns(length=pl.col("word").str.len_chars().cast(pl.Int64))
     return df
 
 
@@ -96,7 +94,7 @@ class Query:
         q: int = 1,
         sunday: bool = True,
         default: bool = True,
-        alpha_only: bool = True,
+        alpha_only: bool = False,
         limit: int | None = 100,
     ):
         """Helper class for building crossword database queries
@@ -276,15 +274,15 @@ class Query:
                 continue
             elif c == "#":
                 # Consonant
-                self._query = self._query.filter(lambda w, i = i: w.word[i] in xc.constants.CONSONANTS)
+                self._query = self._query.filter(lambda w: w.word[i] in xc.constants.CONSONANTS)
                 # self._query = orm.select(w for w in self._query if w.word[i] in xc.constants.CONSONANTS)
             elif c == "@":
                 # Vowel
-                self._query = self._query.filter(lambda w, i = i: w.word[i] in xc.constants.VOWELS)
-                # self._query = orm.select(w for w in self._query if w.word[i] in xc.constants.VOWELS)
+                self._query = self._query.filter(lambda w: w.word[i] in xc.constants.VOWELS)
+                self._query = orm.select(w for w in self._query if w.word[i] in xc.constants.VOWELS)
             else:
                 # Exact character match
-                self._query = self._query.filter(lambda w, i = i: w.word[i] == c)
+                self._query = self._query.filter(lambda w: w.word[i] == c)
                 # self._query = orm.select(w for w in self._query if w.word[i] == c)
 
         return self

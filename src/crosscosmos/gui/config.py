@@ -102,6 +102,15 @@ class InfoConfig:
 
 
 @dataclass(frozen=True)
+class TextConfig:
+    """Text configuration options"""
+
+    grid_font_name = "Liberation Mono"
+    word_list_font_name = "Liberation Mono"
+    info_section_font_name = "Liberation Sans"
+
+
+@dataclass(frozen=True)
 class AdvancedConfig:
     """Advanced behavioral settings."""
 
@@ -131,6 +140,7 @@ class ColorConfig:
     locked_text: arcade.color.Color = arcade.color.GIANTS_ORANGE  # cyan
     blacked_text: arcade.color.Color = arcade.color.BLACK
     number: arcade.color.Color = (105, 105, 105)
+    search_text: ColorTuple4 = arcade.color.BLACK
 
     info_bar_background1: arcade.color.Color = (70, 70, 70)
     info_bar_background2: arcade.color.Color = (50, 50, 50)
@@ -147,8 +157,6 @@ class ColorConfig:
         return cls(**values)
 
 
-
-
 @dataclass(frozen=True)
 class LayoutConfig:
     """Complete application configuration."""
@@ -158,6 +166,7 @@ class LayoutConfig:
     advanced: AdvancedConfig = field(default_factory=AdvancedConfig)
     color: ColorConfig = field(default_factory=ColorConfig)
     info: InfoConfig = field(default_factory=InfoConfig)
+    text: TextConfig = field(default_factory=TextConfig)
 
     @classmethod
     def from_toml(cls, path: Path | str) -> "LayoutConfig":

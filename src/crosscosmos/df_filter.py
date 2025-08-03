@@ -115,8 +115,7 @@ class DfFilter:
         return self
 
     def sort_by_score(self):
-        """ Sorts the data frame by the score value
-        """
+        """Sorts the data frame by the score value"""
         self._df = self._df.sort(by="score", descending=True)
         return self
 

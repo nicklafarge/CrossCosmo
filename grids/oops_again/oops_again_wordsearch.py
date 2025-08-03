@@ -118,7 +118,7 @@ lowerright = xc.refine(df2, "*I????", max_length=11)[cols]
 lowerright2 = xc.refine(df2, "I???????I????")[cols]
 
 "WAIT IT ITI TI"
-x = grid.get_possible_words("1A", default=False)
+x = grid.get_possible_words("1A")
 
 df1a = xc.search("LAW??")
 df20a = xc.search("OVA??")
