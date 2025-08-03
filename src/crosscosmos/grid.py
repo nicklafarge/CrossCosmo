@@ -368,7 +368,7 @@ class Grid:
         shuffle: bool = True,
         symmetry: GridSymmetry = GridSymmetry.ROTATIONAL,
         auto_symmetry: bool = False,
-        save_path: Path | None = None,
+        save_path: Path | str | None = None,
     ):
         # Validate dimensions
         self.grid_size = grid_size
@@ -399,9 +399,9 @@ class Grid:
         self.tries = []
 
         # Grid properties
-        self.symmetry = symmetry
-        self.auto_symmetry = auto_symmetry
-        self.save_path = save_path
+        self.symmetry: GridSymmetry = symmetry
+        self.auto_symmetry: bool = auto_symmetry
+        self.save_path = save_path if not save_path else Path(save_path)
 
         # Initialize word boundaries
         self.update_length_and_head_data()

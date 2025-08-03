@@ -4,8 +4,8 @@ height=900
 title="CrossCosmos"
 
 [grid]
-left_margin=40
-right_margin=40
+left_margin=20
+right_margin=20
 top_margin=15
 bottom_margin=65
 inner_margin=2
@@ -13,9 +13,13 @@ inner_margin=2
 #cell_background_color="WHITE"
 #blacked_text_color="BLACK"
 
-[text]
-normal_color="BLACK"
-locked_color="BLACK"
+#[grid.cursor]
+#blink_frequency=30
+#color1="BLACK"
+#color2="DARK_GRAY"
+
+[color]
+normal="BLACK"
+locked="BLACK"
 
 [advanced]
-text_cursor_blink_frequency=30

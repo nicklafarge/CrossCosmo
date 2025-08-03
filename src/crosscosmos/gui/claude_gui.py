@@ -160,11 +160,7 @@ class CrossCosmosGame(arcade.Window):
             with open(config_path, "rb") as f:
                 config = tomllib.load(f)
 
-        super().__init__(
-            int(config["window"]["width"]),
-            int(config["window"]["height"]),
-            config["window"]["title"]
-        )
+        super().__init__(int(config["window"]["width"]), int(config["window"]["height"]), config["window"]["title"])
 
         self.grid = grid_in
         self.frame_update_count = 0
@@ -193,7 +189,7 @@ class CrossCosmosGame(arcade.Window):
         config : dict
             Configuration settings
         """
-        self.inner_margin: int= int(config["grid"]["inner_margin"])
+        self.inner_margin: int = int(config["grid"]["inner_margin"])
         self.outer_margin: int = int(config["grid"]["outer_margin"])
 
         # Calculate grid dimensions
@@ -203,7 +199,7 @@ class CrossCosmosGame(arcade.Window):
         # Reserve space for right panel (Split 50/50 between the two columns on the right)
         right_panel_width_pct = float(config["grid"]["width_pct"]["right_panel"])
         self.right_panel_width: int = int(self.width * right_panel_width_pct)
-        self.right_panel_column_width = self.right_panel_width/2.0
+        self.right_panel_column_width = self.right_panel_width / 2.0
 
         #################################################################################
         # Calculate grid dimensions
@@ -258,11 +254,7 @@ class CrossCosmosGame(arcade.Window):
         cursor_height = int(self.square_size * 0.5)
         cursor_width = max(2, int(self.square_size * 0.05))
 
-        self.text_cursor = arcade.SpriteSolidColor(
-            width=cursor_width,
-            height=cursor_height,
-            color=arcade.color.WHITE
-        )
+        self.text_cursor = arcade.SpriteSolidColor(width=cursor_width, height=cursor_height, color=arcade.color.WHITE)
 
     def _create_grid_sprites(self):
         """Create sprites for each grid cell.
@@ -295,7 +287,7 @@ class CrossCosmosGame(arcade.Window):
                     anchor_y="center",
                     font_size=self.cell_font_size,
                     font_name="Arial",
-                    bold=True
+                    bold=True,
                 )
                 self.cell_letters[row, column] = cell_letter
 
@@ -309,7 +301,7 @@ class CrossCosmosGame(arcade.Window):
                     anchor_x="center",
                     anchor_y="center",
                     font_size=self.number_font_size,
-                    font_name="Arial"
+                    font_name="Arial",
                 )
                 self.text_labels[row, column] = t
 
@@ -359,7 +351,7 @@ class CrossCosmosGame(arcade.Window):
             anchor_x="right",
             anchor_y="center",
             align_x=0,  # Right edge alignment
-            align_y=0  # Center alignment
+            align_y=0,  # Center alignment
         )
 
         self.manager.add(anchor_layout)
@@ -384,11 +376,7 @@ class CrossCosmosGame(arcade.Window):
         content = arcade.gui.UIAnchorLayout(size_hint=(0.5, 1))
 
         # Create vertical layout for content
-        word_list = arcade.gui.UIBoxLayout(
-            vertical=True,
-            size_hint=(1, .2),
-            space_between=1
-        )
+        word_list = arcade.gui.UIBoxLayout(vertical=True, size_hint=(1, 0.2), space_between=1)
         for i in range(100):
             button = arcade.gui.UIFlatButton(height=30, size_hint=(1, None), text=f"Button {i}")
             word_list.add(button)
@@ -434,13 +422,12 @@ class CrossCosmosGame(arcade.Window):
         panel_x = self.width - self.right_panel_width + 20
         base_y = self.height - 40  # Start below title
 
-
         panel = arcade.gui.UIGridLayout(
             column_count=1,
             row_count=3,
             align_horizontal="left",
             background_color=arcade.color.DARK_SLATE_GRAY,
-            size_hint=(1, .2),
+            size_hint=(1, 0.2),
         )
 
         self.position_text = arcade.gui.UILabel(text="Position: (0, 0)", font_size=14)
@@ -467,9 +454,7 @@ class CrossCosmosGame(arcade.Window):
         self.position_text.text = f"Position: ({self.selected_x}, {self.selected_y})"
 
         # Update current word info
-        active_word = self.grid.full_word_from_cell(
-            self.selected_x, self.selected_y, self.edit_direction
-        )
+        active_word = self.grid.full_word_from_cell(self.selected_x, self.selected_y, self.edit_direction)
         word_str = str(active_word).replace("-", "?")
         word_len = len(active_word)
         self.word_info_text.text = f"Word: {word_str} ({word_len} letters)"
@@ -506,16 +491,12 @@ class CrossCosmosGame(arcade.Window):
             right=self.grid_edge_dimension + 2 * self.outer_margin,
             bottom=0,
             top=self.height,
-            color=(50, 50, 50)
+            color=(50, 50, 50),
         )
 
         # Draw right panel background
         arcade.draw_lrbt_rectangle_filled(
-            left=self.width - self.right_panel_width,
-            right=self.width,
-            bottom=0,
-            top=self.height,
-            color=(30, 30, 30)
+            left=self.width - self.right_panel_width, right=self.width, bottom=0, top=self.height, color=(30, 30, 30)
         )
 
         # Draw sprites
@@ -672,9 +653,7 @@ class CrossCosmosGame(arcade.Window):
         # Tab: switch direction
         if key == arcade.key.TAB and self.cursor_visible:
             self.edit_direction = (
-                WordDirection.VERTICAL
-                if self.edit_direction == WordDirection.HORIZONTAL
-                else WordDirection.HORIZONTAL
+                WordDirection.VERTICAL if self.edit_direction == WordDirection.HORIZONTAL else WordDirection.HORIZONTAL
             )
             self.update_gui_colors()
             self._update_info_panel()
@@ -1171,15 +1150,13 @@ if __name__ == "__main__":
     # config = ConfigParser()
     # config.read(config_path)
 
-
-    
     # Load grid
-    test_file = Path(xc.crosscosmos_root / "gui"  / "test_grid.json")
+    test_file = Path(xc.crosscosmos_root / "gui" / "test_grid.json")
     xc_grid = xc.grid.Grid.load("/Users/lafarnb1/Projects/GitHub/CrossCosmos/grids/oops_again/oops_again1.json")
     # xc_grid = xc.grid.Grid.load("/Users/nlafarge/Repos/Personal/CrossCosmo/grids/oops_again/oops_again1.json")
     # xc_grid.corpus = xc.corpus.Corpus.from_lafarge()
     # xc_grid.build_tries()
-    
+
     # Create and run GUI window
     CrossCosmosGame(xc_grid)
     arcade.run()

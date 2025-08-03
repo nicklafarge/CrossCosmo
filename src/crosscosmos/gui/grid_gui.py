@@ -60,6 +60,7 @@ ALL_KEY_VALS = [getattr(arcade.key, k) for k in ALL_KEYS]
 ALL_MODS = [k for k in dir(arcade.key) if k.isupper() and "MOD_" in k]
 ALL_MODS_VALS = [getattr(arcade.key, k) for k in ALL_MODS]
 
+
 class CrossCosmosGame(arcade.Window):
     """Main game window for the crossword puzzle creator.
 
@@ -83,7 +84,7 @@ class CrossCosmosGame(arcade.Window):
         )
         self.layout_config: LayoutConfig = config
 
-        self.grid:Grid = grid_in
+        self.grid: Grid = grid_in
         self.frame_update_count: int = 0
         self.toggle_black_mode_active: bool = False
         self.grave_down: bool = False
@@ -91,8 +92,8 @@ class CrossCosmosGame(arcade.Window):
         # Size computations -------------------------------------------------------------------------------------------#
 
         # Set GUI layout parameters based on the inputted configuration
-        self.inner_margin = self.layout_config.grid.inner_margin # space between each grid cell
-        self.outer_margin = self.layout_config.grid.top_margin # space between grid and edge of GUI
+        self.inner_margin = self.layout_config.grid.inner_margin  # space between each grid cell
+        self.outer_margin = self.layout_config.grid.top_margin  # space between grid and edge of GUI
 
         # The sum of all inner margins
         larger_dim = max(self.grid.row_count, self.grid.col_count)
@@ -124,7 +125,7 @@ class CrossCosmosGame(arcade.Window):
         # GUI Objects -------------------------------------------------------------------------------------------------#
 
         # Create the text cursor
-        self.text_curser_blink_frequency = self.layout_config.advanced.text_cursor_blink_frequency
+        self.text_curser_blink_frequency = self.layout_config.grid.text_cursor_blink_frequency
         text_curser = arcade.SpriteSolidColor(width=2, height=int(self.square_size * 0.37), color=arcade.color.WHITE)
         self.text_curser: arcade.SpriteSolidColor = text_curser
         self.curser_visible: bool = True
@@ -814,8 +815,6 @@ class CrossCosmosGame(arcade.Window):
 
 
 def run_default(grid: Grid, override_config_path=None):
-
-
     config_path = xc.crosscosmos_root / "gui" / "gui_config.toml"
 
     if override_config_path:
