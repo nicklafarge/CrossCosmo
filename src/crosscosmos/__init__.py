@@ -32,7 +32,7 @@ from . import (
 
 from .query import Query, search
 from .wordlists.lafarge import LaFargeWord
-from .df_filter import DfFilter, refine
+from .refine import Refiner, refine
 
 from .gui import grid_gui
 

@@ -486,6 +486,57 @@ class Grid:
         grid.save_path = filepath
         return grid
 
+    def entries(self, with_db_counts: bool = True) -> pl.DataFrame:
+        df_data = {
+            "entry_id": [],
+            "entry": [],
+            "length": [],
+            "score": [],
+            "complete": [],
+            "start_x": [],
+            "start_y": [],
+            "direction": [],
+            "entry_num": [],
+        }
+        # if with_db_counts:
+        #     df_data["n_possible"] = []
+
+        all_starts = pl.concat([self.h_starts, self.v_starts])
+        for c in all_starts.rows(named=True):
+            for direction in [WordDirection.HORIZONTAL, WordDirection.VERTICAL]:
+                if direction == WordDirection.HORIZONTAL and not["is_h_start"]:
+                    continue
+                if direction == WordDirection.VERTICAL and not["is_v_start"]:
+                    continue
+
+                entry_dir_str = direction.char()
+                df_data["start_x"].append(c["x"])
+                df_data["start_y"].append(c["y"])
+                df_data["direction"].append(entry_dir_str)
+
+                entry_str = str(self.full_word_from_cell(c["x"], c["y"], direction))
+                df_data["entry"].append(entry_str)
+                df_data["length"].append(len(entry_str))
+                df_data["entry_id"].append(self.get_entry_id(c["x"], c["y"], direction))
+                df_data["entry_num"].append(c["answer_number"])
+
+                complete = not any(c in entry_str for c in constants.PLACEHOLDERS)
+                df_data["complete"].append(not any(c in entry_str for c in constants.PLACEHOLDERS))
+
+                # if with_db_counts:
+                #     n_possible = query.Query(default=False).match(entry_str).limit(100).count()
+                #     n_possible = db_query.match(entry_str).count()
+                #     df_data["n_possible"].append(n_possible)
+
+                score = None
+                if complete:
+                    word = query.Query(default=False).db.get(word=entry_str)
+                    if word:
+                        score = word.score
+                df_data["score"].append(score)
+
+        return pl.DataFrame(df_data)
+
     def is_cell_valid(self, i: int, j: int) -> bool:
         """Check if both crossings at a given cell are valid (>=3 letters)"""
         is_black = self.grid[i, j].status == CellStatus.BLACK
@@ -881,35 +932,22 @@ class Grid:
         except ValueError as e:
             raise ValueError(f"Invalid entry number in ID: {entry_id}") from e
 
-        word_dir = WordDirection.HORIZONTAL if direction_char == "A" else WordDirection.VERTICAL
+        if direction_char == "A":
+            word_dir = WordDirection.HORIZONTAL
+            df = self.h_starts
+        else:
+            word_dir = WordDirection.VERTICAL
+            df = self.v_starts
 
-        # Find the starting cell (todo - use grid's h_starts
-        for i in range(self.row_count):
-            for j in range(self.col_count):
-                cell = self[i, j]
-                if cell.answer_number != entry_num:
-                    continue
+        entry = df.filter(pl.col("answer_number") == entry_num).to_dicts()[0]
+        return self.full_word_from_cell(entry["x"], entry["y"], direction=word_dir)
 
-                if (word_dir == WordDirection.HORIZONTAL and cell.is_h_start) or (
-                    word_dir == WordDirection.VERTICAL and cell.is_v_start
-                ):
-                    return self.full_word_from_cell(i, j, word_dir)
-
-        return None
-        # Previous implementation
-        # -----------------------
-        # Left in place in case of errors with the auto-updated one
-        #
-        # word_dir = WordDirection.from_char(entry_id[-1])
-        # starts = self.h_starts if word_dir == WordDirection.HORIZONTAL else self.v_starts
-        #
-        # entry_num = int(entry_id[:-1])
-        # try:
-        #     start_cell_data = starts.row(by_predicate=(pl.col("answer_number") == entry_num), named=True)
-        # except pl.exceptions.NoRowsReturnedError as e:
-        #     raise ValueError(f"Invalid entry ID: {entry_id}") from e
-        # start_cell = Cell.from_dict(start_cell_data)
-        # return self.full_word_from_cell(*start_cell.matrix_index, direction=word_dir)
+    def get_entry_id(self, x: int, y: int, direction: WordDirection) -> str:
+        """ Gets the ID string (e.g., "6A") for a the entry at a given coordinate/diction combination
+        """
+        word = self.full_word_from_cell(x, y, direction=direction)
+        direction_char = "A" if direction == WordDirection.HORIZONTAL else "D"
+        return f"{word[0].answer_number}{direction_char}"
 
     def get_crossers(self, entry_id: str) -> list[CellList]:
         """Find all words crossing a given entry.

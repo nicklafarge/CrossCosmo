@@ -3,7 +3,7 @@ import logging
 import polars as pl
 import pygtrie
 
-from crosscosmos import constants, df_filter, query
+from crosscosmos import constants, query
 from crosscosmos.enums import ModelSource
 
 logger = logging.getLogger(__name__)
@@ -70,7 +70,7 @@ class Corpus:
 
     def max_length(self, word_len: int) -> "Corpus":
         """Filter to words less than or equal to a given length"""
-        self._df = df_filter.DfFilter(self._df, default=False).max_length(word_len).df()
+        self._df = refineRefiner(self._df, default=False).max_length(word_len).df()
         return self
 
     def to_subcorpus(self, min_len: int, max_len: int) -> "Corpus":
@@ -79,7 +79,7 @@ class Corpus:
         assert 3 <= max_len <= constants.NYT_SUNDAY_SIZE
         assert max_len >= min_len
 
-        sub_df = df_filter.DfFilter(self._df, default=False).length((min_len, max_len)).df()
+        sub_df = refineRefiner(self._df, default=False).length((min_len, max_len)).df()
         return Corpus(sub_df, self.model)
 
     def to_n_tries(self, n: int, padded: bool = False) -> list[pygtrie.CharTrie]:
@@ -104,7 +104,7 @@ class Corpus:
 
     def query(self, query_str: str) -> pl.DataFrame:
         """Queries the current word list"""
-        return df_filter.DfFilter(self._df, default=False).match(query_str).by_score()
+        return refineRefiner(self._df, default=False).match(query_str).by_score()
 
     def build_trie(self):
         """Updates the 'trie' variable with values from the current word list"""

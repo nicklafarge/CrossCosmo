@@ -1,4 +1,5 @@
 import logging
+
 from typing_extensions import override
 import string
 
@@ -7,10 +8,12 @@ import arcade.gui
 import arcade.color
 import numpy as np
 import pyperclip
+import polars as pl
 
 from crosscosmos.grid import Grid, Cell
 from crosscosmos.enums import CellStatus, WordDirection, MoveDirection, GridSymmetry
 from crosscosmos.gui.config import LayoutConfig
+from crosscosmos.query import Query
 
 
 logger = logging.getLogger(__name__)
@@ -415,33 +418,109 @@ class CrossCosmosGui(arcade.Window):
         right_container = arcade.gui.UIBoxLayout(vertical=False, size_hint=(self.right_side_ratio, 1))
 
         # Column 1 - subdivided into top/bottom
-        right_main_ratio = 0.9
-        right_main_container = arcade.gui.UIBoxLayout(vertical=True, size_hint=(right_main_ratio, 1))
+        right_main_container = arcade.gui.UIBoxLayout(vertical=True, size_hint=(self.cfg.grid.right_main_ratio, 1))
 
         # Column 1 top half
-        right_main_top = arcade.gui.UITextArea(
-            size_hint=(1, 0.5),
+        right_main_top = arcade.gui.UIBoxLayout(vertical=True, size_hint=(1, 0.6), space_between=5)
+
+        right_main_top_info = arcade.gui.UIBoxLayout(vertical=False, size_hint=(1, 0.1))
+
+        self.n_letters_label = arcade.gui.UILabel(
+            align="left",
+            font_size=self.cfg.info.font_size,
+            font_name=self.cfg.text.info_section_font_name,
+        )
+        right_word_info_uc = arcade.gui.UIAnchorLayout(size_hint=(0.25, 1))
+        right_word_info_uc.add(
+            self.n_letters_label,
+            anchor_x="left",
+            anchor_y="center_y"
+        )
+
+        self.current_entry_label = arcade.gui.UILabel(
+            align="left",
+            font_size=self.cfg.info.font_size,
+            font_name=self.cfg.text.word_list_font_name,
+        )
+        right_word_info_ul = arcade.gui.UIAnchorLayout(size_hint=(0.5, 1))
+        right_word_info_ul.add(
+            self.current_entry_label,
+            anchor_x="left",
+            anchor_y="center_y"
+        )
+        right_word_info_ul.with_padding(left=5)
+
+        self.n_possible_label = arcade.gui.UILabel(
+            align="left",
+            font_size=self.cfg.info.font_size,
+            font_name=self.cfg.text.info_section_font_name,
+        )
+        right_word_info_ur = arcade.gui.UIAnchorLayout(size_hint=(0.25, 1))
+        right_word_info_ur.add(
+            self.n_possible_label,
+            anchor_x="left",
+            anchor_y="center_y"
+        )
+
+        right_main_top_info.add(right_word_info_ul)
+        right_main_top_info.add(right_word_info_uc)
+        right_main_top_info.add(right_word_info_ur)
+
+
+        right_main_top_wordlist = arcade.gui.UIBoxLayout(vertical=False, size_hint=(1, 0.9))
+        right_main_top_wordlist.with_background(color=arcade.color.LIGHT_GRAY)
+        right_main_top_wordlist.with_padding(top=20, left=10)
+
+        self.matches_list_1 = arcade.gui.UITextArea(
+            size_hint=(0.33, 1),
             text_color=self.cfg.color.search_text,
             font_name=self.cfg.text.word_list_font_name,
-            font_size=14,
+            font_size=self.cfg.text.word_list_font_size,
             border_width=0,
             italic=False,
             bold=False,
             multiline=True,
         )
-        right_main_top.with_background(color=arcade.color.LIGHT_GRAY)
-        all_entries = [21 * x for x in string.ascii_uppercase]
-        long_entry = 21 * "X"
-        n_entries = "\n".join(all_entries[:15])
-        right_main_top.text = n_entries
+        self.matches_list_1.with_padding(left=4)
+        self.matches_list_2 = arcade.gui.UITextArea(
+            size_hint=(0.33, 1),
+            text_color=self.cfg.color.search_text,
+            font_name=self.cfg.text.word_list_font_name,
+            font_size=self.cfg.text.word_list_font_size,
+            border_width=0,
+            italic=False,
+            bold=False,
+            multiline=True,
+        )
+        self.matches_list_3 = arcade.gui.UITextArea(
+            size_hint=(0.33, 1),
+            text_color=self.cfg.color.search_text,
+            font_name=self.cfg.text.word_list_font_name,
+            font_size=self.cfg.text.word_list_font_size,
+            border_width=0,
+            italic=False,
+            bold=False,
+            multiline=True,
+        )
+        # all_entries = [21 * x for x in string.ascii_uppercase]
+        # n_entries = "\n".join(all_entries[:17])
+        # self.matches_list_1.text = n_entries
+        # self.matches_list_2.text = n_entries
+        # self.matches_list_3.text = n_entries
+        right_main_top_wordlist.add(self.matches_list_1)
+        right_main_top_wordlist.add(self.matches_list_2)
+        right_main_top_wordlist.add(self.matches_list_3)
+
+        right_main_top.add(right_main_top_info)
+        right_main_top.add(right_main_top_wordlist)
         # right_main_top.font
 
         # Column 1 bottom half
-        right_main_bottom = arcade.gui.UIWidget(size_hint=(1, 0.5))
+        right_main_bottom = arcade.gui.UIWidget(size_hint=(1, 0.4))
         right_main_bottom.with_background(color=arcade.color.GRAY)
 
         # Column 2 - full height
-        side_bar = arcade.gui.UIWidget(size_hint=(1 - right_main_ratio, 1))
+        side_bar = arcade.gui.UIWidget(size_hint=(1 - self.cfg.grid.right_main_ratio, 1))
         side_bar.with_background(color=arcade.color.DARK_BLUE_GRAY)
 
         # Build the layout
@@ -480,7 +559,6 @@ class CrossCosmosGui(arcade.Window):
 
         text_label = arcade.gui.UILabel(
             size_hint=(label_pct, 1),
-            # dpi=200,
             text=label_text,
             font_size=self.cfg.info.font_size,
             font_name=self.cfg.text.info_section_font_name,
@@ -771,7 +849,7 @@ class CrossCosmosGui(arcade.Window):
         )
         self.current_value_label.with_padding(top=4, left=11)
 
-        n_letters_kv, self.n_letters_label = self._create_label_value(
+        n_letters_kv, self.n_letters_label2 = self._create_label_value(
             label_text="Length:",
             label_pct=0.22,
             top_padding=2,
@@ -1036,19 +1114,55 @@ class CrossCosmosGui(arcade.Window):
         self.grid.set_grid(self.selected_x, self.selected_y, new_value)
 
     def _update_info_section(self):
-        active_entry = self.grid.full_word_from_cell(
+        logger.info("_update_info_section")
+        logger.info("00")
+        entries = self.grid.entries(with_db_counts=True)
+        logger.info("0")
+
+        entry_id = self.grid.get_entry_id(
             self.selected_grid_cell.x, self.selected_grid_cell.y, self.edit_direction
         )
+
+        entry_data = entries.filter(pl.col("entry_id") == entry_id).to_dicts()[0]
+
         self.grid_location_label.text = f"({self.selected_grid_cell.x},{self.selected_grid_cell.y})"
         # self.ans_combo_label.text = ""  TODO
-        self.current_value_label.text = f'"{active_entry}"'
-        self.n_letters_label.text = len(active_entry)
-        self.n_entries_label.text = len(self.grid.h_starts) + len(self.grid.v_starts)
+        self.current_value_label.text = entry_data['entry']
+        self.n_letters_label2.text = entry_data['length']
+        self.n_letters_label.text = f"Length: {entry_data['length']}"
 
+        logger.info("01")
         n_blocks = len([c for c in self.grid.grid.flatten() if c.status == CellStatus.BLACK])
         blocks_pct = 100 * (n_blocks / len(self.grid.grid.flatten()))
         self.n_blocks_label.text = f"{n_blocks} ({blocks_pct:.1f}%)"
 
+        self.current_entry_label.text = f"{entry_id}: {entry_data['entry']}"
+        # self.n_possible_label.text = f"N. Database: {entry_data['n_possible']}"
+
+
+        entry_query = Query(default=False).match(entry_data['entry'])
+        self.n_possible_label.text = f"N. Database: {entry_query.count()}"
+
+        n_per_col = self.cfg.info.n_matches_per_column
+        best_matches = entry_query.limit(n_per_col*3).order_by_score().df()
+
+        # match_words = [] if best_matches.is_empty() else best_matches["word"].to_list()
+        match_words = [] if best_matches.is_empty() else [
+            f"{e['word']} [{int(np.round(e['score']))}]" for e in best_matches.iter_rows(named=True)
+        ]
+
+
+        self.matches_list_1.text = "\n".join(match_words[:n_per_col])
+
+        if len(match_words) > n_per_col:
+            self.matches_list_2.text =  "\n".join(match_words[n_per_col:2*n_per_col])
+        else:
+            self.matches_list_2.text = ""
+
+        if len(match_words) > 2*n_per_col:
+            self.matches_list_3.text =  "\n".join(match_words[2*n_per_col:3*n_per_col])
+        else:
+            self.matches_list_3.text = ""
         # avg_length = self.grid.word_lengths()
         # pass
 

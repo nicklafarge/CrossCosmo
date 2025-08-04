@@ -9,7 +9,7 @@ from crosscosmos import constants, query
 logger = logging.getLogger(__name__)
 
 
-class DfFilter:
+class Refiner:
     def __init__(
         self,
         df: pl.DataFrame,
@@ -36,7 +36,7 @@ class DfFilter:
                 min_score=min_score, max_len=constants.NYT_REGULAR_SIZE if not sunday else constants.NYT_SUNDAY_SIZE
             )
 
-    def default(self, min_len: int = 3, max_len: int = constants.NYT_REGULAR_SIZE, min_score: float = 1) -> "DfFilter":
+    def default(self, min_len: int = 3, max_len: int = constants.NYT_REGULAR_SIZE, min_score: float = 1) -> "Refiner":
         """Sets default query parameters:
 
         Defaults:
@@ -62,13 +62,13 @@ class DfFilter:
         """Filter word list to remove words with symbols or numbers"""
         self._df = self._df.filter(pl.col("word").str.contains(rf"^{constants.ANY_LETTER_RE_PATTERN}+$"))
 
-    def fix_letter(self, letter_idx: int, value: str) -> "DfFilter":
+    def fix_letter(self, letter_idx: int, value: str) -> "Refiner":
         """Filter to words that contain a given value at the specified index"""
         assert len(value) == 1
         self._df = self._df.filter(pl.col("word").str.slice(letter_idx, 1) == value)
         return self
 
-    def length(self, word_len: int | tuple[int, int]) -> "DfFilter":
+    def length(self, word_len: int | tuple[int, int]) -> "Refiner":
         """Filter to only words of a specified length"""
         if isinstance(word_len, int):
             self._df = self._df.filter(pl.col("word").str.len_chars() == word_len)
@@ -79,27 +79,27 @@ class DfFilter:
             raise ValueError(f"Unexpected input: {word_len}")
         return self
 
-    def min_length(self, word_len: int) -> "DfFilter":
+    def min_length(self, word_len: int) -> "Refiner":
         """Filter to words greater than or equal to a given length"""
         self._df = self._df.filter(pl.col("word").str.len_chars() >= word_len)
         return self
 
-    def max_length(self, word_len: int) -> "DfFilter":
+    def max_length(self, word_len: int) -> "Refiner":
         """Filter to words less than or equal to a given length"""
         self._df = self._df.filter(pl.col("word").str.len_chars() <= word_len)
         return self
 
-    def min_score(self, min_score: float) -> "DfFilter":
+    def min_score(self, min_score: float) -> "Refiner":
         """Filter results to all be above a minimum score value"""
         self._df = self._df.filter(pl.col("score") >= min_score)
         return self
 
-    def max_score(self, max_score: float) -> "DfFilter":
+    def max_score(self, max_score: float) -> "Refiner":
         """Filter results to all be above a maximum score value"""
         self._df = self._df.filter(pl.col("score") <= max_score)
         return self
 
-    def match(self, match_str: str) -> "DfFilter":
+    def match(self, match_str: str) -> "Refiner":
         """
         Match words against a pattern string with wildcards:
         ? - any single letter
@@ -142,20 +142,20 @@ def refine(
     min_score: int | None = None,
     **kwargs,
 ) -> pl.DataFrame:
-    df_filter = DfFilter(df, **kwargs)
+    refiner =  Refiner(df, **kwargs)
     if match_term:
-        df_filter = df_filter.match(match_term)
+        refiner =  refiner.match(match_term)
     if length:
-        df_filter = df_filter.length(length)
+        refiner =  refiner.length(length)
     if min_score:
-        df_filter = df_filter.min_score(min_score)
+        refiner =  refiner.min_score(min_score)
     if max_length:
-        df_filter = df_filter.max_length(max_length)
+        refiner =  refiner.max_length(max_length)
     if min_length:
-        df_filter = df_filter.min_length(min_length)
+        refiner =  refiner.min_length(min_length)
 
     fixed_letters = fixed_letters or {}
     for k, v in fixed_letters.items():
-        df_filter = df_filter.fix_letter(k, v)
+        refiner =  refiner.fix_letter(k, v)
 
-    return df_filter.by_score()
+    return refiner.by_score()

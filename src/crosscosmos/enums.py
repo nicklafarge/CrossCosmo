@@ -61,6 +61,11 @@ class WordDirection(Enum):
     def flip(wd: "WordDirection") -> "WordDirection":
         return WordDirection(not wd.value)
 
+    def char(self):
+        if self.value == WordDirection.HORIZONTAL:
+            return "A"
+        else:
+            return "D"
 
 class GridSymmetry(Enum):
     NONE = 0

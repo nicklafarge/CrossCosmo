@@ -4,7 +4,7 @@ import polars as pl
 
 import crosscosmos as xc
 from crosscosmos import LaFargeWord
-from crosscosmos.df_filter import DfFilter
+from crosscosmos.refine import Refiner
 
 ################################################################################################
 # Setup
@@ -44,7 +44,7 @@ def process_it_df(_df):
 
 new_data = []
 df_orig = df_orig.with_columns(doubled=False)
-df_it = process_it_df(DfFilter(df_orig, default=False).max_length(sunday - 4).match("*IT*").by_score())
+df_it = process_it_df(Refiner(df_orig, default=False).max_length(sunday - 4).match("*IT*").by_score())
 for it_word in df_it.iter_rows(named=True):
     new_word = it_word
     new_word['word'] = new_word.pop("word_itit")
@@ -146,7 +146,7 @@ df23a = xc.search("WEI??")
 # df18_lent =  df18_lent.filter(pl.col("word_itit").str.contains("A"))
 #
 # # dfit = process_it_df(
-# #     DfFilter(df, default=False).max_length(sunday - 2).match("*IT*").by_score()
+# #     Refiner(df, default=False).max_length(sunday - 2).match("*IT*").by_score()
 # # )
 #
 # left_pairs = [(grid[7+i, 7].value, grid[7+i, 13].value) for i in range(7)]
@@ -201,10 +201,10 @@ df23a = xc.search("WEI??")
 # # )[cols]
 # #
 # #
-# # dfititit_21 = DfFilter(dfititit, default=False).length(sunday-6).df()
-# # dfitit_21 = DfFilter(dfitit, default=False).length(sunday-4).df()
-# # dfitit_17 = DfFilter(dfitit, default=False).length(17-4).df()
-# # dfit_21 = DfFilter(dfit, default=False).length(sunday-2).df()
+# # dfititit_21 = Refiner(dfititit, default=False).length(sunday-6).df()
+# # dfitit_21 = Refiner(dfitit, default=False).length(sunday-4).df()
+# # dfitit_17 = Refiner(dfitit, default=False).length(17-4).df()
+# # dfit_21 = Refiner(dfit, default=False).length(sunday-2).df()
 # #
 # #
 # # df3d = (dfitit

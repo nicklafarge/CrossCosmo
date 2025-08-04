@@ -4,7 +4,7 @@ import polars as pl
 
 import crosscosmos as xc
 from crosscosmos import LaFargeWord
-from crosscosmos.df_filter import DfFilter
+from crosscosmos.refine import Refiner
 
 ################################################################################################
 # Setup

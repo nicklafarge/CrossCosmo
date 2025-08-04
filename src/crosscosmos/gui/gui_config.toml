@@ -1,11 +1,11 @@
 [window]
-width=1500
+width=1700
 height=900
 title="CrossCosmos"
 
 [grid]
-left_margin=20
-right_margin=20
+left_margin=15
+right_margin=15
 top_margin=15
 bottom_margin=65
 inner_margin=2

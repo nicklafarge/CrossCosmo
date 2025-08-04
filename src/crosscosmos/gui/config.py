@@ -71,6 +71,8 @@ class GridConfig:
     bottom_margin: int = 60
     inner_margin: int = 2
 
+    right_main_ratio: float = 0.94
+
     updates_per_frame: int = 100
 
     cursor: CursorConfig = field(default_factory=CursorConfig)
@@ -99,6 +101,7 @@ class InfoConfig:
     font_size: float = 14
     background_color1: arcade.color.Color = (70, 70, 70)
     background_color2: arcade.color.Color = (50, 50, 50)
+    n_matches_per_column: int = 25
 
 
 @dataclass(frozen=True)
@@ -108,6 +111,7 @@ class TextConfig:
     grid_font_name = "Liberation Mono"
     word_list_font_name = "Liberation Mono"
     info_section_font_name = "Liberation Sans"
+    word_list_font_size: float = 10
 
 
 @dataclass(frozen=True)
