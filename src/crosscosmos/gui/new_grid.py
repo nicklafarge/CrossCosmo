@@ -14,6 +14,7 @@ from crosscosmos.grid import Grid, Cell
 from crosscosmos.enums import CellStatus, WordDirection, MoveDirection, GridSymmetry
 from crosscosmos.gui.config import LayoutConfig
 from crosscosmos.query import Query
+from crosscosmos.refine import Refiner
 
 
 logger = logging.getLogger(__name__)
@@ -23,6 +24,8 @@ logger.setLevel(logging.DEBUG)
 
 A_TO_Z = list(range(arcade.key.A, arcade.key.Z + 1))
 ONE_TO_TEN = list(range(arcade.key.KEY_0, arcade.key.KEY_9 + 1))
+
+VALID_LETTER_KEYS = A_TO_Z + [arcade.key.AT, arcade.key.POUND]
 
 # Key values
 ALL_KEYS = [k for k in dir(arcade.key) if k.isupper() and "MOD_" not in k]
@@ -35,10 +38,11 @@ ALL_MODS_VALS = [getattr(arcade.key, k) for k in ALL_MODS]
 class CrossCosmosGui(arcade.Window):
     """View demonstrating a layout with square on left and two columns on right."""
 
-    def __init__(self, grid: Grid, config: LayoutConfig):
+    def __init__(self, grid: Grid, config: LayoutConfig, df: pl.DataFrame):
         super().__init__(config.window.width, config.window.height, config.window.title, resizable=False)
         self.grid = grid
         self.cfg: LayoutConfig = config
+        self.df = df
 
         self.ui_manager: arcade.gui.UIManager = arcade.gui.UIManager()
         self.ui_manager.enable()
@@ -54,6 +58,13 @@ class CrossCosmosGui(arcade.Window):
         self._init_layout_parameters()
         self._init_data_structures()
         self._setup()
+
+        # Initialize entry cache
+        self.entry_cache_size = self.cfg.info.n_matches_per_column * 3
+        self.entry_cache: dict[str, pl.DataFrame] = {}
+        for entry_id in self.grid.entry_starts["entry_id"]:
+            logger.info(f"Initializing {entry_id}")
+            self._update_entry_cache(entry_id)
 
     @property
     def selected_grid_cell(self) -> Cell:
@@ -145,7 +156,7 @@ class CrossCosmosGui(arcade.Window):
 
         # Copy current word to clipboard
         if key == arcade.key.C and (modifiers & (arcade.key.MOD_CTRL | arcade.key.MOD_COMMAND)):
-            active_word_cells = self.grid.full_word_from_cell(
+            active_word_cells = self.grid.cell_to_entry(
                 self.selected_grid_cell.x, self.selected_grid_cell.y, self.edit_direction
             )
             copy_str = str(active_word_cells).replace("-", "?")
@@ -212,7 +223,8 @@ class CrossCosmosGui(arcade.Window):
         move_dir = None
 
         # Handle letter input
-        if key in A_TO_Z and self.selected_grid_cell.status == CellStatus.EMPTY:
+
+        if key in VALID_LETTER_KEYS and self.selected_grid_cell.status == CellStatus.EMPTY:
             new_val = chr(key).upper()
             move_dir = (
                 MoveDirection.FORWARD_HORIZONTAL
@@ -259,10 +271,10 @@ class CrossCosmosGui(arcade.Window):
                 self.selected_x = new_cell.x
                 self.selected_y = new_cell.y
             self.update_gui_colors()
-            # self._update_info_section()
 
         self.grid.save()
         self.sync_gui_grid()
+        self._update_info_section()
 
     @override
     def on_mouse_motion(self, x: int, y: int, dx: int, dy: int):
@@ -361,6 +373,7 @@ class CrossCosmosGui(arcade.Window):
             if cell.status != CellStatus.LOCKED:
                 self._toggle_black_square(gui_row, gui_col)
                 self._draw_answer_numbers()
+                self._update_info_section()
                 if self.cursor_visible and grid_row == self.selected_x and grid_col == self.selected_y:
                     hide_cursor = True
 
@@ -374,7 +387,7 @@ class CrossCosmosGui(arcade.Window):
         elif cell.status != CellStatus.BLACK:
             self.selected_x = grid_row
             self.selected_y = grid_col
-            # self._update_info_panel()
+            self._update_info_section()
 
         if self.selected_grid_cell.status == CellStatus.LOCKED:
             hide_cursor = True
@@ -420,8 +433,75 @@ class CrossCosmosGui(arcade.Window):
         # Column 1 - subdivided into top/bottom
         right_main_container = arcade.gui.UIBoxLayout(vertical=True, size_hint=(self.cfg.grid.right_main_ratio, 1))
 
-        # Column 1 top half
-        right_main_top = arcade.gui.UIBoxLayout(vertical=True, size_hint=(1, 0.6), space_between=5)
+        # Column 1 - top - Word list section
+        right_main_top = self._create_word_list_section(vertical=True, size_hint=(1, 0.6), space_between=5)
+        right_main_container.add(right_main_top)
+
+        # Column 1 - bottom - (??))
+        right_main_bottom = arcade.gui.UIWidget(size_hint=(1, 0.4))
+        right_main_bottom.with_background(color=arcade.color.GRAY)
+
+        # Sidebar
+        side_bar = arcade.gui.UIWidget(size_hint=(1 - self.cfg.grid.right_main_ratio, 1))
+        side_bar.with_background(color=arcade.color.DARK_BLUE_GRAY)
+
+
+        # Build the layout
+        right_main_container.add(right_main_bottom)
+
+        right_container.add(right_main_container)
+        right_container.add(side_bar)
+
+        ################################################################################
+        # Main GUI
+        ################################################################################
+        main_box.add(left_container)
+        main_box.add(right_container)
+
+        # Create an anchor to position and size the layout
+        anchor = arcade.gui.UIAnchorLayout(width=self.width, height=self.height, children=[main_box])
+
+        # Add to UI manager
+        self.ui_manager.add(anchor)
+
+        # Syncronize grid data with GUI
+        self.sync_gui_grid()
+
+    def _create_label_value(
+        self,
+        label_text: str,
+        label_pct: float = 0.4,
+        vertical_pct: float = 0.5,
+        top_padding: int = 2,
+        left_padding: int = 11,
+        default_value_text: str = "",
+    ):
+        kv_pair = arcade.gui.UIBoxLayout(vertical=False, size_hint=(1, vertical_pct))
+        kv_pair.with_padding(top=top_padding, left=left_padding)
+
+        text_label = arcade.gui.UILabel(
+            size_hint=(label_pct, 1),
+            text=label_text,
+            font_size=self.cfg.info.font_size,
+            font_name=self.cfg.text.info_section_font_name,
+        )
+        value_label = arcade.gui.UILabel(
+            size_hint=(1 - label_pct, 1),
+            text=default_value_text,
+            font_size=self.cfg.info.font_size,
+            font_name=self.cfg.text.info_section_font_name,
+        )
+
+        kv_pair.add(text_label)
+        kv_pair.add(value_label)
+
+        return kv_pair, value_label
+
+    def _create_word_list_section(self, **kwargs):
+        """ Creates the section of the GUI containing the list of valid words
+        """
+        right_main_top = arcade.gui.UIBoxLayout(**kwargs)
+
 
         right_main_top_info = arcade.gui.UIBoxLayout(vertical=False, size_hint=(1, 0.1))
 
@@ -513,67 +593,8 @@ class CrossCosmosGui(arcade.Window):
 
         right_main_top.add(right_main_top_info)
         right_main_top.add(right_main_top_wordlist)
-        # right_main_top.font
 
-        # Column 1 bottom half
-        right_main_bottom = arcade.gui.UIWidget(size_hint=(1, 0.4))
-        right_main_bottom.with_background(color=arcade.color.GRAY)
-
-        # Column 2 - full height
-        side_bar = arcade.gui.UIWidget(size_hint=(1 - self.cfg.grid.right_main_ratio, 1))
-        side_bar.with_background(color=arcade.color.DARK_BLUE_GRAY)
-
-        # Build the layout
-        right_main_container.add(right_main_top)
-        right_main_container.add(right_main_bottom)
-
-        right_container.add(right_main_container)
-        right_container.add(side_bar)
-
-        ################################################################################
-        # Main GUI
-        ################################################################################
-        main_box.add(left_container)
-        main_box.add(right_container)
-
-        # Create an anchor to position and size the layout
-        anchor = arcade.gui.UIAnchorLayout(width=self.width, height=self.height, children=[main_box])
-
-        # Add to UI manager
-        self.ui_manager.add(anchor)
-
-        # Syncronize grid data with GUI
-        self.sync_gui_grid()
-
-    def _create_label_value(
-        self,
-        label_text: str,
-        label_pct: float = 0.4,
-        vertical_pct: float = 0.5,
-        top_padding: int = 2,
-        left_padding: int = 11,
-        default_value_text: str = "",
-    ):
-        kv_pair = arcade.gui.UIBoxLayout(vertical=False, size_hint=(1, vertical_pct))
-        kv_pair.with_padding(top=top_padding, left=left_padding)
-
-        text_label = arcade.gui.UILabel(
-            size_hint=(label_pct, 1),
-            text=label_text,
-            font_size=self.cfg.info.font_size,
-            font_name=self.cfg.text.info_section_font_name,
-        )
-        value_label = arcade.gui.UILabel(
-            size_hint=(1 - label_pct, 1),
-            text=default_value_text,
-            font_size=self.cfg.info.font_size,
-            font_name=self.cfg.text.info_section_font_name,
-        )
-
-        kv_pair.add(text_label)
-        kv_pair.add(value_label)
-
-        return kv_pair, value_label
+        return right_main_top
 
     def gui_row_col_to_grid_row_col(self, gui_row: int, gui_col: int) -> tuple[int, int]:
         """
@@ -662,7 +683,6 @@ class CrossCosmosGui(arcade.Window):
                         cell_letter.text = ""
 
         self.update_gui_colors()
-        self._update_info_section()
 
     def _init_layout_parameters(self):
         """
@@ -977,7 +997,7 @@ class CrossCosmosGui(arcade.Window):
         self._reset_colors()
 
         # Highlight active word
-        active_word_cells = self.grid.full_word_from_cell(
+        active_word_cells = self.grid.cell_to_entry(
             self.selected_grid_cell.x, self.selected_grid_cell.y, self.edit_direction
         )
 
@@ -1112,6 +1132,31 @@ class CrossCosmosGui(arcade.Window):
         """
         logger.info(f"Updating cell {self.selected_x}, {self.selected_y} to {new_value}")
         self.grid.set_grid(self.selected_x, self.selected_y, new_value)
+        for direction in [WordDirection.HORIZONTAL, WordDirection.VERTICAL]:
+            entry_id = self.grid.get_entry_id(self.selected_x, self.selected_y, direction)
+            self._update_entry_cache(entry_id)
+
+    def _update_entry_cache(self, entry_id: str):
+        """ Update the entry cache for a given entry ID"""
+        entry = self.grid.get_entry(entry_id)
+        updated_matches = Refiner(self.df).match(str(entry)).df()
+        self.entry_cache[entry_id] = updated_matches[:self.entry_cache_size]
+
+    def _valid_entries(self, entry_id: str):
+        cached_entries = self.entry_cache[entry_id]
+        if cached_entries.is_empty():
+            return cached_entries
+
+        entry_dir = WordDirection.from_entry_id(entry_id)
+        crosser_dir = WordDirection.flip(entry_dir)
+
+        for crosser in self.grid.get_crossers(entry_id):
+            crosser_id = self.grid.get_entry_id(crosser[0].x, crosser[0].y, crosser_dir)
+            intx_cell, entry_idx, crosser_idx  = self.grid.find_intersection(entry_id, crosser_id)
+            letter_set = self.entry_cache[crosser_id]['word'].str.slice(crosser_idx, 1).unique()
+            cached_entries = cached_entries.filter(pl.col("word").str.slice(entry_idx, 1).is_in(letter_set.to_list()))
+
+        return cached_entries
 
     def _update_info_section(self):
         logger.info("_update_info_section")
@@ -1122,6 +1167,16 @@ class CrossCosmosGui(arcade.Window):
         entry_id = self.grid.get_entry_id(
             self.selected_grid_cell.x, self.selected_grid_cell.y, self.edit_direction
         )
+        if not entry_id:
+            self.grid_location_label.text = ""
+            self.current_value_label.text = ""
+            self.n_letters_label2.text = ""
+            self.n_letters_label.text = ""
+            self.n_blocks_label.text = ""
+            self.current_entry_label.text = ""
+            self.n_possible_label.text = ""
+            self.matches_list_1.text = ""
+            return
 
         entry_data = entries.filter(pl.col("entry_id") == entry_id).to_dicts()[0]
 
@@ -1140,17 +1195,20 @@ class CrossCosmosGui(arcade.Window):
         # self.n_possible_label.text = f"N. Database: {entry_data['n_possible']}"
 
 
-        entry_query = Query(default=False).match(entry_data['entry'])
-        self.n_possible_label.text = f"N. Database: {entry_query.count()}"
+        # possible_entries = self.entry_cache[entry_id]
+        possible_entries = self._valid_entries(entry_id)
+        # entry_query = Refiner(self.df).match(entry_data['entry'])
+        # entry_query = Query(default=False).match(entry_data['entry'])
+        self.n_possible_label.text = f"N. Database: {len(possible_entries)}"
 
-        n_per_col = self.cfg.info.n_matches_per_column
-        best_matches = entry_query.limit(n_per_col*3).order_by_score().df()
+        # best_matches = entry_query.df()[:n_per_col*3]
 
         # match_words = [] if best_matches.is_empty() else best_matches["word"].to_list()
-        match_words = [] if best_matches.is_empty() else [
-            f"{e['word']} [{int(np.round(e['score']))}]" for e in best_matches.iter_rows(named=True)
+        match_words = [] if possible_entries.is_empty() else [
+            f"{e['word']} [{int(np.round(e['score']))}]" for e in possible_entries.iter_rows(named=True)
         ]
 
+        n_per_col = self.cfg.info.n_matches_per_column
 
         self.matches_list_1.text = "\n".join(match_words[:n_per_col])
 
@@ -1171,7 +1229,12 @@ if __name__ == "__main__":
     """Main function to run the application."""
     # grid = Grid((21, 21))
     # "oops_again1.json"
+
+    df = Query(default=True, q=1, limit=None).order_by_score().df()
+    # df = Query(default=True, q=2, limit=500).order_by_score().df()
+
     grid_path = "/Users/lafarnb1/Projects/GitHub/CrossCosmos/grids/oops_again/oops_again1.json"
+    # grid_path = "/Users/lafarnb1/Projects/GitHub/CrossCosmos/scratch/past_nyt_test.json"
     # grid_path = "/Users/lafarnb1/Projects/GitHub/CrossCosmos/scratch/matiss/monster_floopy_kleeky.json"
     # grid_path = "/Users/lafarnb1/Projects/GitHub/CrossCosmos/scratch/matiss/lantern_monster.json"
     grid = Grid.load(grid_path)
@@ -1180,8 +1243,11 @@ if __name__ == "__main__":
     # config = LayoutConfig.from_toml(config_path)
     config = LayoutConfig()
 
-    # window = arcade.Window(config.window.width, config.window.height, config.window.title, resizable=False)
-    layout_view = CrossCosmosGui(grid, config)
-    # layout_view._setup()
-    # window.show_view(layout_view)
+    layout_view = CrossCosmosGui(grid, config, df=df)
     arcade.run()
+
+    # sg = grid.make_subgrid_from_words(word_ids=["5D", "6D", "7D", "8D", "9D", "28A"])
+
+    # window = arcade.Window(config.window.width, config.window.height, config.window.title, resizable=False)
+    # layout_view = CrossCosmosGui(sg, config, df=df)
+    # arcade.run()

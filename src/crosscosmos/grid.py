@@ -52,6 +52,9 @@ class Cell:
     shuffle : bool, optional
         Whether to shuffle the letter queue (default: True)
 
+    TODO:
+         -Remove solve attributes
+
     Attributes
     ----------
     queue : list[str]
@@ -89,7 +92,7 @@ class Cell:
         self.is_v_end: bool = False
         self.answer_number: int | None = None
 
-        # Solving state
+        # Solving state (TODO-remove)
         self.removed_words: list[tuple[str, WordDirection]] = []
         self.excluded: list[str] = []
 
@@ -233,7 +236,7 @@ class Cell:
             gui_coordinates=json_cell["gui_coordinates"],
             **kwargs,
         )
-        cell.matrix_index = json_cell["matrix_index"]
+        cell.matrix_index = tuple(json_cell["matrix_index"])
         cell.gui_row = json_cell["gui_row"]
         cell.gui_col = json_cell["gui_col"]
         cell.is_h_start = json_cell["is_h_start"]
@@ -253,25 +256,25 @@ class Cell:
         io_utils.save_json_dict(filename, self.to_json())
 
 
-class CellList:
+class Entry:
     """Ordered collection of cells forming a word or partial word.
 
     Provides convenient access to cells that form a continuous
     sequence in the grid, typically representing a word slot.
 
-    Parameters
-    ----------
-    cells : list[Cell]
-        Ordered list of cells
-
     Attributes
     ----------
+    cells: list[Cell]
+        List of cells that make up this entry
+    partial_entry:
+        If true, this is only a partial entry and not the complete word
     direction : WordDirection
         Direction of the cell sequence (auto-detected)
     """
 
-    def __init__(self, cells: list[Cell]):
-        self.cells = cells
+    def __init__(self, cells: list[Cell], partial_entry: bool = False):
+        self.cells: list[Cell] = cells
+        self.partial_entry = partial_entry
 
         # Auto-detect direction based on cell positions
         if not self.cells or len(self.cells) < 2:
@@ -281,14 +284,30 @@ class CellList:
         else:
             self.direction = WordDirection.VERTICAL
 
-    def __getitem__(self, item):
+    @property
+    def direction_char(self):
+        """Direction charaction: "A" (accross) or "D" (down) """
+        return self.direction.char()
+
+    @property
+    def entry_id(self):
+        """Entry identifier (e.g., "1A" or "10D") """
+        return f"{self.cells[0].answer_number}{self.direction_char}"
+
+    def __getitem__(self, item) -> Cell:
+        """ Returns the cell at a given index. """
         return self.cells[item]
 
     def __setitem__(self, key, value):
+        """ Sets the value of the cell at a given index. """
         self.cells[key] = value
 
     def __len__(self):
+        """Length of the entry (number of cells / characters in the entry). """
         return len(self.cells)
+
+    def __iter__(self):
+        return iter(self.cells)
 
     def __str__(self) -> str:
         """String representation showing letters/placeholders."""
@@ -296,10 +315,8 @@ class CellList:
 
     def __repr__(self) -> str:
         origin = self.cells[0]
-        return f'CellList "{self}": {{x={origin.x}, y={origin.y}, dir={self.direction}}}'
+        return f'Entry "{self}": {{x={origin.x}, y={origin.y}, dir={self.direction}}}'
 
-    def __iter__(self):
-        return iter(self.cells)
 
     @property
     def x_range(self) -> tuple[int, int]:
@@ -315,11 +332,13 @@ class CellList:
 
     def has_empty_cell(self) -> bool:
         """Check if any cells are empty"""
-        return "-" in str(self)
+        return any(x for x in str(self) if x in constants.PLACEHOLDERS)
 
     def truncate_end(self) -> str:
-        cell_str = str(self)
-        return cell_str.rstrip("".join(constants.PLACEHOLDERS))
+        """ Returns a string of this entry with any placeholder characters from the end removed
+        TODO- why is this here?
+        """
+        return str(self).rstrip("".join(constants.PLACEHOLDERS))
 
     def to_first_placeholder(self) -> str:
         cell_str = str(self)
@@ -413,28 +432,31 @@ class Grid:
     def __repr__(self) -> str:
         return f"Grid(dim=({self.row_count}, {self.col_count}))"
 
-    def __getitem__(self, key: tuple[int, int]) -> Cell:
+    def __getitem__(self, key: tuple[int, int] | str) -> Cell | Entry | None:
         """Get cell at coordinates.
 
         Parameters
         ----------
-        key : tuple[int, int]
-            Coordinates as (row, column)
+        key : tuple[int, int] or str
+            Coordinates as (row, column) or an entry id ("19D", etc)
 
         Returns
         -------
-        Cell
-            Cell at given position
+        Cell or Entry
+            Cell at given position or Entry associated with the given entry ID
 
         Raises
         ------
         IndexError
             If coordinates are out of bounds
         """
-        x, y = key
-        if x < 0 or x >= self.row_count or y < 0 or y >= self.col_count:
-            raise IndexError(f"Index {key} outside grid bounds: ({self.row_count}, {self.col_count})")
-        return self.grid[x, y]
+        if isinstance(key, tuple):
+            x, y = key
+            if x < 0 or x >= self.row_count or y < 0 or y >= self.col_count:
+                raise IndexError(f"Index {key} outside grid bounds: ({self.row_count}, {self.col_count})")
+            return self.grid[x, y]
+        elif isinstance(key, str):
+            return self.get_entry(key)
 
     def __setitem__(self, key: tuple[int, int], value: str | None) -> None:
         """Set cell value at coordinates.
@@ -454,14 +476,31 @@ class Grid:
         return all(self.is_cell_valid(c.x, c.y) for c in self.grid.flatten())
 
     @property
+    def entry_starts(self) -> pl.DataFrame:
+        """Get dataframe of horizontal word starts."""
+        return pl.concat([self.h_starts, self.v_starts])
+
+    @property
     def h_starts(self) -> pl.DataFrame:
         """Get dataframe of horizontal word starts."""
-        return self.to_dataframe().filter(pl.col("is_h_start"))
+        df = self.to_dataframe().filter(pl.col("is_h_start"))
+        df = df.with_columns(
+            pl.col("matrix_index")
+            .map_elements(lambda row: self.get_entry_id(row[0], row[1], WordDirection.HORIZONTAL), return_dtype=pl.String)
+            .alias("entry_id")
+        )
+        return df
 
     @property
     def v_starts(self) -> pl.DataFrame:
         """Get dataframe of vertical word starts."""
-        return self.to_dataframe().filter(pl.col("is_v_start"))
+        df = self.to_dataframe().filter(pl.col("is_v_start"))
+        df = df.with_columns(
+            pl.col("matrix_index")
+            .map_elements(lambda row: self.get_entry_id(row[0], row[1], WordDirection.VERTICAL), return_dtype=pl.String)
+            .alias("entry_id")
+        )
+        return df
 
     @classmethod
     def from_dict(cls, json_grid: dict, **kwargs) -> "Grid":
@@ -495,45 +534,52 @@ class Grid:
             "complete": [],
             "start_x": [],
             "start_y": [],
+            "end_x": [],
+            "end_y": [],
             "direction": [],
             "entry_num": [],
         }
-        # if with_db_counts:
-        #     df_data["n_possible"] = []
 
-        all_starts = pl.concat([self.h_starts, self.v_starts])
-        for c in all_starts.rows(named=True):
-            for direction in [WordDirection.HORIZONTAL, WordDirection.VERTICAL]:
-                if direction == WordDirection.HORIZONTAL and not["is_h_start"]:
-                    continue
-                if direction == WordDirection.VERTICAL and not["is_v_start"]:
-                    continue
+        def process_entries(starts_df: pl.DataFrame, direction: WordDirection):
+            """Process all entries in a given direction."""
+            # Use correct direction character for entries
+            dir_char = "H" if direction == WordDirection.HORIZONTAL else "V"
 
-                entry_dir_str = direction.char()
+            for c in starts_df.rows(named=True):
+                entry = self.cell_to_entry(c["x"], c["y"], direction)
+                entry_str = str(entry)
+
+                # Calculate end coordinates based on direction
+                if direction == WordDirection.HORIZONTAL:
+                    end_x, end_y = c["x"], c["y"] + len(entry) - 1
+                else:  # VERTICAL
+                    end_x, end_y = c["x"] + len(entry) - 1, c["y"]
+
+                # Add entry data
                 df_data["start_x"].append(c["x"])
                 df_data["start_y"].append(c["y"])
-                df_data["direction"].append(entry_dir_str)
-
-                entry_str = str(self.full_word_from_cell(c["x"], c["y"], direction))
-                df_data["entry"].append(entry_str)
-                df_data["length"].append(len(entry_str))
-                df_data["entry_id"].append(self.get_entry_id(c["x"], c["y"], direction))
+                df_data["direction"].append(dir_char)
+                df_data["end_x"].append(end_x)
+                df_data["end_y"].append(end_y)
+                df_data["entry"].append(str(entry))
+                df_data["length"].append(len(entry))
+                df_data["entry_id"].append(entry.entry_id)
                 df_data["entry_num"].append(c["answer_number"])
 
-                complete = not any(c in entry_str for c in constants.PLACEHOLDERS)
-                df_data["complete"].append(not any(c in entry_str for c in constants.PLACEHOLDERS))
-
-                # if with_db_counts:
-                #     n_possible = query.Query(default=False).match(entry_str).limit(100).count()
-                #     n_possible = db_query.match(entry_str).count()
-                #     df_data["n_possible"].append(n_possible)
+                # Check completion and get score
+                complete = not any(ch in entry_str for ch in constants.PLACEHOLDERS)
+                df_data["complete"].append(complete)
 
                 score = None
-                if complete:
-                    word = query.Query(default=False).db.get(word=entry_str)
-                    if word:
-                        score = word.score
+                # if complete:
+                #     word = query.Query(default=False).db.get(word=entry_str)
+                #     if word:
+                #         score = word.score
                 df_data["score"].append(score)
+
+        # Process both directions
+        process_entries(self.h_starts, WordDirection.HORIZONTAL)
+        process_entries(self.v_starts, WordDirection.VERTICAL)
 
         return pl.DataFrame(df_data)
 
@@ -555,6 +601,10 @@ class Grid:
 
     def build_tries(self, n: int | None = None) -> None:
         """Build tries from corpus for each word length.
+
+        TODO
+        ----
+        Remove from this class
 
         Parameters
         ----------
@@ -651,7 +701,7 @@ class Grid:
         if symmetry == GridSymmetry.ROTATIONAL:
             center_x, center_y = self.corner2center(x, y)
             return self.center2corner(-center_x, -center_y)
-        # Add other symmetry types as needed
+        # TODO- Add other symmetry types as needed (reflectional)
         return x, y
 
     def update_length_and_head_data(self) -> None:
@@ -694,7 +744,7 @@ class Grid:
             if cell.status == CellStatus.SET:
                 cell.reset_cell()
 
-    def lock_entry(self, i: int, j: int) -> None:
+    def lock_cell(self, i: int, j: int) -> None:
         """Lock a cell to prevent changes during solving.
 
         Parameters
@@ -710,7 +760,7 @@ class Grid:
         else:
             logger.error(f"Cannot lock entry [{i},{j}]: not currently set")
 
-    def unlock_entry(self, i: int, j: int) -> None:
+    def unlock_cell(self, i: int, j: int) -> None:
         """Unlock a previously locked cell.
 
         Parameters
@@ -793,9 +843,9 @@ class Grid:
             case _:
                 raise ValueError("Invalid word direction")
 
-    def full_word_from_cell(
+    def cell_to_entry(
         self, x: int, y: int, direction: WordDirection, terminate_on_empty: bool = False
-    ) -> CellList:
+    ) -> Entry | None:
         """Get all cells forming a word from a given position.
 
         Parameters
@@ -811,12 +861,12 @@ class Grid:
 
         Returns
         -------
-        CellList
+        Entry
             Cells forming the complete word
         """
         start_cell = self[x, y]
         if start_cell.status == CellStatus.BLACK:
-            return CellList([])
+            return None
 
         # Determine traversal directions
         if direction == WordDirection.VERTICAL:
@@ -826,17 +876,19 @@ class Grid:
             pre_dir = GridDirection.LEFT
             post_dir = GridDirection.RIGHT
 
-        # Collect cells before and after start position
+            # Collect cells before and after start position
         pre_cells = self._traverse_cells(x, y, pre_dir, terminate_on_empty)
         post_cells = self._traverse_cells(x, y, post_dir, terminate_on_empty)
 
         # Combine in correct order
-        cells = [*list(reversed(pre_cells[1:])), start_cell, *post_cells[1:]]
-        return CellList(cells)
+        entry_cells = [*list(reversed(pre_cells[1:])), start_cell, *post_cells[1:]]
+
+        # Create entry ID
+        return Entry(entry_cells, partial_entry=False)
 
     def word_len(self, i: int, j: int, direction: WordDirection) -> int:
         """Get length of word at position (i, j)."""
-        return len(self.full_word_from_cell(i, j, direction))
+        return len(self.cell_to_entry(i, j, direction))
 
     def get_next_cell(self, x: int, y: int, move_dir: MoveDirection) -> Cell:
         """Get next cell in solving order.
@@ -902,7 +954,7 @@ class Grid:
 
         return self[i, j]
 
-    def get_word(self, entry_id: str) -> CellList | None:
+    def get_entry(self, entry_id: str) -> Entry | None:
         """Get cells forming a numbered word entry.
 
         Parameters
@@ -912,7 +964,7 @@ class Grid:
 
         Returns
         -------
-        CellList | None
+        Entry | None
             Cells forming the word, or None if not found
 
         Raises
@@ -920,36 +972,33 @@ class Grid:
         ValueError
             If entry_id format is invalid
         """
+
         if not entry_id or len(entry_id) < 2:
             raise ValueError(f"Invalid entry ID format: {entry_id}")
-
-        direction_char = entry_id[-1].upper()
-        if direction_char not in ("A", "D"):
-            raise ValueError(f"Invalid direction in entry ID: {entry_id}")
 
         try:
             entry_num = int(entry_id[:-1])
         except ValueError as e:
             raise ValueError(f"Invalid entry number in ID: {entry_id}") from e
 
-        if direction_char == "A":
-            word_dir = WordDirection.HORIZONTAL
-            df = self.h_starts
-        else:
-            word_dir = WordDirection.VERTICAL
-            df = self.v_starts
+        word_dir = WordDirection.from_char(entry_id[-1].upper())
 
+        # Find matching entry in dataframe
+        df = self.h_starts if word_dir == WordDirection.HORIZONTAL else self.v_starts
         entry = df.filter(pl.col("answer_number") == entry_num).to_dicts()[0]
-        return self.full_word_from_cell(entry["x"], entry["y"], direction=word_dir)
 
-    def get_entry_id(self, x: int, y: int, direction: WordDirection) -> str:
+        # Return the entry cells
+        return self.cell_to_entry(entry["x"], entry["y"], direction=word_dir)
+
+    def get_entry_id(self, x: int, y: int, direction: WordDirection) -> str | None:
         """ Gets the ID string (e.g., "6A") for a the entry at a given coordinate/diction combination
         """
-        word = self.full_word_from_cell(x, y, direction=direction)
-        direction_char = "A" if direction == WordDirection.HORIZONTAL else "D"
-        return f"{word[0].answer_number}{direction_char}"
+        entry = self.cell_to_entry(x, y, direction=direction)
+        if not entry:
+            return None
+        return entry.entry_id
 
-    def get_crossers(self, entry_id: str) -> list[CellList]:
+    def get_crossers(self, entry_id: str) -> list[Entry]:
         """Find all words crossing a given entry.
 
         Parameters
@@ -959,19 +1008,19 @@ class Grid:
 
         Returns
         -------
-        list[CellList]
+        list[Entry]
             All crossing words
         """
-        word = self.get_word(entry_id)
-        if not word:
+        entry = self.get_entry(entry_id)
+        if not entry:
             return []
 
-        cross_dir = WordDirection.flip(word.direction)
-        return [self.full_word_from_cell(cell.x, cell.y, cross_dir) for cell in word]
+        cross_dir = WordDirection.flip(entry.direction)
+        return [self.cell_to_entry(cell.x, cell.y, cross_dir) for cell in entry]
 
     def count_possible(
         self,
-        query_cells: CellList | list[tuple[Cell, WordDirection]],
+        query_cells: Entry | list[tuple[Cell, WordDirection]],
         grid_status: GridStatus = GridStatus.INCOMPLETE,
         query_level: int = 2,
         corpus: Corpus | None = None,
@@ -987,7 +1036,7 @@ class Grid:
 
         Parameters
         ----------
-        query_cells : CellList | list[tuple[Cell, WordDirection]]
+        query_cells : Entry | list[tuple[Cell, WordDirection]]
             Cells to analyze
         grid_status : GridStatus, optional
             Current grid status
@@ -1020,7 +1069,7 @@ class Grid:
 
             # Get perpendicular word
             query_direction = WordDirection.flip(original_direction)
-            query_cell_list = self.full_word_from_cell(cell.x, cell.y, query_direction, terminate_on_empty=False)
+            query_cell_list = self.cell_to_entry(cell.x, cell.y, query_direction, terminate_on_empty=False)
 
             if not query_cell_list.has_empty_cell():
                 continue
@@ -1035,7 +1084,7 @@ class Grid:
             # Prepare next level cells
             next_level_cells = []
             for c in query_cell_list:
-                word_cells = self.full_word_from_cell(c.x, c.y, original_direction, terminate_on_empty=False)
+                word_cells = self.cell_to_entry(c.x, c.y, original_direction, terminate_on_empty=False)
                 next_level_cells.extend(
                     [(nc, original_direction) for nc in word_cells if nc.is_start(original_direction)]
                 )
@@ -1285,7 +1334,7 @@ class Grid:
         """
         exclude = exclude or {}
 
-        current_entry = self.get_word(entry_id)
+        current_entry = self.get_entry(entry_id)
         word_len = len(current_entry)
 
         crossers = self.get_crossers(entry_id)
@@ -1350,7 +1399,7 @@ class Grid:
             Newly created grid containing only the requested words (all others black)
         """
 
-        cell_lists = [self.get_word(w) for w in word_ids]
+        cell_lists = [self.get_entry(w) for w in word_ids]
 
         # Get the size of the new grid based on the total span of the inputted cell lists
         xmin = min([w.x_range[0] for w in cell_lists])
@@ -1502,6 +1551,31 @@ class Grid:
 
         return cells
 
+    def find_intersection(self, entry_id1: str, entry_id2: str) -> tuple[Cell, int, int] | None:
+        """
+
+        """
+        word1 = self.get_entry(entry_id1)
+        word2 = self.get_entry(entry_id2)
+
+
+        # Create a lookup map for the first word's cells for efficient searching.
+        # The key is the (x, y) coordinate tuple, and the value is the cell's index in word1.
+        word1_map = {tuple(cell.matrix_index): i for i, cell in enumerate(word1.cells)}
+
+        # Iterate through the second word to find a cell with a matching coordinate
+        for i2, cell2 in enumerate(word2.cells):
+            # Check if the cell's coordinate exists as a key in the first word's map
+            if cell2.matrix_index in word1_map:
+                # An intersection is found. Get the index from the first word.
+                i1 = word1_map[cell2.matrix_index]
+
+                # The intersecting cell is cell2 (which is the same as word1.cells[i1])
+                return cell2, i1, i2
+
+        # If the loop completes without finding a match, no intersection exists.
+        return None
+
 
 if __name__ == "__main__":
     lc = Corpus.from_lafarge(q=2)
@@ -1517,7 +1591,7 @@ if __name__ == "__main__":
     g.to_console()
 
     g.print_lens(0)
-    cl = g.full_word_from_cell(4, 0, WordDirection.HORIZONTAL)
+    cl = g.cell_to_entry(4, 0, WordDirection.HORIZONTAL)
 
     # g.print_lens(1)
 

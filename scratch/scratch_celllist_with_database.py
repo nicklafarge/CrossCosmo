@@ -19,6 +19,6 @@ grid_path = Path("test_auto.json").resolve()
 # grid = xc.grid.Grid.load(grid_path, corpus=xc.corpus.Corpus.from_lafarge())
 grid = xc.grid.Grid.load(grid_path)
 
-cl = grid.get_word("1A")
+cl = grid.get_entry("1A")
 
 df = xc.Query(default=False, alpha_only=False).limit(10).match("T???").order_by_score().df()

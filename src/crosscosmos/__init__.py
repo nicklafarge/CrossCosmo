@@ -29,7 +29,7 @@ from . import (
     standards,
 )
 
-
+from .grid import Grid, Cell, Entry
 from .query import Query, search
 from .wordlists.lafarge import LaFargeWord
 from .refine import Refiner, refine

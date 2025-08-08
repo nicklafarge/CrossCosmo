@@ -9,7 +9,7 @@ import pygtrie
 import crosscosmos as xc
 from crosscosmos import constants, GridStatus
 from crosscosmos.enums import LetterSequenceStatus, LetterStatus
-from crosscosmos.grid import CellList, CellStatus, MoveDirection, WordDirection
+from crosscosmos.grid import Entry, CellStatus, MoveDirection, WordDirection
 
 logger = logging.getLogger(__name__)
 
@@ -46,7 +46,7 @@ class DepthFirstSolver:
         int
             Trie node status (HAS_VALUE, HAS_SUBTRIE, or doesn't exist)
         """
-        cell_sequence = grid.full_word_from_cell(cell.x, cell.y, direction)
+        cell_sequence = grid.cell_to_entry(cell.x, cell.y, direction)
 
         # If they're all locked, call it a valid word
         if all(c.status == CellStatus.LOCKED for c in cell_sequence):
@@ -127,7 +127,7 @@ class DepthFirstSolver:
             return x, y - 1, xc.GridStatus.INCOMPLETE
 
     def validate_grid_cell_list(
-        self, grid_trie: pygtrie.Trie, cell_list: CellList, is_end_cell: bool
+        self, grid_trie: pygtrie.Trie, cell_list: Entry, is_end_cell: bool
     ) -> LetterSequenceStatus:
         """Validate a letter sequence against the trie.
 
@@ -140,7 +140,7 @@ class DepthFirstSolver:
         ----------
         grid_trie : pygtrie.Trie
             Trie containing valid words
-        cell_list : CellList
+        cell_list : Entry
             Cell list sequence to validate
         is_end_cell : bool
             Whether this is the final letter in a word
@@ -243,11 +243,11 @@ class DepthFirstSolver:
             grid[cell.x, cell.y].status = CellStatus.SET
 
             # Validate horizontal direction
-            h_sequence = grid.full_word_from_cell(cell.x, cell.y, WordDirection.HORIZONTAL)
+            h_sequence = grid.cell_to_entry(cell.x, cell.y, WordDirection.HORIZONTAL)
             h_status = self.validate_grid_cell_list(tries[cell.hlen], h_sequence, cell.is_h_end)
 
             # Validate vertical direction
-            v_sequence = grid.full_word_from_cell(cell.x, cell.y, WordDirection.VERTICAL)
+            v_sequence = grid.cell_to_entry(cell.x, cell.y, WordDirection.VERTICAL)
             v_status = self.validate_grid_cell_list(tries[cell.vlen], v_sequence, cell.is_v_end)
 
             # Accept letter if valid in both directions

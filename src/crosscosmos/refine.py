@@ -114,10 +114,13 @@ class Refiner:
         self._df = self._df.filter(pl.col("word").str.contains(re_pattern))
         return self
 
-    def sort_by_score(self):
+    def sort_by_score(self) -> "Refiner":
         """Sorts the data frame by the score value"""
         self._df = self._df.sort(by="score", descending=True)
         return self
+
+    def count(self) -> int:
+        return len(self._df)
 
     def apply(self) -> pl.DataFrame:
         return self._df

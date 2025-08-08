@@ -49,13 +49,17 @@ class WordDirection(Enum):
     VERTICAL = 1
 
     @staticmethod
-    def from_char(str_id):
+    def from_char(str_id: str):
         if str_id.upper() in ["A", "H"]:
             return WordDirection.HORIZONTAL
         elif str_id.upper() in ["D", "V"]:
             return WordDirection.VERTICAL
         else:
             raise ValueError("Expected A or D")
+
+    @staticmethod
+    def from_entry_id(entry_id: str):
+        return WordDirection.from_char(entry_id[-1])
 
     @staticmethod
     def flip(wd: "WordDirection") -> "WordDirection":

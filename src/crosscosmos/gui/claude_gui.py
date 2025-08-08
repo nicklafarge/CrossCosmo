@@ -454,7 +454,7 @@ class CrossCosmosGame(arcade.Window):
         self.position_text.text = f"Position: ({self.selected_x}, {self.selected_y})"
 
         # Update current word info
-        active_word = self.grid.full_word_from_cell(self.selected_x, self.selected_y, self.edit_direction)
+        active_word = self.grid.cell_to_entry(self.selected_x, self.selected_y, self.edit_direction)
         word_str = str(active_word).replace("-", "?")
         word_len = len(active_word)
         self.word_info_text.text = f"Word: {word_str} ({word_len} letters)"
@@ -611,7 +611,7 @@ class CrossCosmosGame(arcade.Window):
 
         # Copy current word to clipboard
         if key == arcade.key.C and (modifiers & (arcade.key.MOD_CTRL | arcade.key.MOD_COMMAND)):
-            active_word_cells = self.grid.full_word_from_cell(
+            active_word_cells = self.grid.cell_to_entry(
                 self.selected_grid_cell.x, self.selected_grid_cell.y, self.edit_direction
             )
             copy_str = str(active_word_cells).replace("-", "?")
@@ -994,7 +994,7 @@ class CrossCosmosGame(arcade.Window):
         self.reset_colors()
 
         # Highlight active word
-        active_word_cells = self.grid.full_word_from_cell(
+        active_word_cells = self.grid.cell_to_entry(
             self.selected_grid_cell.x, self.selected_grid_cell.y, self.edit_direction
         )
 

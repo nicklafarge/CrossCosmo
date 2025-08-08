@@ -1,30 +1,25 @@
-""" """
-
+from pathlib import Path
+import arcade
+from crosscosmos.gui.new_grid import CrossCosmosGui, LayoutConfig
 import crosscosmos as xc
-from crosscosmos import bot
 
-grid_size = (9, 8)
+grids_path = xc.grids_root / "oops_again"
 
+# Create grid backend
+grid_path = Path(grids_path / "oops_again1.json")
+grid = xc.grid.Grid.load(grid_path)
 
-test_corpus = xc.corpus.Corpus.from_lafarge(max_length=8, q=1)
-test_grid = xc.grid.Grid(grid_size, test_corpus, shuffle=True)
-test_grid.build_tries()
+# word_ids=["6A", "21A", "24A", "27A"] + [f"{x}D" for x in range(6, 17)]
+# sg = grid.make_subgrid_from_words(word_ids=word_ids)
 
-test_grid.set_black(0, 0, 4, 0)
-test_grid.set_black(1, 0, 4, 0)
-test_grid.set_black(4, 6, 2, 0)
-test_grid.set_black(5, 0, 3, 0)
-test_grid.set_black(6, 0, 4, 0)
-test_grid.set_black(7, 0, 4, 0)
-test_grid.set_black(8, 0, 4, 0)
-test_grid.set_black(8, 5, 3, 0)
+# xc.gui.grid_gui.run_default(sg)
+es = grid.entry_starts
 
+df = xc.Query(default=False, q=1, limit=None).max_length(max(grid.grid.shape)).order_by_score().df()
 
-test_grid.set_word("USTMEBRO", 2, 0, 0, True)
-test_grid.set_word("KSSAFE", 4, 0, 0, True)
-test_grid.set_word("ORDS", 7, 4, 0, True)
-test_grid.set_word("OPENFLOOR", 0, 4, 1, True)
-print(test_grid)
+config = LayoutConfig()
 
-test_grid.reset_for_solving()
-bot.solve(test_grid, max_time=60*10)
+layout_view = CrossCosmosGui(sg, config, df=df)
+# layout_view = CrossCosmosGui(grid, config, df=df)
+# arcade.run()
+

@@ -4,6 +4,6 @@ from pathlib import Path
 project_root = Path(__file__).parents[2]
 crosscosmos_root = Path(__file__).parent
 config_root = project_root / "config"
-grids_root = crosscosmos_root / "grids"
+grids_root = project_root / "grids"
 
 __all__ = ["config_root", "crosscosmos_root", "grids_root", "project_root"]

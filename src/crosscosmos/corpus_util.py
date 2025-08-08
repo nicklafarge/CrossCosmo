@@ -7,7 +7,7 @@ from crosscosmos.corpus import Corpus
 logger = logging.getLogger(__name__)
 
 
-def match(corpus: Corpus, query: str | xc.grid.CellList):
+def match(corpus: Corpus, query: str | xc.grid.Entry):
     return corpus.query(str(query))
 
 

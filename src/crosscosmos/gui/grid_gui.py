@@ -393,7 +393,7 @@ class CrossCosmosGame(arcade.Window):
             logger.info(f"Numbers: {key}")
 
         if key == arcade.key.C and (modifiers & arcade.key.MOD_CTRL):
-            active_word_cells = self.grid.full_word_from_cell(
+            active_word_cells = self.grid.cell_to_entry(
                 self.selected_grid_cell.x, self.selected_grid_cell.y, self.edit_direction
             )
             copy_str = str(active_word_cells).replace("-", "?")
@@ -728,7 +728,7 @@ class CrossCosmosGame(arcade.Window):
         self.reset_colors()
 
         # Get "active" based on the current edit direction
-        active_word_cells = self.grid.full_word_from_cell(
+        active_word_cells = self.grid.cell_to_entry(
             self.selected_grid_cell.x, self.selected_grid_cell.y, self.edit_direction
         )
 

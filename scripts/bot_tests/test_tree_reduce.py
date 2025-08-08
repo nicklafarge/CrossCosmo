@@ -18,10 +18,10 @@ x = 0
 y = 0
 word_direction = xc.WordDirection.VERTICAL
 opposite_dir = xc.WordDirection.flip(word_direction)
-cell_list = grid.full_word_from_cell(x=x,
-                                     y=y,
-                                     direction=word_direction,
-                                     terminate_on_empty=False)
+cell_list = grid.cell_to_entry(x=x,
+                               y=y,
+                               direction=word_direction,
+                               terminate_on_empty=False)
 
 # Copy for later
 original_grid = copy.deepcopy(grid)
