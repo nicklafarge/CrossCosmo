@@ -7,8 +7,8 @@ import copy
 import logging
 import random
 import string
-from collections.abc import Iterable
 from pathlib import Path
+from typing import Iterable
 
 import numpy as np
 import polars as pl
@@ -309,11 +309,11 @@ class Entry:
         """ Sets the value of the cell at a given index. """
         self.cells[key] = value
 
-    def __len__(self):
+    def __len__(self) -> int:
         """Length of the entry (number of cells / characters in the entry). """
         return len(self.cells)
 
-    def __iter__(self):
+    def __iter__(self) -> Iterable[Cell]:
         return iter(self.cells)
 
     def __str__(self) -> str:
