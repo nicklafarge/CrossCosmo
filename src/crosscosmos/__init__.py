@@ -35,6 +35,7 @@ from .wordlists.lafarge import LaFargeWord
 from .refine import Refiner, refine
 
 from .gui import grid_gui
+from .grid_pruner import GridPruningSolver
 
 from . import bot
 

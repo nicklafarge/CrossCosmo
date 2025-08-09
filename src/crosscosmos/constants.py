@@ -1,7 +1,9 @@
 """ """
+import string
 
 PLACEHOLDERS = [r"?", r"-", r" "]
 
+ALPHABET = string.ascii_uppercase
 VOWELS = "aeiouAEIOU"
 CONSONANTS = "bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ"
 ANY_LETTER_RE_PATTERN = "[a-zA-Z]"

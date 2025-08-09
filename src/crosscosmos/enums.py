@@ -66,10 +66,7 @@ class WordDirection(Enum):
         return WordDirection(not wd.value)
 
     def char(self):
-        if self.value == WordDirection.HORIZONTAL:
-            return "A"
-        else:
-            return "D"
+        return "A" if self == WordDirection.HORIZONTAL else "D"
 
 class GridSymmetry(Enum):
     NONE = 0

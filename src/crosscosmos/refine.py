@@ -62,10 +62,9 @@ class Refiner:
         """Filter word list to remove words with symbols or numbers"""
         self._df = self._df.filter(pl.col("word").str.contains(rf"^{constants.ANY_LETTER_RE_PATTERN}+$"))
 
-    def fix_letter(self, letter_idx: int, value: str) -> "Refiner":
+    def fix_letter(self, letter_idx: int, value: str | list[str]) -> "Refiner":
         """Filter to words that contain a given value at the specified index"""
-        assert len(value) == 1
-        self._df = self._df.filter(pl.col("word").str.slice(letter_idx, 1) == value)
+        self._df = self._df.filter(pl.col("word").str.slice(letter_idx, 1).is_in(list(value)))
         return self
 
     def length(self, word_len: int | tuple[int, int]) -> "Refiner":
@@ -142,7 +141,7 @@ def refine(
     length: int | None = None,
     max_length: int | None = None,
     min_length: int | None = None,
-    min_score: int | None = None,
+    min_score: float | None = None,
     **kwargs,
 ) -> pl.DataFrame:
     refiner =  Refiner(df, **kwargs)

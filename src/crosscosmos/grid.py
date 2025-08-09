@@ -54,6 +54,7 @@ class Cell:
 
     TODO:
          -Remove solve attributes
+         - Make a frozen dataclass
 
     Attributes
     ----------
@@ -154,6 +155,7 @@ class Cell:
             self.value = value.upper()
         else:
             raise ValueError(f"Invalid input: {value}")
+
 
     def reset_cell(self) -> list[tuple[str, WordDirection]]:
         """Reset cell to empty state.
@@ -285,14 +287,19 @@ class Entry:
             self.direction = WordDirection.VERTICAL
 
     @property
-    def direction_char(self):
+    def direction_char(self) -> str:
         """Direction charaction: "A" (accross) or "D" (down) """
         return self.direction.char()
 
     @property
-    def entry_id(self):
+    def entry_id(self) -> str:
         """Entry identifier (e.g., "1A" or "10D") """
         return f"{self.cells[0].answer_number}{self.direction_char}"
+
+    @property
+    def is_complete(self) -> bool:
+        """If true, the entry is complete (no empty cells)"""
+        return not any(c.status == CellStatus.EMPTY for c in self.cells)
 
     def __getitem__(self, item) -> Cell:
         """ Returns the cell at a given index. """
@@ -315,7 +322,7 @@ class Entry:
 
     def __repr__(self) -> str:
         origin = self.cells[0]
-        return f'Entry "{self}": {{x={origin.x}, y={origin.y}, dir={self.direction}}}'
+        return f'Entry {self.entry_id}: "{self}" (x={origin.x},y={origin.y},length={len(self)})'
 
 
     @property
@@ -457,6 +464,8 @@ class Grid:
             return self.grid[x, y]
         elif isinstance(key, str):
             return self.get_entry(key)
+        else:
+            raise ValueError(f"Unexpeted key: {key}")
 
     def __setitem__(self, key: tuple[int, int], value: str | None) -> None:
         """Set cell value at coordinates.
@@ -542,11 +551,11 @@ class Grid:
 
         def process_entries(starts_df: pl.DataFrame, direction: WordDirection):
             """Process all entries in a given direction."""
-            # Use correct direction character for entries
-            dir_char = "H" if direction == WordDirection.HORIZONTAL else "V"
 
             for c in starts_df.rows(named=True):
                 entry = self.cell_to_entry(c["x"], c["y"], direction)
+                if not entry:
+                    raise RuntimeError(f"No entry found, despite being marked as a start. This should never happen!")
                 entry_str = str(entry)
 
                 # Calculate end coordinates based on direction
@@ -558,7 +567,7 @@ class Grid:
                 # Add entry data
                 df_data["start_x"].append(c["x"])
                 df_data["start_y"].append(c["y"])
-                df_data["direction"].append(dir_char)
+                df_data["direction"].append(direction.char())
                 df_data["end_x"].append(end_x)
                 df_data["end_y"].append(end_y)
                 df_data["entry"].append(str(entry))
@@ -843,6 +852,8 @@ class Grid:
             case _:
                 raise ValueError("Invalid word direction")
 
+        self.update_length_and_head_data()
+
     def cell_to_entry(
         self, x: int, y: int, direction: WordDirection, terminate_on_empty: bool = False
     ) -> Entry | None:
@@ -876,7 +887,7 @@ class Grid:
             pre_dir = GridDirection.LEFT
             post_dir = GridDirection.RIGHT
 
-            # Collect cells before and after start position
+        # Collect cells before and after start position
         pre_cells = self._traverse_cells(x, y, pre_dir, terminate_on_empty)
         post_cells = self._traverse_cells(x, y, post_dir, terminate_on_empty)
 
@@ -985,7 +996,11 @@ class Grid:
 
         # Find matching entry in dataframe
         df = self.h_starts if word_dir == WordDirection.HORIZONTAL else self.v_starts
-        entry = df.filter(pl.col("answer_number") == entry_num).to_dicts()[0]
+        entry = df.filter(pl.col("answer_number") == entry_num).to_dicts()
+        if not entry:
+            logger.error(f"Entry '{entry_id}' does not exist.")
+
+        entry = entry[0]
 
         # Return the entry cells
         return self.cell_to_entry(entry["x"], entry["y"], direction=word_dir)
@@ -1508,7 +1523,6 @@ class Grid:
         # Define movement functions based on direction
         match GridDirection(direction):
             case GridDirection.UP:
-
                 def should_stop(c):
                     return c.is_v_start or (terminate_on_empty and c.status == CellStatus.EMPTY)
 
