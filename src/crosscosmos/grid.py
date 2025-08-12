@@ -534,7 +534,10 @@ class Grid:
         grid.save_path = filepath
         return grid
 
-    def entries(self) -> pl.DataFrame:
+    def entries(self) -> list[Entry]:
+        return [self.get_entry(eid) for eid in self.entries_df()["entry_id"]]
+
+    def entries_df(self) -> pl.DataFrame:
         df_data = {
             "entry_id": [],
             "entry": [],

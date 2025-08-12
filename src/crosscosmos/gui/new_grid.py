@@ -63,6 +63,9 @@ class CrossCosmosGui(arcade.Window):
         self.gps.solve()
         self.gps.print_possibilities_grid()
 
+        self.update_gui_colors(True)
+        self._update_info_section()
+
         # self.entry_cache_size = self.cfg.info.n_matches_per_column * 3
         # self.entry_cache: dict[str, pl.DataFrame] = {}
         # for entry_id in self.grid.entry_starts["entry_id"]:
@@ -492,6 +495,8 @@ class CrossCosmosGui(arcade.Window):
             self.gps.reset_possibilities()
             self.gps.solve()
             self._update_info_section()
+            self.update_gui_colors()
+
         # button.with_padding(top=10)
         button_anchor = arcade.gui.UIAnchorLayout()
         button_anchor.add(button,
@@ -1052,6 +1057,43 @@ class CrossCosmosGui(arcade.Window):
             else:
                 self.grid_sprites[cell.gui_row, cell.gui_col].color = self.cfg.color.active_word
 
+
+        # Update cell based on number of possibilities
+        for cell in self.grid.grid.flatten():
+            if cell.status != CellStatus.EMPTY:
+                continue
+            if cell.x == self.selected_grid_cell.x and cell.y == self.selected_grid_cell.y:
+                continue
+
+            h_entries = self.gps.get_valid_entries(
+                self.grid.cell_to_entry(cell.x, cell.y, WordDirection.HORIZONTAL), from_cache=True
+            )
+            v_entries = self.gps.get_valid_entries(
+                self.grid.cell_to_entry(cell.x, cell.y, WordDirection.VERTICAL), from_cache=True
+            )
+            n_horiz = len(h_entries) if h_entries is not None else 0
+            n_vert = len(v_entries) if v_entries is not None else 0
+
+            min_count = min(n_horiz, n_vert)
+
+            update_color = None
+            if min_count == 0:
+                update_color = arcade.color.CHINESE_RED
+            elif min_count < 5:
+                update_color = arcade.color.YELLOW
+
+            if update_color:
+                self.grid_sprites[cell.gui_row, cell.gui_col].color = update_color
+
+                sprite = self.grid_sprites[cell.gui_row, cell.gui_col]
+                arcade.draw_lbwh_rectangle_outline(
+                    left=sprite.left,
+                    bottom=sprite.bottom,
+                    width=sprite.width,
+                    height=sprite.height,
+                    color=arcade.color.RED,
+                    border_width=10,
+                )
     def _reset_colors(self):
         """Reset all cell colors to defaults.
 
@@ -1259,7 +1301,7 @@ class CrossCosmosGui(arcade.Window):
 
     def _update_info_section(self):
         logger.info("_update_info_section")
-        entries = self.grid.entries()
+        entries = self.grid.entries_df()
 
         entry_id = self.grid.get_entry_id(self.selected_grid_cell.x, self.selected_grid_cell.y, self.edit_direction)
         if not entry_id:

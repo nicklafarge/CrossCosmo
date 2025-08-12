@@ -122,7 +122,12 @@ class GridPruningSolver:
                 # No possibilities - no valid words can exist
                 return None
 
-        df = self.word_df if not from_cache else self.entry_cache[entry.entry_id]
+        if from_cache:
+            if entry.entry_id not in self.entry_cache:
+                return None
+            df = self.entry_cache[entry.entry_id]
+        else:
+            df = self.word_df
         entries = refine(df, length=len(entry), fixed_letters=fixed_letters)
         self.entry_cache[entry.entry_id] = entries
         return entries
@@ -360,7 +365,7 @@ class GridPruningSolver:
         # TODO-do I need this?
         # entry_ids = self.grid.entries()["entry_id"]
         # entries_list = [self.grid.get_entry(x) for x in entry_ids]
-        for entry in self.grid.entries()["entry_id"]:
+        for entry in self.grid.entries_df()["entry_id"]:
             self.update_entry_cache(entry)
 
         return stats
