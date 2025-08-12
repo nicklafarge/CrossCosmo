@@ -42,7 +42,7 @@ class GridPruningSolver:
         self,
         grid: Grid,
         word_df: pl.DataFrame,
-        min_score: float = 20
+        min_score: float = 20,
     ):
         self.grid = grid
         self.word_df = word_df
@@ -56,8 +56,12 @@ class GridPruningSolver:
         # Queue of entries to process
         self.entry_queue = deque()
 
+        # Cache entries for others to use
+        self.entry_cache: dict[str, pl.DataFrame] = {}
+
         # Initialize cell possibilities (A-Z for non-black cells)
-        self._initialize_cell_possibilities()
+        self.reset_possibilities()
+
 
     @overload
     def possible_letters(self, x: int, y: int) -> set[str]: ...
@@ -91,20 +95,23 @@ class GridPruningSolver:
         else:
             raise TypeError("Invalid arguments: expected (int, int, str) or (Cell, str)")
 
-
-    def get_valid_entries(self, entry: Entry) -> pl.DataFrame | None:
+    def get_valid_entries(self, entry: Entry | str, from_cache: bool =False) -> pl.DataFrame | None:
         """Query database for words matching entry pattern and constraints.
 
         Parameters
         ----------
-        entry : Entry
+        entry : Entry or str
             The entry to find valid words for
+        from_cache : bool
+            If true, initialize it from the cache
 
         Returns
         -------
         pl.DataFrame or None
             List of valid words from database
         """
+        if isinstance(entry, str):
+            entry = self.grid.get_entry(entry)
         # Build pattern from current cell possibilities and constraints
         fixed_letters = {}
         for i, cell in enumerate(entry):
@@ -115,16 +122,25 @@ class GridPruningSolver:
                 # No possibilities - no valid words can exist
                 return None
 
-        return refine(self.word_df, length=len(entry), fixed_letters=fixed_letters)
+        df = self.word_df if not from_cache else self.entry_cache[entry.entry_id]
+        entries = refine(df, length=len(entry), fixed_letters=fixed_letters)
+        self.entry_cache[entry.entry_id] = entries
+        return entries
 
-    def update_entry_possibilities(self, entry: Entry, valid_words: list[str]) -> list[Entry]:
+    def update_entry_cache(self, entry: Entry | str):
+        if isinstance(entry, str):
+            entry = self.grid.get_entry(entry)
+        valid_entries = self.get_valid_entries(entry)
+        self.update_entry_possibilities(entry, valid_entries)
+
+    def update_entry_possibilities(self, entry: Entry, valid_entries: pl.DataFrame | None = None) -> list[Entry]:
         """Update possible letters for cells based on valid words.
 
         Parameters
         ----------
         entry : Entry
             The entry whose cells to update
-        valid_words : list[str]
+        valid_entries : pl.DataFrame or None
             Valid words for this entry
 
         Returns
@@ -133,9 +149,12 @@ class GridPruningSolver:
             Crossing entries that need reprocessing due to changes
         """
         entries_to_requeue = []
-        logger.info(f"Updating possibilities...")
+        logger.debug(f"Updating possibilities...")
 
-        if not valid_words:
+        if valid_entries is None:
+            valid_entries = self.get_valid_entries(entry)
+
+        if valid_entries is None or valid_entries.is_empty():
             # No valid words found - but don't mark cells as impossible yet
             # They might still be valid through other crossing words
             logger.warning(f"No valid words found for entry {entry.entry_id} with current constraints")
@@ -156,7 +175,7 @@ class GridPruningSolver:
                 continue  # Skip fixed cells
 
             # Find all letters that appear at this position in valid words
-            valid_letters_at_position = {word[i] for word in valid_words}
+            valid_letters_at_position = {word[i] for word in valid_entries["word"]}
 
             # Intersect with current possibilities
             old_possibilities = self.possible_letters(cell).copy()
@@ -168,10 +187,10 @@ class GridPruningSolver:
             cross_dir = WordDirection.flip(entry.direction)
             crossing_entry = self.grid.cell_to_entry(cell.x, cell.y, cross_dir)
 
-            logger.info(f"({cell.x},{cell.y}): Checking possibilities (crosser={crossing_entry.entry_id})")
+            logger.debug(f"({cell.x},{cell.y}): Checking possibilities (crosser={crossing_entry.entry_id})")
             # If possibilities changed, queue crossing entry
             if old_possibilities == new_possibilities:
-                logger.info(f"  No change.")
+                logger.debug(f"  No change.")
             else:
                 # Get crossing entry
                 logger.info(
@@ -202,11 +221,11 @@ class GridPruningSolver:
 
         if entries_to_requeue:
             entries_added = ','.join(sorted(x.entry_id for x in entries_to_requeue))
-            logger.info(
+            logger.debug(
                 f"Adding {len(entries_to_requeue)} entries back to queue ({entries_added})\n"
             )
         else:
-            logger.info("No entries added back to queue")
+            logger.debug("No entries added back to queue")
         return entries_to_requeue
 
     def _add_to_requeue_list(self, entry: Entry, entries_to_requeue: list[Entry]) -> bool:
@@ -264,8 +283,11 @@ class GridPruningSolver:
         return self.prune_grid(**kwargs)
 
     def update_from_cell(self, cell: Cell, **kwargs):
-        entries = [self.grid.cell_to_entry(cell.x, cell.y, word_dir) for word_dir in [WordDirection.HORIZONTAL, WordDirection.VERTICAL]]
-        return self.update_from_entries(*entries, **kwargs)
+        for word_dir in [WordDirection.HORIZONTAL, WordDirection.VERTICAL]:
+            entry = self.grid.cell_to_entry(cell.x, cell.y, word_dir)
+            for c in entry:
+                self.cell_letters[(c.x, c.y)] = set(constants.ALPHABET) if c.status==CellStatus.EMPTY else c.value
+            self.update_entry_possibilities(entry, **kwargs)
 
     def prune_grid(self, max_iterations: int = 100) -> dict:
         """Run constraint propagation to identify valid letters for each cell.
@@ -316,9 +338,8 @@ class GridPruningSolver:
 
                 logger.info(f"{len(valid_words_df)} valid entries found")
 
-                # Update cells and get entries to requeue
-                valid_words_list = valid_words_df["word"].to_list()
-                entries_to_requeue = self.update_entry_possibilities(entry, valid_words_list)
+                # Update cells and get entries to requeu
+                entries_to_requeue = self.update_entry_possibilities(entry, valid_words_df)
 
                 self.entry_queue.extend(entries_to_requeue)
                 self.processed_entries.add(entry_id)
@@ -335,6 +356,12 @@ class GridPruningSolver:
             "total_queries": total_queries,
             "converged": len(self.entry_queue) == 0
         })
+
+        # TODO-do I need this?
+        # entry_ids = self.grid.entries()["entry_id"]
+        # entries_list = [self.grid.get_entry(x) for x in entry_ids]
+        for entry in self.grid.entries()["entry_id"]:
+            self.update_entry_cache(entry)
 
         return stats
 
@@ -394,8 +421,13 @@ class GridPruningSolver:
                         row_str.append(f"{count} ")
             print(" ".join(row_str))
 
-    def _initialize_cell_possibilities(self):
+    def reset_possibilities(self):
         """Initialize possible letters for each cell."""
+        self.cell_letters = {}
+        self.processed_entries = set()
+        self.entry_queue = deque()
+        self.entry_cache = {}
+
         for cell in self.grid.grid.flatten():
             if cell.status == CellStatus.BLACK:
                 self.cell_letters[(cell.x, cell.y)] = set()
@@ -405,7 +437,6 @@ class GridPruningSolver:
             else:
                 # Empty cells can be any letter initially
                 self.cell_letters[(cell.x, cell.y)] = set(constants.ALPHABET)
-
 
 if __name__ == "__main__":
     """Test the constraint solver with a simple grid."""

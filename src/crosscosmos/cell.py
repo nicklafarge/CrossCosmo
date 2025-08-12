@@ -163,7 +163,7 @@ class Cell:
         """
         self.removed_words.append((word, WordDirection(direction)))
 
-    def to_json(self) -> dict:
+    def to_dict(self) -> dict:
         """Serialize cell to JSON-compatible dictionary.
 
         Returns
@@ -226,4 +226,4 @@ class Cell:
 
     def save(self, filename: Path) -> None:
         """Save cell to JSON file."""
-        io_utils.save_json_dict(filename, self.to_json())
+        io_utils.save_json_dict(filename, self.to_dict())

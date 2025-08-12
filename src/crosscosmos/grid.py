@@ -192,7 +192,7 @@ class Cell:
         """
         self.removed_words.append((word, WordDirection(direction)))
 
-    def to_json(self) -> dict:
+    def to_dict(self) -> dict:
         """Serialize cell to JSON-compatible dictionary.
 
         Returns
@@ -255,7 +255,7 @@ class Cell:
 
     def save(self, filename: Path) -> None:
         """Save cell to JSON file."""
-        io_utils.save_json_dict(filename, self.to_json())
+        io_utils.save_json_dict(filename, self.to_dict())
 
 
 class Entry:
@@ -534,7 +534,7 @@ class Grid:
         grid.save_path = filepath
         return grid
 
-    def entries(self, with_db_counts: bool = True) -> pl.DataFrame:
+    def entries(self) -> pl.DataFrame:
         df_data = {
             "entry_id": [],
             "entry": [],
@@ -1224,7 +1224,7 @@ class Grid:
 
     def to_dataframe(self) -> pl.DataFrame:
         """Convert grid to dataframe representation."""
-        return pl.DataFrame([c.to_json() for c in self.grid.flatten()])
+        return pl.DataFrame([c.to_dict() for c in self.grid.flatten()])
 
     def print(self) -> None:
         """Print grid to console."""
@@ -1291,11 +1291,11 @@ class Grid:
                 row_vals.append(str(self.word_len(i, j, direction)))
             print(" ".join(row_vals))
 
-    def to_json(self) -> dict:
+    def to_dict(self) -> dict:
         """Serialize grid to JSON-compatible dictionary."""
         grid_letters = []
         for i in range(self.row_count):
-            row = [self.grid[i, j].to_json() for j in range(self.col_count)]
+            row = [self.grid[i, j].to_dict() for j in range(self.col_count)]
             grid_letters.append(row)
 
         return {
@@ -1315,7 +1315,7 @@ class Grid:
         """
         save_path = file_path or self.save_path
         if save_path:
-            io_utils.save_json_dict(save_path, self.to_json())
+            io_utils.save_json_dict(save_path, self.to_dict())
 
     def horizontal_word_len(self, i: int, j: int) -> int:
         """Get length of horizontal word containing cell at (i,j)"""

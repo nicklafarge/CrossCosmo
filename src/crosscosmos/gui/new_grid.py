@@ -1,25 +1,24 @@
 import logging
 
-from typing_extensions import override
-import string
-
 import arcade
-import arcade.gui
 import arcade.color
+import arcade.gui
 import numpy as np
-import pyperclip
 import polars as pl
+import pyperclip
+from typing_extensions import override
 
-from crosscosmos.grid import Grid, Cell
-from crosscosmos.enums import CellStatus, WordDirection, MoveDirection, GridSymmetry
+from crosscosmos import constants, Refiner, Entry
+from crosscosmos.enums import CellStatus, GridSymmetry, MoveDirection, WordDirection
+from crosscosmos.grid import Cell, Grid
 from crosscosmos.gui.config import LayoutConfig
+from crosscosmos.gui.image_transform import RGBTransform
 from crosscosmos.query import Query
-from crosscosmos.refine import Refiner
-
+from crosscosmos.grid_pruner import GridPruningSolver
 
 logger = logging.getLogger(__name__)
-# logger.setLevel(logging.INFO)
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
+# logger.setLevel(logging.DEBUG)
 
 
 A_TO_Z = list(range(arcade.key.A, arcade.key.Z + 1))
@@ -40,9 +39,9 @@ class CrossCosmosGui(arcade.Window):
 
     def __init__(self, grid: Grid, config: LayoutConfig, df: pl.DataFrame):
         super().__init__(config.window.width, config.window.height, config.window.title, resizable=False)
-        self.grid = grid
         self.cfg: LayoutConfig = config
-        self.df = df
+
+        self.gps = GridPruningSolver(grid=grid, word_df=df)
 
         self.ui_manager: arcade.gui.UIManager = arcade.gui.UIManager()
         self.ui_manager.enable()
@@ -59,12 +58,24 @@ class CrossCosmosGui(arcade.Window):
         self._init_data_structures()
         self._setup()
 
-        # Initialize entry cache
-        self.entry_cache_size = self.cfg.info.n_matches_per_column * 3
-        self.entry_cache: dict[str, pl.DataFrame] = {}
-        for entry_id in self.grid.entry_starts["entry_id"]:
-            logger.info(f"Initializing {entry_id}")
-            self._update_entry_cache(entry_id)
+        # Initialize entry solver
+        logger.info("Beginning solver")
+        self.gps.solve()
+        self.gps.print_possibilities_grid()
+
+        # self.entry_cache_size = self.cfg.info.n_matches_per_column * 3
+        # self.entry_cache: dict[str, pl.DataFrame] = {}
+        # for entry_id in self.grid.entry_starts["entry_id"]:
+        #     logger.info(f"Initializing {entry_id}")
+            # self._update_entry_cache(entry_id)
+
+    @property
+    def grid(self) -> Grid:
+        return self.gps.grid
+
+    @property
+    def df(self) -> pl.DataFrame:
+        return self.gps.word_df
 
     @property
     def selected_grid_cell(self) -> Cell:
@@ -223,7 +234,6 @@ class CrossCosmosGui(arcade.Window):
         move_dir = None
 
         # Handle letter input
-
         if key in VALID_LETTER_KEYS and self.selected_grid_cell.status == CellStatus.EMPTY:
             new_val = chr(key).upper()
             move_dir = (
@@ -318,7 +328,7 @@ class CrossCosmosGui(arcade.Window):
             return
 
         # Check validity
-        temp_grid = Grid.from_dict(self.grid.to_json())
+        temp_grid = Grid.from_dict(self.grid.to_dict())
         temp_grid.set_grid(grid_row, grid_col, None)
         highlight_color = (
             self.cfg.color.block_valid_highlight if temp_grid.is_valid else self.cfg.color.block_invalid_highlight
@@ -442,9 +452,57 @@ class CrossCosmosGui(arcade.Window):
         right_main_bottom.with_background(color=arcade.color.GRAY)
 
         # Sidebar
-        side_bar = arcade.gui.UIWidget(size_hint=(1 - self.cfg.grid.right_main_ratio, 1))
-        side_bar.with_background(color=arcade.color.DARK_BLUE_GRAY)
+        # side_bar = arcade.gui.UIWidget(size_hint=(1 - self.cfg.grid.right_main_ratio, 1))
+        sidebar_width_ratio = 1 - self.cfg.grid.right_main_ratio
+        side_bar = arcade.gui.UIBoxLayout(vertical=True, size_hint=(1 - self.cfg.grid.right_main_ratio, 1))
+        side_bar.with_background(color=self.cfg.color.grid_background)
 
+
+        ####
+        texture = arcade.load_texture(":resources:onscreen_controls/flat_light/down.png")
+
+        hover_image = RGBTransform().mix_with([220] * 3, factor=0.40).applied_to(texture.image)
+        texture_hover = arcade.Texture(hover_image)
+
+        click_image = RGBTransform().mix_with([220] * 3, factor=0.90).applied_to(texture.image)
+        texture_pressed = arcade.Texture(click_image)
+
+        # button = arcade.gui.UITextureButton(
+        #     texture=texture,
+        #     width=64, height=64,
+        #     texture_hovered=texture_hover,
+        #     texture_pressed=texture_pressed,
+        # )
+        # Create the button first
+        button_size = sidebar_width_ratio * self.width * 0.4
+        button = arcade.gui.UITextureButton(
+            texture=texture,
+            width=button_size,
+            height=button_size,
+            texture_hovered=texture_hover,
+            texture_pressed=texture_pressed,
+        )
+
+        @button.event("on_click")
+        def on_click_prune(event):
+            # Reset solver
+            for c in self.gps.grid.grid.flatten():
+                if c.status == CellStatus.EMPTY:
+                    self.gps.cell_letters[(c.x, c.y)] = set(constants.ALPHABET)
+            self.gps.reset_possibilities()
+            self.gps.solve()
+            self._update_info_section()
+        # button.with_padding(top=10)
+        button_anchor = arcade.gui.UIAnchorLayout()
+        button_anchor.add(button,
+            width=button_size,
+            height=button_size, anchor_x="center_y", anchor_y="top")
+
+        side_bar.add(arcade.gui.UISpace(size_hint=(1.0, None), height=10))
+        side_bar.add(button)
+
+        # side_bar.add(padded_button)
+        # side_bar.add(button)
 
         # Build the layout
         right_main_container.add(right_main_bottom)
@@ -498,10 +556,8 @@ class CrossCosmosGui(arcade.Window):
         return kv_pair, value_label
 
     def _create_word_list_section(self, **kwargs):
-        """ Creates the section of the GUI containing the list of valid words
-        """
+        """Creates the section of the GUI containing the list of valid words"""
         right_main_top = arcade.gui.UIBoxLayout(**kwargs)
-
 
         right_main_top_info = arcade.gui.UIBoxLayout(vertical=False, size_hint=(1, 0.1))
 
@@ -511,11 +567,7 @@ class CrossCosmosGui(arcade.Window):
             font_name=self.cfg.text.info_section_font_name,
         )
         right_word_info_uc = arcade.gui.UIAnchorLayout(size_hint=(0.25, 1))
-        right_word_info_uc.add(
-            self.n_letters_label,
-            anchor_x="left",
-            anchor_y="center_y"
-        )
+        right_word_info_uc.add(self.n_letters_label, anchor_x="left", anchor_y="center_y")
 
         self.current_entry_label = arcade.gui.UILabel(
             align="left",
@@ -523,11 +575,7 @@ class CrossCosmosGui(arcade.Window):
             font_name=self.cfg.text.word_list_font_name,
         )
         right_word_info_ul = arcade.gui.UIAnchorLayout(size_hint=(0.5, 1))
-        right_word_info_ul.add(
-            self.current_entry_label,
-            anchor_x="left",
-            anchor_y="center_y"
-        )
+        right_word_info_ul.add(self.current_entry_label, anchor_x="left", anchor_y="center_y")
         right_word_info_ul.with_padding(left=5)
 
         self.n_possible_label = arcade.gui.UILabel(
@@ -536,16 +584,11 @@ class CrossCosmosGui(arcade.Window):
             font_name=self.cfg.text.info_section_font_name,
         )
         right_word_info_ur = arcade.gui.UIAnchorLayout(size_hint=(0.25, 1))
-        right_word_info_ur.add(
-            self.n_possible_label,
-            anchor_x="left",
-            anchor_y="center_y"
-        )
+        right_word_info_ur.add(self.n_possible_label, anchor_x="left", anchor_y="center_y")
 
         right_main_top_info.add(right_word_info_ul)
         right_main_top_info.add(right_word_info_uc)
         right_main_top_info.add(right_word_info_ur)
-
 
         right_main_top_wordlist = arcade.gui.UIBoxLayout(vertical=False, size_hint=(1, 0.9))
         right_main_top_wordlist.with_background(color=arcade.color.LIGHT_GRAY)
@@ -701,7 +744,7 @@ class CrossCosmosGui(arcade.Window):
         # self.left_side_ratio = self.height / self.width
         self.right_side_ratio = 1 - self.left_side_ratio
 
-        # Calculate the withs for each of the sides based on the computed ratios
+        # Calculate the widths for each of the sides based on the computed ratios
         self.left_side_width = self.width * self.left_side_ratio
         self.right_panel_width = self.width * self.right_side_ratio
 
@@ -1098,6 +1141,44 @@ class CrossCosmosGui(arcade.Window):
         else:
             gui_text_label.color = self.cfg.color.normal_text
 
+    def _build_button(self, texture_str: str, dim: float | None = None, **kwargs) -> arcade.gui.UITextureButton:
+        """
+        Build a textured button with hover and click effects.
+
+        Creates a button with visual feedback by lightening the texture
+        on hover and click events.
+
+        Parameters
+        ----------
+        texture_str : str
+            Path to button texture image
+        dim : float or None
+            Width and height of the button in pixels
+
+        Returns
+        -------
+        arcade.gui.UITextureButton
+            Button with hover and pressed states
+        """
+        texture = arcade.load_texture(texture_str)
+
+        hover_image = RGBTransform().mix_with([220] * 3, factor=0.40).applied_to(texture.image)
+        texture_hover = arcade.Texture(hover_image)
+
+        click_image = RGBTransform().mix_with([220] * 3, factor=0.90).applied_to(texture.image)
+        texture_pressed = arcade.Texture(click_image)
+
+        if dim:
+            kwargs["width"] = dim
+            kwargs["height"] = dim
+
+        return arcade.gui.UITextureButton(
+            texture=texture,
+            texture_hovered=texture_hover,
+            texture_pressed=texture_pressed,
+            **kwargs,
+        )
+
     def _with_black_toggle_modifiers(self, modifiers: int) -> bool:
         """
         Check if black toggle modifiers are active.
@@ -1132,41 +1213,55 @@ class CrossCosmosGui(arcade.Window):
         """
         logger.info(f"Updating cell {self.selected_x}, {self.selected_y} to {new_value}")
         self.grid.set_grid(self.selected_x, self.selected_y, new_value)
-        for direction in [WordDirection.HORIZONTAL, WordDirection.VERTICAL]:
-            entry_id = self.grid.get_entry_id(self.selected_x, self.selected_y, direction)
-            self._update_entry_cache(entry_id)
+        # update_value = new_value or set(constants.ALPHABET)
+        # self.gps.set_possible_letters(self.selected_grid_cell, set(update_value))
+
+        # self.gps.update_from_cell(self.grid[self.selected_x, self.selected_y])
+        # for direction in [WordDirection.HORIZONTAL, WordDirection.VERTICAL]:
+        #     entry_id = self.grid.get_entry_id(self.selected_x, self.selected_y, direction)
+        #     self._update_entry_cache(entry_id)
 
     def _update_entry_cache(self, entry_id: str):
-        """ Update the entry cache for a given entry ID"""
-        entry = self.grid.get_entry(entry_id)
-        updated_matches = Refiner(self.df).match(str(entry)).df()
-        self.entry_cache[entry_id] = updated_matches[:self.entry_cache_size]
+        """Update the entry cache for a given entry ID"""
+        pass
+        # self.gps.update_entry_cache(entry_id)
+        # entry = self.grid.get_entry(entry_id)
+        # updated_matches = Refiner(self.df).match(str(entry)).df()
+        # self.entry_cache[entry_id] = updated_matches[: self.entry_cache_size]
 
-    def _valid_entries(self, entry_id: str):
-        cached_entries = self.entry_cache[entry_id]
-        if cached_entries.is_empty():
-            return cached_entries
 
-        entry_dir = WordDirection.from_entry_id(entry_id)
-        crosser_dir = WordDirection.flip(entry_dir)
 
-        for crosser in self.grid.get_crossers(entry_id):
-            crosser_id = self.grid.get_entry_id(crosser[0].x, crosser[0].y, crosser_dir)
-            intx_cell, entry_idx, crosser_idx  = self.grid.find_intersection(entry_id, crosser_id)
-            letter_set = self.entry_cache[crosser_id]['word'].str.slice(crosser_idx, 1).unique()
-            cached_entries = cached_entries.filter(pl.col("word").str.slice(entry_idx, 1).is_in(letter_set.to_list()))
+    def _valid_entries(self, entry: str | Entry):
+        if isinstance(entry, str):
+            entry = self.grid.get_entry(entry)
 
-        return cached_entries
+        valid_entries_df = self.gps.entry_cache[entry.entry_id]
+        refiner = Refiner(valid_entries_df, default=False)
+        for i, c in enumerate(entry):
+            if c.value:
+                refiner = refiner.fix_letter(i, c.value)
+
+        return refiner.df()
+
+        # if cached_entries.is_empty():
+        #     return cached_entries
+
+        # entry_dir = WordDirection.from_entry_id(entry_id)
+        # crosser_dir = WordDirection.flip(entry_dir)
+        #
+        # for crosser in self.grid.get_crossers(entry_id):
+        #     crosser_id = self.grid.get_entry_id(crosser[0].x, crosser[0].y, crosser_dir)
+        #     intx_cell, entry_idx, crosser_idx  = self.grid.find_intersection(entry_id, crosser_id)
+        #     letter_set = self.entry_cache[crosser_id]['word'].str.slice(crosser_idx, 1).unique()
+        #     cached_entries = cached_entries.filter(pl.col("word").str.slice(entry_idx, 1).is_in(letter_set.to_list()))
+
+        # return cached_entries
 
     def _update_info_section(self):
         logger.info("_update_info_section")
-        logger.info("00")
-        entries = self.grid.entries(with_db_counts=True)
-        logger.info("0")
+        entries = self.grid.entries()
 
-        entry_id = self.grid.get_entry_id(
-            self.selected_grid_cell.x, self.selected_grid_cell.y, self.edit_direction
-        )
+        entry_id = self.grid.get_entry_id(self.selected_grid_cell.x, self.selected_grid_cell.y, self.edit_direction)
         if not entry_id:
             self.grid_location_label.text = ""
             self.current_value_label.text = ""
@@ -1182,18 +1277,16 @@ class CrossCosmosGui(arcade.Window):
 
         self.grid_location_label.text = f"({self.selected_grid_cell.x},{self.selected_grid_cell.y})"
         # self.ans_combo_label.text = ""  TODO
-        self.current_value_label.text = entry_data['entry']
-        self.n_letters_label2.text = entry_data['length']
+        self.current_value_label.text = entry_data["entry"]
+        self.n_letters_label2.text = entry_data["length"]
         self.n_letters_label.text = f"Length: {entry_data['length']}"
 
-        logger.info("01")
         n_blocks = len([c for c in self.grid.grid.flatten() if c.status == CellStatus.BLACK])
         blocks_pct = 100 * (n_blocks / len(self.grid.grid.flatten()))
         self.n_blocks_label.text = f"{n_blocks} ({blocks_pct:.1f}%)"
 
         self.current_entry_label.text = f"{entry_id}: {entry_data['entry']}"
         # self.n_possible_label.text = f"N. Database: {entry_data['n_possible']}"
-
 
         # possible_entries = self.entry_cache[entry_id]
         possible_entries = self._valid_entries(entry_id)
@@ -1204,25 +1297,38 @@ class CrossCosmosGui(arcade.Window):
         # best_matches = entry_query.df()[:n_per_col*3]
 
         # match_words = [] if best_matches.is_empty() else best_matches["word"].to_list()
-        match_words = [] if possible_entries.is_empty() else [
-            f"{e['word']} [{int(np.round(e['score']))}]" for e in possible_entries.iter_rows(named=True)
-        ]
+        match_words = (
+            []
+            if possible_entries.is_empty()
+            else [f"{e['word']} [{int(np.round(e['score']))}]" for e in possible_entries.iter_rows(named=True)]
+        )
 
         n_per_col = self.cfg.info.n_matches_per_column
 
         self.matches_list_1.text = "\n".join(match_words[:n_per_col])
 
         if len(match_words) > n_per_col:
-            self.matches_list_2.text =  "\n".join(match_words[n_per_col:2*n_per_col])
+            self.matches_list_2.text = "\n".join(match_words[n_per_col : 2 * n_per_col])
         else:
             self.matches_list_2.text = ""
 
-        if len(match_words) > 2*n_per_col:
-            self.matches_list_3.text =  "\n".join(match_words[2*n_per_col:3*n_per_col])
+        if len(match_words) > 2 * n_per_col:
+            self.matches_list_3.text = "\n".join(match_words[2 * n_per_col : 3 * n_per_col])
         else:
             self.matches_list_3.text = ""
         # avg_length = self.grid.word_lengths()
         # pass
+
+
+def run_gui(grid: Grid, df: pl.DataFrame | None = None):
+    if df is None or df.is_empty():
+        logger.info("Loading entries dataframe....")
+        df = Query(default=True, q=1, limit=None).order_by_score().df()
+        logger.info(f"Loaded {len(df)} entries")
+
+    gui = CrossCosmosGui(grid, LayoutConfig(), df=df)
+    arcade.run()
+    return gui
 
 
 if __name__ == "__main__":
@@ -1230,7 +1336,12 @@ if __name__ == "__main__":
     # grid = Grid((21, 21))
     # "oops_again1.json"
 
-    df = Query(default=True, q=1, limit=None).order_by_score().df()
+    if "test_df" not in locals():
+        logger.info("Loading words...")
+        test_df = Query(default=True, q=1, limit=None).order_by_score().df()
+        logger.info(f"Complete! {len(test_df)} loaded.")
+    else:
+        test_df = None
     # df = Query(default=True, q=2, limit=500).order_by_score().df()
 
     grid_path = "/Users/lafarnb1/Projects/GitHub/CrossCosmos/grids/oops_again/oops_again1.json"
@@ -1238,16 +1349,4 @@ if __name__ == "__main__":
     # grid_path = "/Users/lafarnb1/Projects/GitHub/CrossCosmos/scratch/matiss/monster_floopy_kleeky.json"
     # grid_path = "/Users/lafarnb1/Projects/GitHub/CrossCosmos/scratch/matiss/lantern_monster.json"
     grid = Grid.load(grid_path)
-
-    # config_path = "/Users/lafarnb1/Projects/GitHub/CrossCosmos/src/crosscosmos/gui/gui_config.toml"
-    # config = LayoutConfig.from_toml(config_path)
-    config = LayoutConfig()
-
-    layout_view = CrossCosmosGui(grid, config, df=df)
-    arcade.run()
-
-    # sg = grid.make_subgrid_from_words(word_ids=["5D", "6D", "7D", "8D", "9D", "28A"])
-
-    # window = arcade.Window(config.window.width, config.window.height, config.window.title, resizable=False)
-    # layout_view = CrossCosmosGui(sg, config, df=df)
-    # arcade.run()
+    gui = run_gui(grid, df=test_df)

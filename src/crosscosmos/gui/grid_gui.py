@@ -125,7 +125,7 @@ class CrossCosmosGame(arcade.Window):
         # GUI Objects -------------------------------------------------------------------------------------------------#
 
         # Create the text cursor
-        self.text_curser_blink_frequency = self.layout_config.grid.text_cursor_blink_frequency
+        self.text_curser_blink_frequency = self.layout_config.grid.cursor.blink_frequency
         text_curser = arcade.SpriteSolidColor(width=2, height=int(self.square_size * 0.37), color=arcade.color.WHITE)
         self.text_curser: arcade.SpriteSolidColor = text_curser
         self.curser_visible: bool = True
@@ -528,7 +528,7 @@ class CrossCosmosGame(arcade.Window):
             return
 
         # Set the color
-        temp_grid = Grid.from_dict(self.grid.to_json())
+        temp_grid = Grid.from_dict(self.grid.to_dict())
         temp_grid.set_grid(grid_row, grid_col, None)
         highlight_color = BLACK_VALID_HIGHLIGHT_COLOR if temp_grid.is_valid else BLACK_INVALID_HIGHLIGHT_COLOR
         if not is_highlighted:
