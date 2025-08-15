@@ -62,6 +62,9 @@ class GridPruningSolver:
         # Initialize cell possibilities (A-Z for non-black cells)
         self.reset_possibilities()
 
+        # Entries to requeue
+        self.requeue_entries: set[str] = set()
+
 
     @overload
     def possible_letters(self, x: int, y: int) -> set[str]: ...
@@ -95,7 +98,7 @@ class GridPruningSolver:
         else:
             raise TypeError("Invalid arguments: expected (int, int, str) or (Cell, str)")
 
-    def get_valid_entries(self, entry: Entry | str, from_cache: bool =False) -> pl.DataFrame | None:
+    def get_valid_entries(self, entry: Entry | str, from_cache: bool = False, update_cache: bool = True) -> pl.DataFrame | None:
         """Query database for words matching entry pattern and constraints.
 
         Parameters
@@ -104,12 +107,16 @@ class GridPruningSolver:
             The entry to find valid words for
         from_cache : bool
             If true, initialize it from the cache
-
+        update_cache : bool
+            If true, store the result of the
         Returns
         -------
         pl.DataFrame or None
             List of valid words from database
         """
+        if from_cache and update_cache:
+            raise ValueError("Cannot specify both 'from_cache' and 'update_cache'")
+
         if isinstance(entry, str):
             entry = self.grid.get_entry(entry)
         # Build pattern from current cell possibilities and constraints
@@ -129,14 +136,31 @@ class GridPruningSolver:
         else:
             df = self.word_df
         entries = refine(df, length=len(entry), fixed_letters=fixed_letters)
-        self.entry_cache[entry.entry_id] = entries
+
+        if update_cache:
+            self.entry_cache[entry.entry_id] = entries
         return entries
 
-    def update_entry_cache(self, entry: Entry | str):
-        if isinstance(entry, str):
-            entry = self.grid.get_entry(entry)
-        valid_entries = self.get_valid_entries(entry)
-        self.update_entry_possibilities(entry, valid_entries)
+    def update_entry_cache(self, entry: Entry | str | None = None) -> None:
+        """
+        Updates the entry cache for a specific entry, or for the entire grid.
+
+        Parameters
+        ----------
+        entry : Entry or str, optional
+            Specific entry to update the cache. If not specified, the cache is updated for every entry in the grid
+
+        """
+        if not entry:
+            entries = self.grid.entries()
+        elif isinstance(entry, str):
+            entries = [self.grid.get_entry(entry)]
+        else:
+            entries = [entry]
+
+        for e in entries:
+            valid_entries = self.get_valid_entries(e)
+            self.update_entry_possibilities(e, valid_entries)
 
     def update_entry_possibilities(self, entry: Entry, valid_entries: pl.DataFrame | None = None) -> list[Entry]:
         """Update possible letters for cells based on valid words.
@@ -154,7 +178,7 @@ class GridPruningSolver:
             Crossing entries that need reprocessing due to changes
         """
         entries_to_requeue = []
-        logger.debug(f"Updating possibilities...")
+        logger.info(f"Updating possibilities for {entry.entry_id}...")
 
         if valid_entries is None:
             valid_entries = self.get_valid_entries(entry)
@@ -195,7 +219,8 @@ class GridPruningSolver:
             logger.debug(f"({cell.x},{cell.y}): Checking possibilities (crosser={crossing_entry.entry_id})")
             # If possibilities changed, queue crossing entry
             if old_possibilities == new_possibilities:
-                logger.debug(f"  No change.")
+                pass
+                # logger.debug(f"  No change.")
             else:
                 # Get crossing entry
                 logger.info(
@@ -223,11 +248,12 @@ class GridPruningSolver:
                     logger.info(f"  {entry.entry_id} (current entry) added back into the queue")
                 if crosser_added:
                     logger.info(f"  {crossing_entry.entry_id} (crosser) added back into the queue")
-
+                if entry_added or crosser_added:
+                    logger.info(f" Updated entries to re-queue: {','.join(x.entry_id for x in entries_to_requeue)}")
         if entries_to_requeue:
             entries_added = ','.join(sorted(x.entry_id for x in entries_to_requeue))
             logger.debug(
-                f"Adding {len(entries_to_requeue)} entries back to queue ({entries_added})\n"
+                f"Adding {len(entries_to_requeue)} entries back to queue: {entries_added}\n"
             )
         else:
             logger.debug("No entries added back to queue")
@@ -250,9 +276,9 @@ class GridPruningSolver:
             Whether the entry was re-queued.
         """
         # Only requeue if not already processed this iteration
-        if entry.entry_id not in self.processed_entries:
-            logger.debug(f"  {entry.entry_id} not added (not yet processed this iteration)")
-            return False
+        # if entry.entry_id not in self.processed_entries:
+        #     logger.debug(f"  {entry.entry_id} not added (not yet processed this iteration)")
+        #     return False
 
         if entry in entries_to_requeue:
             logger.debug(f"  {entry.entry_id} not added (already in re-queue list)")
@@ -282,17 +308,47 @@ class GridPruningSolver:
         logger.info(f"Initialized entry queue: {','.join(sorted(x.entry_id for x in self.entry_queue))}")
         return self.prune_grid(**kwargs)
 
-    def update_from_entries(self, *entry_ids, **kwargs):
-        logger.info(f"Updating possibilities given new values for {','.join([e.entry_id for e in entry_ids])}")
-        self.entry_queue = deque(entry_ids)
+    def re_solve(self, **kwargs) -> dict:
+        """ Re-solves the grid only using the entries that already exist in the queue
+        """
+
+        # Reset the re-queued entries
+        self.reset_possibilities()
+
+        if len(self.requeue_entries) == 0:
+            logger.info("Re-solve queue empty: Nothing to solve")
+            return {}
+
+        for entry_id in self.requeue_entries:
+            # Reset the entry cache
+            if entry_id in self.entry_cache:
+                self.entry_cache.pop(entry_id)
+
+            # Get the entry
+            entry = self.grid.get_entry(entry_id)
+
+            # Reset the cell letters for the cells in all entries
+            for c in self.grid.get_entry(entry_id):
+                self.reset_letters_for_cell(c)
+
+            self.add_to_queue(entry)
+
+        self.requeue_entries = set()
+        logger.info(f"Re-solving for entries: {','.join(sorted(x.entry_id for x in self.entry_queue))}")
         return self.prune_grid(**kwargs)
 
-    def update_from_cell(self, cell: Cell, **kwargs):
-        for word_dir in [WordDirection.HORIZONTAL, WordDirection.VERTICAL]:
-            entry = self.grid.cell_to_entry(cell.x, cell.y, word_dir)
-            for c in entry:
-                self.cell_letters[(c.x, c.y)] = set(constants.ALPHABET) if c.status==CellStatus.EMPTY else c.value
-            self.update_entry_possibilities(entry, **kwargs)
+
+    # def update_from_entries(self, *entry_ids, **kwargs):
+    #     logger.info(f"Updating possibilities given new values for {','.join([e.entry_id for e in entry_ids])}")
+    #     self.entry_queue = deque(entry_ids)
+    #     return self.prune_grid(**kwargs)
+
+    # def update_from_cell(self, cell: Cell, **kwargs):
+    #     for word_dir in [WordDirection.HORIZONTAL, WordDirection.VERTICAL]:
+    #         entry = self.grid.cell_to_entry(cell.x, cell.y, word_dir)
+    #         for c in entry:
+    #             self.cell_letters[(c.x, c.y)] = set(constants.ALPHABET) if c.status==CellStatus.EMPTY else c.value
+    #         self.update_entry_possibilities(entry, **kwargs)
 
     def prune_grid(self, max_iterations: int = 100) -> dict:
         """Run constraint propagation to identify valid letters for each cell.
@@ -318,6 +374,7 @@ class GridPruningSolver:
             logger.info(f"{'='*50}")
             logger.debug(f"Iteration {iteration}: Processing {current_queue_size} entries")
             logger.info(f"{'='*50}")
+            logger.info(f"Current queue: {','.join(x.entry_id for x in self.entry_queue)}")
 
             # Clear processed set for new iteration
             self.processed_entries.clear()
@@ -343,10 +400,9 @@ class GridPruningSolver:
 
                 logger.info(f"{len(valid_words_df)} valid entries found")
 
-                # Update cells and get entries to requeu
+                # Update cells and get entries to re-queue
                 entries_to_requeue = self.update_entry_possibilities(entry, valid_words_df)
-
-                self.entry_queue.extend(entries_to_requeue)
+                self.add_to_queue(entries_to_requeue)
                 self.processed_entries.add(entry_id)
 
         if not solution_exists:
@@ -362,9 +418,7 @@ class GridPruningSolver:
             "converged": len(self.entry_queue) == 0
         })
 
-        # TODO-do I need this?
-        # entry_ids = self.grid.entries()["entry_id"]
-        # entries_list = [self.grid.get_entry(x) for x in entry_ids]
+        # Update the cache
         for entry in self.grid.entries_df()["entry_id"]:
             self.update_entry_cache(entry)
 
@@ -402,6 +456,36 @@ class GridPruningSolver:
             ) / max(total_cells, 1)
         }
 
+    def add_to_queue(self, entries: Entry | str | list[Entry] | list[str]):
+        """ Add entry (or entries) to the queue
+
+        Parameters
+        ----------
+        entries : str, Entry, list[str], list[Entry]
+            Entry (or entries) to add to the queue
+        """
+
+        # Ensure it's a list
+        if not isinstance(entries, list):
+            entries = [entries]
+
+        # Parse any entry ID strings into entries
+        for i, e in enumerate(entries):
+            if isinstance(e, str):
+                entries[i] = self.grid.get_entry(e)
+
+        # Add to queue
+        self.entry_queue.extend(entries)
+
+    def add_to_requeue(self, entry_id: str):
+        """ Adds an entry id to the list of entries to re-queue
+        """
+        if entry_id not in self.requeue_entries:
+            logger.info(f"Re-queueing {entry_id}")
+            self.requeue_entries.add(entry_id)
+        else:
+            logger.info(f"{entry_id} already in the re-queue")
+
 
     def print_possibilities_grid(self):
         """Print grid showing number of possibilities for each cell."""
@@ -432,16 +516,25 @@ class GridPruningSolver:
         self.processed_entries = set()
         self.entry_queue = deque()
         self.entry_cache = {}
+        # self.requeue_entries = set()
 
         for cell in self.grid.grid.flatten():
-            if cell.status == CellStatus.BLACK:
-                self.cell_letters[(cell.x, cell.y)] = set()
-            elif cell.status in (CellStatus.SET, CellStatus.LOCKED):
-                # Fixed cells only have their current value as possibility
-                self.cell_letters[(cell.x, cell.y)] = {cell.value}
-            else:
-                # Empty cells can be any letter initially
-                self.cell_letters[(cell.x, cell.y)] = set(constants.ALPHABET)
+            self.reset_letters_for_cell(cell)
+
+
+    def reset_letters_for_cell(self, cell: Cell):
+        """ Resets the cached valid letters set for a given cell
+        """
+        if cell.status == CellStatus.BLACK:
+            # Nothing is valid for a black cell
+            self.cell_letters[(cell.x, cell.y)] = set()
+        elif cell.status in (CellStatus.SET, CellStatus.LOCKED):
+            # Fixed cells only have their current value as possibility
+            self.cell_letters[(cell.x, cell.y)] = {cell.value}
+        else:
+            # Empty cells can be any letter initially
+            self.cell_letters[(cell.x, cell.y)] = set(constants.ALPHABET)
+
 
 if __name__ == "__main__":
     """Test the constraint solver with a simple grid."""

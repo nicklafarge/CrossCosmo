@@ -786,7 +786,7 @@ class CrossCosmosGame(arcade.Window):
             return
 
         # Check validity
-        temp_grid = xc.grid.Grid.from_dict(self.grid.to_json())
+        temp_grid = xc.grid.Grid.from_dict(self.grid.to_dict())
         temp_grid.set_grid(grid_row, grid_col, None)
         highlight_color = BLACK_VALID_HIGHLIGHT_COLOR if temp_grid.is_valid else BLACK_INVALID_HIGHLIGHT_COLOR
 

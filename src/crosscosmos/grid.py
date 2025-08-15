@@ -597,10 +597,12 @@ class Grid:
 
     def is_cell_valid(self, i: int, j: int) -> bool:
         """Check if both crossings at a given cell are valid (>=3 letters)"""
-        is_black = self.grid[i, j].status == CellStatus.BLACK
+        if self.grid[i, j].status == CellStatus.BLACK:
+            return True
+
         hlen = self.word_len(i, j, WordDirection.HORIZONTAL)
         vlen = self.word_len(i, j, WordDirection.VERTICAL)
-        return is_black or (hlen >= 3 and vlen >= 3)
+        return hlen >= 3 and vlen >= 3
 
     def clone(self):
         """Clone (deepcopy) this grid"""
@@ -812,6 +814,14 @@ class Grid:
         black_sequence = [None] * n
         self.set_word(black_sequence, i, j, direction)
 
+    def set_entry(self, entry: Entry | str, value: str, lock: bool = False):
+        """Sets a given entry to a specific value"""
+        if isinstance(entry, str):
+            entry = self.get_entry(entry)
+        if len(value) != len(entry):
+            raise ValueError(f"Invalid entry length: expected {len(entry)}, found {len(value)}")
+        self.set_word(value, entry[0].x, entry[0].y, entry.direction, lock=lock)
+
     def set_word(
         self, word: str | list[str | None], i: int, j: int, direction: WordDirection | int, lock: bool = False
     ) -> None:
@@ -825,7 +835,7 @@ class Grid:
             Starting row coordinate
         j : int
             Starting column coordinate
-        direction : WordDirection
+        direction : WordDirection or int
             Direction to place word
         lock : bool, optional
             Whether to lock the cells (default: False)
@@ -902,7 +912,8 @@ class Grid:
 
     def word_len(self, i: int, j: int, direction: WordDirection) -> int:
         """Get length of word at position (i, j)."""
-        return len(self.cell_to_entry(i, j, direction))
+        entry = self.cell_to_entry(i, j, direction)
+        return 0 if not entry else len(entry)
 
     def get_next_cell(self, x: int, y: int, move_dir: MoveDirection) -> Cell:
         """Get next cell in solving order.

@@ -79,6 +79,13 @@ class LaFargeWord(lafarge_word_db.Entity):
         LaFargeWord(word=word, score=score, **kwargs)
         orm.commit()
 
+    @classmethod
+    def remove_word(cls, word: str):
+        existing_entry = LaFargeWord.get(word=word)
+        if existing_entry:
+            existing_entry.delete()
+        orm.commit()
+
     @property
     def avg_score(self):
         # scores_to_average = [
