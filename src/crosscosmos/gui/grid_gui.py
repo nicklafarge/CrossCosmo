@@ -24,7 +24,7 @@ from crosscosmos.gui.image_transform import RGBTransform
 
 logger = logging.getLogger(__name__)
 # logger.setLevel(logging.INFO)
-logger.setLevel(logging.DEBUG)
+# logger.setLevel(logging.DEBUG)
 
 # Constants
 UPDATES_PER_FRAME = 100

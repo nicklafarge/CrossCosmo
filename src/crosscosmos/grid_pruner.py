@@ -12,13 +12,13 @@ from typing import overload
 
 import polars as pl
 
-from crosscosmos import constants, query, refine
+from crosscosmos import constants, query, refine, scoring
 from crosscosmos.enums import CellStatus, WordDirection
 from crosscosmos.grid import Grid, Entry, Cell
 from crosscosmos.wordlists import LaFargeWord
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+# logger.setLevel(logging.DEBUG)
 
 
 class GridPruningSolver:
@@ -137,7 +137,7 @@ class GridPruningSolver:
             df = self.word_df
         entries = refine(df, length=len(entry), fixed_letters=fixed_letters)
 
-        if update_cache:
+        if entry.entry_id not in self.entry_cache or update_cache:
             self.entry_cache[entry.entry_id] = entries
         return entries
 
@@ -187,6 +187,8 @@ class GridPruningSolver:
             # No valid words found - but don't mark cells as impossible yet
             # They might still be valid through other crossing words
             logger.warning(f"No valid words found for entry {entry.entry_id} with current constraints")
+            return []
+
             # Still need to check crossings as they might provide more constraints
             for cell in entry:
                 if cell.status != CellStatus.EMPTY:
@@ -535,6 +537,38 @@ class GridPruningSolver:
             # Empty cells can be any letter initially
             self.cell_letters[(cell.x, cell.y)] = set(constants.ALPHABET)
 
+    def get_scored_words(self, entry_id: str | Entry, **kwargs):
+        scoring_settings = {
+            "use_quality_scores": True,
+            "frequency_weight": 0.2,
+            "quality_weight": 0.2,
+            "scarcity_weight": 0.6,
+            "scarcity_penalty_power": 2.0
+        }
+
+        main_entry = self.grid.get_entry(entry_id)
+        main_valid_entries = self.get_valid_entries(main_entry.entry_id, **kwargs)
+
+        position_scores = {}
+        for i, c in enumerate(main_entry):
+            if c.status != CellStatus.EMPTY:
+                position_scores[i] = pl.DataFrame({
+                    "letter": c.value, "score": 100, "count1": 1, "count2": 1, "excluded1": 0, "excluded2": 0
+                })
+                continue
+
+
+            x_entry_id = c.vertical_entry_id if main_entry.direction == WordDirection.HORIZONTAL else c.horizontal_entry_id
+            x_entry_index = c.vertical_index if main_entry.direction == WordDirection.HORIZONTAL else c.horizontal_index
+            x_valid_entries = self.get_valid_entries(x_entry_id, **kwargs)
+            x_distribution = scoring.get_letter_distribution_at_position(x_valid_entries, position=x_entry_index)
+
+            main_distribution = scoring.get_letter_distribution_at_position(main_valid_entries, position=i)
+
+            score = scoring.compute_letter_scores(main_distribution, x_distribution, **scoring_settings)
+            position_scores[i] = score
+
+        return scoring.apply_multi_position_scores(main_valid_entries, position_scores, aggregation="mean")
 
 if __name__ == "__main__":
     """Test the constraint solver with a simple grid."""

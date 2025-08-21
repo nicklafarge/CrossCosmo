@@ -6,7 +6,7 @@ import crosscosmos as xc
 
 logger = logging.getLogger(__name__)
 
-df = xc.Query(default=False, q=2, limit=None).max_length(12).df()
+df = xc.Query(default=False, q=2, limit=200000).max_length(12).df()
 
 grid = xc.Grid((12, 12), auto_symmetry=True)
 

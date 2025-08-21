@@ -25,7 +25,6 @@ from . import (
     io_utils,
     letter_utils,
     log_config,
-    query,
     standards,
 )
 
@@ -33,6 +32,7 @@ from .grid import Grid, Cell, Entry
 from .query import Query, search
 from .wordlists.lafarge import LaFargeWord
 from .refine import Refiner, refine
+from . import scoring
 
 from .gui import grid_gui
 from .gui.new_grid import run_gui

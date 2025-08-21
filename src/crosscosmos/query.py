@@ -213,7 +213,7 @@ class Query:
         self._limit = limit
         return self
 
-    def fix_letters(self, idx: int, letters: str | list[str]):
+    def fix_letters(self, idx: int, letters: str | list[str]) -> "Query":
         """Fix an index to be a specific letter"""
         if idx < 0:
             raise ValueError(f"Index must be positive: {idx}")
@@ -226,6 +226,7 @@ class Query:
                 raise ValueError("Can only fix a single character")
 
         self._query = orm.select(w for w in self._query if w.word[idx] in letters)
+        return self
 
     def exclude_letters(self, idx: int, letters: str | list[str]):
         """Exclude letter at a given index an index"""
@@ -239,6 +240,7 @@ class Query:
                 raise ValueError("Can only fix a single character")
 
             self._query = orm.select(w for w in self._query if w.word[idx] != l.upper())
+        return self
 
     def order_by_score(self) -> "Query":
         """Sort the results by the "score" column"""

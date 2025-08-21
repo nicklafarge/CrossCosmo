@@ -8,7 +8,7 @@ import polars as pl
 import pyperclip
 from typing_extensions import override
 
-from crosscosmos import constants, Refiner, Entry
+from crosscosmos import constants, Refiner, Entry, scoring
 from crosscosmos.enums import CellStatus, GridSymmetry, MoveDirection, WordDirection
 from crosscosmos.grid import Cell, Grid
 from crosscosmos.gui.config import LayoutConfig
@@ -50,6 +50,7 @@ class CrossCosmosGui(arcade.Window):
         self.grave_down: bool = False
         self.frame_update_count: int = 0
         self.cursor_visible: bool = True
+        self.use_cached_words: bool = False
         self.edit_direction: WordDirection = WordDirection.HORIZONTAL
         self.selected_x: int = 0
         self.selected_y: int = 0
@@ -92,6 +93,10 @@ class CrossCosmosGui(arcade.Window):
     def selected_gui_cell(self) -> arcade.Sprite:
         """Returns the currently selected cell located by the selected x/y coordinates"""
         return self.grid_sprites[self.selected_grid_cell.gui_row, self.selected_grid_cell.gui_col]
+
+    @property
+    def selected_entry(self) -> Entry:
+        return self.grid.cell_to_entry(self.selected_x, self.selected_y, self.edit_direction)
 
     @override
     def on_draw(self):
@@ -468,8 +473,30 @@ class CrossCosmosGui(arcade.Window):
 
         ####
         button_size = sidebar_width_ratio * self.width * 0.4
-        solve_button, solve_button_anchor = self._build_button(":resources:/input_prompt/xbox/button_start_icon.png", button_size)
-        resolve_button, resolve_button_anchor = self._build_button(":resources:/input_prompt/xbox/button_start_icon_outline.png", button_size)
+        use_cache_button, use_cache_anchor = self._build_button(
+            ":resources:/gui_basic_assets/toggle/red.png", button_size
+        )
+        solve_button, solve_button_anchor = self._build_button(
+            ":resources:/input_prompt/xbox/button_start_icon.png", button_size
+        )
+        resolve_button, resolve_button_anchor = self._build_button(
+            ":resources:/input_prompt/xbox/button_start_icon_outline.png", button_size
+        )
+        lock_button, _ = self._build_button(
+            ":resources:/images/tiles/lockYellow.png", button_size
+        )
+
+        @use_cache_button.event("on_click")
+        def on_click_use_cache(event):
+            self.use_cached_words = not self.use_cached_words
+
+            _color = "green" if self.use_cached_words else "red"
+            _image = f":resources:/gui_basic_assets/toggle/{_color}.png"
+            _new_textures = self._create_button_textures(_image)
+            use_cache_button.texture = _new_textures["texture"]
+            use_cache_button.texture_hover = _new_textures["texture_hover"]
+            use_cache_button.texture_pressed = _new_textures["texture_pressed"]
+            self._update_info_section()
 
         @solve_button.event("on_click")
         def on_click_solve(event):
@@ -493,6 +520,11 @@ class CrossCosmosGui(arcade.Window):
             self._update_info_section()
             self.update_gui_colors(with_possibilities=True)
 
+        @lock_button.event("on_click")
+        def on_click_lock_button(event):
+            for c in self.selected_entry:
+                c.status = CellStatus.LOCKED
+            self.update_gui_colors(with_possibilities=False)
         # button.with_padding(top=10)
         # button_anchor = arcade.gui.UIAnchorLayout()
         # button_anchor.add(resolve_button,
@@ -500,8 +532,11 @@ class CrossCosmosGui(arcade.Window):
         #     height=button_size, anchor_x="center_y", anchor_y="top")
 
         side_bar.add(arcade.gui.UISpace(size_hint=(1.0, None), height=10))
+        side_bar.add(use_cache_button)
+        side_bar.add(arcade.gui.UISpace(size_hint=(1.0, None), height=5))
         side_bar.add(solve_button)
         side_bar.add(resolve_button)
+        side_bar.add(lock_button)
 
         # side_bar.add(padded_button)
         # side_bar.add(button)
@@ -898,7 +933,7 @@ class CrossCosmosGui(arcade.Window):
         self.grid_location_label.with_padding(left=self.cfg.grid.left_margin, top=4)
 
         self.ans_combo_label = arcade.gui.UILabel(
-            size_hint=(1, 0.5), text="14A / 22D", font_size=14, font_name=self.cfg.text.grid_font_name
+            size_hint=(1, 0.5), text="--- / ---", font_size=14, font_name=self.cfg.text.grid_font_name
         )
         self.ans_combo_label.with_padding(top=2, left=self.cfg.grid.left_margin)
         info1.add(self.grid_location_label)
@@ -1183,6 +1218,39 @@ class CrossCosmosGui(arcade.Window):
         else:
             gui_text_label.color = self.cfg.color.normal_text
 
+    def _create_button_textures(self, texture_str: str) -> dict[str, arcade.Texture]:
+        """
+        Build a textured button with hover and click effects.
+
+        Creates a button with visual feedback by lightening the texture
+        on hover and click events.
+
+        Parameters
+        ----------
+        texture_str : str
+            Path to button texture image
+
+        Returns
+        -------
+        dict[str, arcade.Texture]
+            Button textures for normal, hover, and pressed states
+        """
+
+        texture = arcade.load_texture(texture_str)
+
+        hover_image = RGBTransform().mix_with([220] * 3, factor=0.40).applied_to(texture.image)
+        texture_hover = arcade.Texture(hover_image)
+
+        click_image = RGBTransform().mix_with([220] * 3, factor=0.90).applied_to(texture.image)
+        texture_pressed = arcade.Texture(click_image)
+
+        return {
+            "texture": texture,
+            "texture_hover": texture_hover,
+            "texture_pressed": texture_pressed
+        }
+
+
     def _build_button(self, texture_str: str, button_size: float , **kwargs) -> tuple[arcade.gui.UITextureButton,arcade.gui.UIAnchorLayout]:
         """
         Build a textured button with hover and click effects.
@@ -1202,21 +1270,13 @@ class CrossCosmosGui(arcade.Window):
         arcade.gui.UITextureButton
             Button with hover and pressed states
         """
-
-        texture = arcade.load_texture(texture_str)
-
-        hover_image = RGBTransform().mix_with([220] * 3, factor=0.40).applied_to(texture.image)
-        texture_hover = arcade.Texture(hover_image)
-
-        click_image = RGBTransform().mix_with([220] * 3, factor=0.90).applied_to(texture.image)
-        texture_pressed = arcade.Texture(click_image)
-
+        textures = self._create_button_textures(texture_str)
         button = arcade.gui.UITextureButton(
-            texture=texture,
+            texture=textures["texture"],
             width=button_size,
             height=button_size,
-            texture_hovered=texture_hover,
-            texture_pressed=texture_pressed,
+            texture_hovered=textures["texture_hover"],
+            texture_pressed=textures["texture_pressed"],
             **kwargs,
         )
 
@@ -1259,7 +1319,7 @@ class CrossCosmosGui(arcade.Window):
         new_value : str
             New letter value for the cell (empty string to clear)
         """
-        old_value = self.grid[self.selected_x,self.selected_x].value
+        old_value = self.grid[self.selected_x,self.selected_y].value
         logger.info(f"Updating cell ({self.selected_x},{self.selected_y}) from '{old_value}' to '{new_value}'")
         self.grid.set_grid(self.selected_x, self.selected_y, new_value)
 
@@ -1268,13 +1328,17 @@ class CrossCosmosGui(arcade.Window):
             entry_id = self.grid.get_entry_id(self.selected_x, self.selected_y, direction)
             self.gps.add_to_requeue(entry_id)
 
-    def _valid_entries(self, entry: str | Entry, from_cache: bool = False) -> pl.DataFrame:
+    def _valid_entries(self, entry: str | Entry,
+                       scored: bool = False,
+                       from_cache: bool = False) -> pl.DataFrame:
         """ Returns a list of valid entries for a given input, computed directly or retieved from the cache
 
         Parameters
         ----------
         entry : str or Entry
             Entry to get valid values for
+        scored : bool, optional
+            If true, run scoring algorithm on valid entry search
         from_cache : bool, optional
             Whether to use cached values
 
@@ -1286,40 +1350,29 @@ class CrossCosmosGui(arcade.Window):
         if isinstance(entry, str):
             entry = self.grid.get_entry(entry)
 
-        valid_entries_df = self.gps.get_valid_entries(entry, from_cache=True, update_cache=False)
-        refiner = Refiner(valid_entries_df, default=False)
-        for i, c in enumerate(entry):
-            if c.value:
-                refiner = refiner.fix_letter(i, c.value)
+        if from_cache:
+            if scored:
+                valid_entries_df = self.gps.get_scored_words(entry, from_cache=from_cache, update_cache=False)
+            else:
+                valid_entries_df = self.gps.get_valid_entries(entry, from_cache=from_cache, update_cache=False)
+        else:
+            valid_entries_df = self.df
 
-        return refiner.df()
-        # return self.gps.get_valid_entries(entry, from_cache=from_cache)
-        # self.gps.entry_cache[entry.entry_id] = updated_matches
-        # if from_cache:
-        #     return self.gps.get_valid_entries(entry, from_cache=False)
-        # else:
-        #     return self._update_entry_cache(entry)
+        if valid_entries_df is None or valid_entries_df.is_empty():
+            return valid_entries_df
 
-        # if cached_entries.is_empty():
-        #     return cached_entries
-
-        # entry_dir = WordDirection.from_entry_id(entry_id)
-        # crosser_dir = WordDirection.flip(entry_dir)
+        return Refiner(valid_entries_df, default=False).match(str(entry)).df()
+        # refiner = Refiner(valid_entries_df, default=False).length(len(entry))
+        # for i, c in enumerate(entry):
+        #     if c.value:
+        #         refiner = refiner.fix_letter(i, c.value)
         #
-        # for crosser in self.grid.get_crossers(entry_id):
-        #     crosser_id = self.grid.get_entry_id(crosser[0].x, crosser[0].y, crosser_dir)
-        #     intx_cell, entry_idx, crosser_idx  = self.grid.find_intersection(entry_id, crosser_id)
-        #     letter_set = self.entry_cache[crosser_id]['word'].str.slice(crosser_idx, 1).unique()
-        #     cached_entries = cached_entries.filter(pl.col("word").str.slice(entry_idx, 1).is_in(letter_set.to_list()))
-
-        # return cached_entries
+        # return refiner.df()
 
     def _update_info_section(self):
         logger.info("_update_info_section")
-        entries = self.grid.entries_df()
 
-        entry_id = self.grid.get_entry_id(self.selected_grid_cell.x, self.selected_grid_cell.y, self.edit_direction)
-        if not entry_id:
+        if self.selected_grid_cell.status == CellStatus.BLACK:
             self.grid_location_label.text = ""
             self.current_value_label.text = ""
             self.n_letters_label2.text = ""
@@ -1330,38 +1383,49 @@ class CrossCosmosGui(arcade.Window):
             self.matches_list_1.text = ""
             return
 
-        entry_data = entries.filter(pl.col("entry_id") == entry_id).to_dicts()[0]
+        cell_data = self.grid.get_cell_context(self.selected_grid_cell.x, self.selected_grid_cell.y)
+
+        if self.edit_direction == WordDirection.HORIZONTAL:
+            main_entry = cell_data.horizontal_entry
+            main_idx = cell_data.index_in_horizontal
+            cross_entry = cell_data.vertical_entry
+            cross_idx = cell_data.index_in_horizontal
+        else:
+            main_entry = cell_data.vertical_entry
+            main_idx = cell_data.index_in_horizontal
+            cross_entry = cell_data.horizontal_entry
+            cross_idx = cell_data.index_in_horizontal
+
+        entries = self.grid.entries_df()
+        entry_data = entries.filter(pl.col("entry_id") == main_entry.entry_id).to_dicts()[0]
 
         self.grid_location_label.text = f"({self.selected_grid_cell.x},{self.selected_grid_cell.y})"
-        # self.ans_combo_label.text = ""  TODO
+        self.ans_combo_label = f"{main_entry.entry_id} / {cross_entry.entry_id}"
+
         self.current_value_label.text = entry_data["entry"]
         self.n_letters_label2.text = entry_data["length"]
         self.n_letters_label.text = f"Length: {entry_data['length']}"
 
-        self.n_entries_label = len(self.grid.entries_df())
+        self.n_entries_label.text = len(self.grid.entries_df())
 
         n_blocks = len([c for c in self.grid.grid.flatten() if c.status == CellStatus.BLACK])
         blocks_pct = 100 * (n_blocks / len(self.grid.grid.flatten()))
         self.n_blocks_label.text = f"{n_blocks} ({blocks_pct:.1f}%)"
 
-        self.current_entry_label.text = f"{entry_id}: {entry_data['entry']}"
+        self.current_entry_label.text = f"{main_entry.entry_id}: {entry_data['entry']}"
+
         # self.n_possible_label.text = f"N. Database: {entry_data['n_possible']}"
 
-        # possible_entries = self.entry_cache[entry_id]
-        # possible_entries = self.gps.get_valid_entries(entry_id, from_cache=True)
-        possible_entries = self._valid_entries(entry_id, from_cache=False)
+        suggested_entries = self._valid_entries(main_entry.entry_id, scored=True, from_cache=self.use_cached_words)
+        # suggested_entries = self.gps.get_scored_words(main_entry.entry_id)
 
-        # entry_query = Refiner(self.df).match(entry_data['entry'])
-        # entry_query = Query(default=False).match(entry_data['entry'])
-        self.n_possible_label.text = f"N. Database: {len(possible_entries)}"
+        self.n_possible_label.text = f"N. Database: {len(suggested_entries)}"
 
-        # best_matches = entry_query.df()[:n_per_col*3]
 
-        # match_words = [] if best_matches.is_empty() else best_matches["word"].to_list()
         match_words = (
             []
-            if possible_entries.is_empty()
-            else [f"{e['word']} [{int(np.round(e['score']))}]" for e in possible_entries.iter_rows(named=True)]
+            if suggested_entries.is_empty()
+            else [f"{e['word']} [{int(np.round(e['score']))}]" for e in suggested_entries.iter_rows(named=True)]
         )
 
         n_per_col = self.cfg.info.n_matches_per_column

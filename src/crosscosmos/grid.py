@@ -4,6 +4,7 @@ Defines a crossword Grid class, interfacing between the data and gui laters
 """
 
 import copy
+from dataclasses import dataclass
 import logging
 import random
 import string
@@ -13,7 +14,6 @@ from typing import Iterable
 import numpy as np
 import polars as pl
 from numpy.typing import NDArray
-from pydantic import BaseModel
 
 from crosscosmos import constants, io_utils, query
 from crosscosmos.corpus import Corpus
@@ -92,6 +92,11 @@ class Cell:
         self.is_v_start: bool = False
         self.is_v_end: bool = False
         self.answer_number: int | None = None
+
+        self.horizontal_entry_id: str | None = None
+        self.vertical_entry_id: str | None = None
+        self.horizontal_index: int | None = None
+        self.vertical_index: int | None = None
 
         # Solving state (TODO-remove)
         self.removed_words: list[tuple[str, WordDirection]] = []
@@ -353,6 +358,16 @@ class Entry:
             if char in constants.PLACEHOLDERS:
                 return cell_str[:i]
         return cell_str
+
+
+@dataclass(frozen=True)
+class CellContext:
+    """A container for the contextual information of a cell within the grid."""
+    cell: Cell
+    horizontal_entry: Entry | None
+    vertical_entry: Entry | None
+    index_in_horizontal: int | None
+    index_in_vertical: int | None
 
 
 class Grid:
@@ -752,6 +767,59 @@ class Grid:
                 else:
                     cell.answer_number = None
 
+                self._update_cell_entry_info()
+
+    def _update_cell_entry_info(self) -> None:
+        """ Caches the entry ID and index for each cell.
+        """
+        # Reset the context for all cells
+        for cell in self.grid.flatten():
+            cell.horizontal_entry_id = None
+            cell.vertical_entry_id = None
+            cell.horizontal_index = None
+            cell.vertical_index = None
+
+        # Process horizontal entries
+        for x, y in self.h_heads:
+            entry = self.cell_to_entry(x, y, WordDirection.HORIZONTAL)
+            if entry:
+                for i, cell in enumerate(entry.cells):
+                    cell.horizontal_entry_id = entry.entry_id
+                    cell.horizontal_index = i
+
+        # Process vertical entries
+        for x, y in self.v_heads:
+            entry = self.cell_to_entry(x, y, WordDirection.VERTICAL)
+            if entry:
+                for i, cell in enumerate(entry.cells):
+                    cell.vertical_entry_id = entry.entry_id
+                    cell.vertical_index = i
+
+    def get_cell_context(self, x: int, y: int) -> CellContext:
+        """
+        Efficiently gets the full context for a cell using cached data.
+
+        Returns a CellContext object containing the cell itself, its horizontal
+        and vertical entries (if any), and its index within those entries.
+        """
+        cell = self[x, y]
+
+        h_entry = None
+        if cell.horizontal_entry_id:
+            h_entry = self.get_entry(cell.horizontal_entry_id)
+
+        v_entry = None
+        if cell.vertical_entry_id:
+            v_entry = self.get_entry(cell.vertical_entry_id)
+
+        return CellContext(
+            cell=cell,
+            horizontal_entry=h_entry,
+            vertical_entry=v_entry,
+            index_in_horizontal=cell.horizontal_index,
+            index_in_vertical=cell.vertical_index,
+        )
+
     def clear(self) -> None:
         """Clear all non-locked, non-black cells."""
         for cell in self.grid.flatten():
@@ -979,7 +1047,7 @@ class Grid:
 
         return self[i, j]
 
-    def get_entry(self, entry_id: str) -> Entry | None:
+    def get_entry(self, entry_id: str | Entry) -> Entry | None:
         """Get cells forming a numbered word entry.
 
         Parameters
@@ -997,6 +1065,9 @@ class Grid:
         ValueError
             If entry_id format is invalid
         """
+
+        if isinstance(entry_id, Entry):
+            return entry_id
 
         if not entry_id or len(entry_id) < 2:
             raise ValueError(f"Invalid entry ID format: {entry_id}")
@@ -1027,12 +1098,12 @@ class Grid:
             return None
         return entry.entry_id
 
-    def get_crossers(self, entry_id: str) -> list[Entry]:
+    def get_crossers(self, entry_id: Entry | str) -> list[Entry]:
         """Find all words crossing a given entry.
 
         Parameters
         ----------
-        entry_id : str
+        entry_id : Entry or str
             Entry identifier (e.g., "1A" or "10D")
 
         Returns
@@ -1046,6 +1117,21 @@ class Grid:
 
         cross_dir = WordDirection.flip(entry.direction)
         return [self.cell_to_entry(cell.x, cell.y, cross_dir) for cell in entry]
+
+    def get_crosser_indices(self, entry_id: Entry | str) -> list[Entry]:
+        """Find all words crossing a given entry.
+
+        Parameters
+        ----------
+        entry_id : Entry or str
+            Entry identifier (e.g., "1A" or "10D")
+
+        Returns
+        -------
+        list[Entry]
+            All crossing words
+        """
+        raise NotImplementedError("NIE")
 
     def count_possible(
         self,

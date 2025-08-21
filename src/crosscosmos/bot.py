@@ -74,16 +74,17 @@ class DepthFirstSolver:
             List of tries indexed by word length
         """
         removed_words = grid[x, y].reset_cell()
-        cell = grid[x, y]
+        hlen = grid.horizontal_word_len(x, y)
+        vlen = grid.vertical_word_len(x, y)
 
         # Restore removed words to appropriate tries
         if removed_words:
             for word, direction in removed_words:
                 match direction:
                     case WordDirection.HORIZONTAL:
-                        trie_list[cell.hlen][word] = True
+                        trie_list[hlen][word] = True
                     case WordDirection.VERTICAL:
-                        trie_list[cell.vlen][word] = True
+                        trie_list[vlen][word] = True
 
     def move_back_horizontal(
         self, grid: xc.grid.Grid, x: int, y: int, trie_list: list[pygtrie.Trie]
@@ -244,22 +245,22 @@ class DepthFirstSolver:
 
             # Validate horizontal direction
             h_sequence = grid.cell_to_entry(cell.x, cell.y, WordDirection.HORIZONTAL)
-            h_status = self.validate_grid_cell_list(tries[cell.hlen], h_sequence, cell.is_h_end)
+            h_status = self.validate_grid_cell_list(tries[len(h_sequence)], h_sequence, cell.is_h_end)
 
             # Validate vertical direction
             v_sequence = grid.cell_to_entry(cell.x, cell.y, WordDirection.VERTICAL)
-            v_status = self.validate_grid_cell_list(tries[cell.vlen], v_sequence, cell.is_v_end)
+            v_status = self.validate_grid_cell_list(tries[len(v_sequence)], v_sequence, cell.is_v_end)
 
             # Accept letter if valid in both directions
             if h_status != LetterSequenceStatus.INVALID and v_status != LetterSequenceStatus.INVALID:
                 # Remove completed words from tries to avoid duplicates
                 #   TODO-reset these if multiple solutions are sought!
                 if h_status == LetterSequenceStatus.VALID_WORD:
-                    tries[cell.hlen].pop(str(h_sequence))
+                    tries[len(h_sequence)].pop(str(h_sequence))
                     grid[cell.x, cell.y].remove_word(str(h_sequence), WordDirection.HORIZONTAL)
 
                 if v_status == LetterSequenceStatus.VALID_WORD:
-                    tries[cell.vlen].pop(str(v_sequence))
+                    tries[len(v_sequence)].pop(str(v_sequence))
                     grid[cell.x, cell.y].remove_word(str(v_sequence), WordDirection.VERTICAL)
 
                 return LetterStatus.VALID, MoveDirection.FORWARD_HORIZONTAL

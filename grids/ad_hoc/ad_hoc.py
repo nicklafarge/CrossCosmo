@@ -2,7 +2,8 @@ from pathlib import Path
 
 import crosscosmos as xc
 from crosscosmos import query
-from crosscosmos.wordlists import CollabWordListWord, DiehlWord, LaFargeWord, XwordWord
+from crosscosmos.wordlists.crossword_tracker import XwordWord
+from crosscosmos.wordlists.lafarge import LaFargeWord
 from crosscosmos.gui import grid_gui
 
 
@@ -17,7 +18,7 @@ if __name__ == "__main__":
 
 
     dfl = query.contains_str_and_removed_str(LaFargeWord, "HOC", 0)
-    dfd = query.contains_str_and_removed_str(DiehlWord, "HOC", 0)
-    dfc = query.contains_str_and_removed_str(CollabWordListWord, "HOC", 0)
+    # dfd = query.contains_str_and_removed_str(XwordWord, "HOC", 0)
+    # dfc = query.contains_str_and_removed_str(CollabWordListWord, "HOC", 0)
     # dft = query.contains_str_and_removed_str(TestWord, "HOC", 0)
     dfx = query.contains_str_and_removed_str(XwordWord, "HOC", 0)
