@@ -1,0 +1,61 @@
+NOTE (4)
+    E
+NOTED (4)
+    ED
+KNOT (4)
+    K
+TNOTE (5)
+    TE
+NOTCH (5)
+    CH
+PINOT (5)
+    PI
+DENOTE (6)
+    DEE
+NOTICE (6)
+    ICE
+NOTIFY (6)
+    IFY
+NOTARY (6)
+    ARY
+NOTION (6)
+    ION
+NOTATE (6)
+    ATE
+CONNOTE (7)
+    CONE
+NOTHING (7)
+    HING
+DENOTED (7)
+    DEED
+ANOTHER (7)
+    AHER
+NOTASTE (7)
+    ASTE
+
+CELTICKNOT (10)
+
+
+NOTAGAIN (8)
+OHNONOTAGAIN (10)
+
+ANOTABLEPINOT (13)
+TOPNOTCHPINOT (13)
+TOPNOTCHTOPKNOT (15)
+
+Forced
+-------
+NOTARYINAKNOT
+
+Too long
+--------
+TIETHEKNOTNOTICE (16)
+(Something with knots?)
+
+I TOOK NOTE
+BANK NOTE
+SICK NOTE
+
+SPARKNOTES
+ASK NOT
+

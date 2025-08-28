@@ -1,0 +1,468 @@
+
+============================================
+Revealer optoins
+============================================
+
+NATUREWALK
+
+THEGREATOUTDOORS
+
+============================================
+Selections
+============================================
+
+COOLANT/FLYLEAF
+FIREFOX/SICKBAY
+BOMBSHELLS/FRESHWATER
+
+
+============================================
+Favorites (no category)
+============================================
+
+
+7
+COOLANT/FLYLEAF
+FIREFOX/SICKBAY
+9
+BOMBSHELL/FIREFLIES
+BOMBSHELL/FIRESTORM
+10
+BOMBSHELLS/FRESHWATER
+
+
+
+
+
+STELLARWIND
+SAVAGEGARDEN
+
+LITER
+LITCHI
+COOLER
+ACETONE
+SICKBAY
+SICKBED
+COOLANT
+FLYLEAF
+FLYPAST
+TIGHTEND
+BOMBSHELL
+EPICENTER
+FLYCATCHER
+
+FIREBUG
+FIREARM
+FIREFLY
+FIREFOX
+FIREDOG
+FIREWALL
+FIREPLACE
+FIRETRUCK
+FIREHOUSE
+FIREBREAK
+FIREFLIES
+FIRECRACKER
+
+"NESS" ones
+COOLNESS
+DOPENESS
+SICKNESS
+TIGHTNESS
+FRESHNESS
+SWEETNESS
+WICKEDNESS
+
+Maybe too much of a deep cut
+"ILLITERATE"
+
+============================================
+Nautical Brainstorm
+============================================
+
+
+SICKBAY
+FLYERS
+
+COOLAIR
+flyline
+
+BOMBSHELL
+FIRESTORM
+DOPESHEET
+
+STELLARWIND
+FRESHBREEZE
+
+
+
+FLYTRAP                 (music)
+MADHOUSE
+
+============================================
+Options
+============================================
+ACEBANDAGE
+    BANDAGE
+ACEHARDWARE
+    HARDWARE
+ACETONE
+    TONE
+
+
+BANGINGOUT
+    GOUT
+
+
+COOLANT
+    ANT
+COOLAIR
+    AIR
+COOLDOWN
+    DOWN
+COOLBREEZE
+    BREEZE
+COOLWATER
+    WATER
+COOLWEATHER
+    WEATHER
+
+
+BOMBSHELL
+    SHELL
+BOMBSQUAD
+    SQUAD
+
+
+DOPESHEET
+    SHEET
+
+
+FRESHWATER
+    WATER
+FRESHMAN
+    MAN
+FRESHAIR
+    AIR
+FRESHBREEZE
+    BREEZE
+
+
+FIRESTATION
+    STATION
+FIREDRILL
+    DRILL
+FIREEXIT
+    EXIT
+FIREFLY
+    FLY
+FIREFIGHTER
+    FIGHTER
+FIREPLACE
+    PLACE
+FIREWALL
+    WALL
+FIREWOOD
+    WOOD
+
+
+FLYFISHING
+    FISHING
+FLYCATCHER
+    CATCHER
+FLYLEAF
+    LEAF
+FLYPAPER
+    PAPER
+FLYWHEEL
+    WHEEL
+FLYBALL
+    BALL
+FLYBOY
+    BOY
+FLYLINE
+    LINE
+
+
+LITCRIT
+    CRIT
+LITREVIEW
+    REVIEW
+LITCANDLE
+    CANDLE
+LITFUSE
+    FUSE
+
+
+SICKNOTE
+    NOTE
+SICKBAY
+    BAY
+SICKBED
+    BED
+SICKROOM
+    ROOM
+SICKPAY
+    PAY
+
+
+STELLARWIND
+    WIND
+
+
+SWEETBREAD
+    BREAD
+SWEETPEA
+    PEA
+SWEETTOOTH
+    TOOTH
+SWEETSPOT
+    SPOT
+SWEETHEART
+    HEART
+
+
+
+TIGHTPANTS
+    PANTS
+TIGHTEND
+    END
+TIGHTRACE
+    RACE
+TIGHTFIT
+    FIT
+TIGHTCORNER
+    CORNER
+TIGHTSPOT
+    SPOT
+TIGHTROPE
+    ROPE
+TIGHTLACE
+    LACE
+
+TRILLION
+    ION
+
+WICKEDSONG
+    SONG
+WICKEDNESS
+    NESS
+
+
+============================================
+Change meaning / different words
+============================================
+ACETONE
+    TONE
+BANGINGOUT
+    GOUT
+COOLANT
+    ANT
+BOMBSHELL
+    SHELL
+DOPESHEET
+    SHEET
+FIREDRILL
+    DRILL
+FIREWALL
+    WALL
+FRESHMAN
+    MAN
+FLYLEAF
+    LEAF
+FLYWHEEL
+    WHEEL
+SICKBAY
+    BAY
+SICKNESS
+    NESS
+WICKEDNESS
+    NESS
+
+============================================
+B-tier
+============================================
+
+FRESHAPPLE
+    APPLE
+etc.
+
+SAVAGEGARDEN
+    GARDEN
+
+KILLERWHALE
+    WHALE
+
+
+
+
+============================================
+Second words only
+============================================
+    BANDAGE
+    HARDWARE
+    TONE
+
+
+    GOUT
+
+
+    ANT
+    AIR
+    DOWN
+    BREEZE
+    WATER
+    WEATHER
+
+
+    SHELL
+    BAY
+    SQUAD
+
+
+    SHEET
+
+
+    WATER
+    MAN
+    AIR
+    BREEZE
+
+
+    FISHING
+    CATCHER
+    LEAF
+    PAPER
+    WHEEL
+    BALL
+    BOY
+    LINE
+
+
+    CRIT
+    REVIEW
+    CANDLE
+    FUSE
+
+
+    NOTE
+    BAY
+    BED
+    ROOM
+    PAY
+
+
+    WIND
+
+
+    BREAD
+    PEA
+    TOOTH
+    SPOT
+    HEART
+
+
+
+    PANTS
+    END
+    RACE
+    FIT
+    CORNER
+    SPOT
+    ROPE
+    LACE
+
+
+    SONG
+    NESS
+
+
+    STATION
+    DRILL
+    EXIT
+    FLY
+    FIGHTER
+    PLACE
+    WALL
+    WOOD
+    STORM
+
+
+============================================
+Categories
+============================================
+
+-------------------------------
+Nature / Weather
+-------------------------------
+AIR (COOLAIR, FRESHAIR)
+BREEZE (COOLBREEZE, FRESHBREEZE)
+BAY (BOMBAY, SICKBAY)
+WIND (STELLARWIND)
+STORM (FIRESTORM)
+WATER (FRESHWATER)
+
+-------------------------------
+Nautical
+-------------------------------
+AIR (COOLAIR, FRESHAIR)
+BAY (SICKBAY)
+LINE (FLYLINE)
+WIND (STELLARWIND)
+SHEET (DOPESHEET)
+STORM (FIRESTORM)
+BREEZE (COOLBREEZE, FRESHBREEZE)
+WATER (FRESHWATER)
+SHELL (BOMBSHELL)
+
+SICKBAY
+COOLAIR
+FLYLINE
+FRESHAIR
+DOPESHEET
+FIRESTORM
+BOMBSHELL
+COOLBREEZE
+FRESHWATER
+STELLARWIND
+FRESHBREEZE
+
+-------------------------------
+Home / Household
+-------------------------------
+HARDWARE (ACEHARDWARE)
+SHEET (DOPESHEET)
+CANDLE (LITCANDLE)
+ROOM (SICKROOM)
+SWEETHEART (HEART)
+WALL (FIREWALL)
+
+-------------------------------
+Sports
+-------------------------------
+AIR (COOLAIR, FRESHAIR)
+BALL (FLYBALL)
+SQUAD (FIRESQUAD)
+CATCHER (FLYCATCHER)
+RACE (TIGHTRACE)
+FIGHTER (FIREFIGHTER)
+~~END (TIGHTEND)
+
+-------------------------------
+Football
+-------------------------------
+DOWN (COOLDOWN)
+LINE (FLYLINE)
+SPOT (SWEETSPOT)
+FLY (FIREFLY)
+
+
+-------------------------------
+Construction
+-------------------------------
+
+HARDWARE (ACEHARDWARE)
+WALL (FIREWALL)
+WOOD (FIREWOOD)
+CORNER (TIGHTCORNER)
+ROOM (SICKROOM)

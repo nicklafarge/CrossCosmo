@@ -12,7 +12,7 @@ from typing import overload
 
 import polars as pl
 
-from crosscosmos import constants, query, refine, scoring
+from crosscosmos import WordMap, constants, query, refine, scoring
 from crosscosmos.enums import CellStatus, WordDirection
 from crosscosmos.grid import Grid, Entry, Cell
 from crosscosmos.wordlists import LaFargeWord
@@ -47,6 +47,8 @@ class GridPruningSolver:
         self.grid = grid
         self.word_df = word_df
         self.min_score = min_score
+
+        self.word_map = WordMap(self.word_df)
 
         self.cell_letters: dict[tuple[int, int], set[str]] = {}
 
