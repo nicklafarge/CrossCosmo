@@ -11,6 +11,7 @@ pydantic~=2.11.7
 pygtrie~=2.5.0
 rapidfuzz
 requests~=2.32.4
+rich
 thefuzz
 tqdm~=4.67.1
 
@@ -20,3 +21,4 @@ python-constraint2~=2.4.0
 selenium~=4.34.2
 typing_extensions~=4.14.1
 rich~=14.1.0
+sqlalchemy

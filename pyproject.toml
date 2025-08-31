@@ -1,14 +1,44 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
 [project]
 name = "crosscosmos"
-version = "0.1"
+version = "0.2.0"
 authors = [
     {name = "Nick LaFarge", email = "nick.lafarge@gmail.com"},
 ]
-description = "Crosswords woo"
+description = "Cross.s"
 readme = "README.md"
 requires-python = ">=3.11"
 classifiers = [
     "Programming Language :: Python :: 3 :: Only",
+]
+dependencies = [
+    "arcade",
+    "beautifulsoup4",
+    "fastapi",
+    "matplotlib",
+    "networkx",
+    "numpy",
+    "pandas",
+    "pillow",
+    "polars",
+    "pony",
+    "pyarrow",
+    "pydantic",
+    "pygtrie",
+    "pyperclip",
+    "python-constraint2",
+    "rapidfuzz",
+    "requests",
+    "rich",
+    "ruff",
+    "selenium",
+    "sqlalchemy",
+    "thefuzz",
+    "typing_extensions",
+    "tqdm"
 ]
 
 [tool.ruff]
@@ -36,7 +66,6 @@ section-order = [
     "local-folder",
     "first-party"
 ]
-
 
 # Additional formatting options
 [tool.ruff.format]
