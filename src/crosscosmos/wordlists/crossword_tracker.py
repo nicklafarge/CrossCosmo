@@ -11,7 +11,7 @@ from bs4 import BeautifulSoup
 from pony import orm
 from tqdm import tqdm
 
-from crosscosmos import letter_utils, project_root
+from crosscosmos import constants, letter_utils, project_root
 
 logger = logging.getLogger(__name__)
 
@@ -43,6 +43,7 @@ def scrape_crossword_tracker():
     browse_soup = BeautifulSoup(browse_html, "html.parser")
     letter_pages = browse_soup.find("ul", id="letters").find_all("li")
 
+    words = []
     i = 0
     for i in range(26):
         print(f"--------------- {letter_utils.int2char(i)} ---------------")
@@ -59,3 +60,6 @@ def scrape_crossword_tracker():
             for w in words:
                 word = XwordWord(word=w.text, info=BASE_URL + w.a["href"])
                 orm.commit()
+
+if __name__ == "__main__":
+    scrape_crossword_tracker()

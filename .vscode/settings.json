@@ -1,11 +1,17 @@
 {
-    // This setting tells VS Code to treat .cclist files as a new language type.
+    "python.analysis.extraPaths": [
+        "${workspaceFolder}/src"
+    ],
     "files.associations": {
-        "*.cclist": "cclist"
+        "*.cclist": "cclist",
     },
-
-    // This block applies specific settings ONLY to the "cclist" language type.
-    "[plaintext]": {
+    "[json]":{
+        "editor.rulers": [120]
+    },
+    "[toml]":{
+        "editor.rulers": [120]
+    },
+    "[txt]": {
         "editor.rulers": [
             { "column": 0,  "color": "#444444" },
             { "column": 5,  "color": "#666666" },
@@ -17,5 +23,10 @@
         ],
         "editor.fontSize": 18,
         "editor.lineNumbers": "off",
+    },
+    "[python]": {
+        "editor.rulers": [120],
+        "editor.fontSize": 12,
+        "editor.lineNumbers": "on",
     },
 }
