@@ -1,7 +1,7 @@
 import logging
-from configparser import ConfigParser
-from pathlib import Path
 import tomllib
+from importlib import resources
+from pathlib import Path
 
 import arcade
 import arcade.gui
@@ -10,7 +10,6 @@ import numpy as np
 import pyperclip
 
 import crosscosmos as xc
-from crosscosmos.gui.config import LayoutConfig
 from crosscosmos.grid import (
     Cell,
     CellStatus,
@@ -18,6 +17,7 @@ from crosscosmos.grid import (
     MoveDirection,
     WordDirection,
 )
+from crosscosmos.gui.config import LayoutConfig
 from crosscosmos.gui.image_transform import RGBTransform
 
 logger = logging.getLogger("gui")
@@ -150,7 +150,7 @@ class CrossCosmosGame(arcade.Window):
         if isinstance(config, Path) or isinstance(config, str):
             config_path = Path(config)
         elif not config:
-            config_path = xc.config_root / "gui_config.toml"
+            config_path = resources.files / "gui_config.toml"
         elif isinstance(config, dict):
             pass
         else:
@@ -1131,7 +1131,7 @@ def run_default(grid: xc.grid.Grid, override_config_path=None):
         Path to custom config file (default None)
     """
 
-    config_path = xc.crosscosmos_root / "gui" / "gui_config.toml"
+    config_path = resources.files / "gui_config.toml"
 
     if override_config_path:
         config_path = override_config_path
@@ -1146,7 +1146,7 @@ def run_default(grid: xc.grid.Grid, override_config_path=None):
 
 if __name__ == "__main__":
     # Parse config file
-    # config_path = xc.crosscosmos_root / "gui" / "gui_config.toml"
+    # config_path = resources.files/ "gui_config.toml"
     # config = ConfigParser()
     # config.read(config_path)
 

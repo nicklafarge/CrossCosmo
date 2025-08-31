@@ -3,6 +3,8 @@
 Source:
     https://github.com/Crossword-Nexus/collaborative-word-list
 
+Last checked: 08/31/2025
+
 """
 
 import logging

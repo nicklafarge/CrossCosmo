@@ -2,8 +2,8 @@
 Entry point for the CrossCosmos GUI
 """
 
-# Third-party
 from configparser import ConfigParser
+from importlib import resources
 
 import arcade
 
@@ -11,7 +11,7 @@ import arcade
 import crosscosmos as xc
 
 # Parse config file
-config_path = xc.crosscosmos_root / "gui" / "gui_config.toml"
+config_path = resources.files / "gui_config.toml"
 config = ConfigParser()
 config.read(config_path)
 

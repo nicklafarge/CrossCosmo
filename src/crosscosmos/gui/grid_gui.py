@@ -1,5 +1,6 @@
 import logging
 from configparser import ConfigParser
+from importlib import resources
 from pathlib import Path
 from typing import Tuple
 
@@ -815,7 +816,7 @@ class CrossCosmosGame(arcade.Window):
 
 
 def run_default(grid: Grid, override_config_path=None):
-    config_path = xc.crosscosmos_root / "gui" / "gui_config.toml"
+    config_path = resources.files / "gui_config.toml"
 
     if override_config_path:
         config_path = override_config_path

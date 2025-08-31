@@ -97,23 +97,6 @@ logger = logging.getLogger(__name__)
 crosserville_word_list_path = project_root / "resources" / "word_lists" / "crosserville_list.csv"
 crosserville_word_list_db_path = project_root / "word_dbs" / "crosserville_words.sqlite"
 
-db_uri = f"sqlite:///{crosserville_word_list_db_path}"
-df = pl.read_csv(crosserville_word_list_path, columns=["n", "s", "w"])
-df = df.rename({"w": "word", "n": "count"})
-
-s_min = df["s"].min()
-s_max = df["s"].max()
-s_span = s_max - s_min
-df = df.with_columns(
-    score=((pl.col("s")-s_min)/s_span*100).round()
-)
-df= df.drop("s")
-df.write_database(
-    table_name="CrosservilleWord",
-    connection=db_uri,
-    if_table_exists="replace"
-)
-
 crosserville_word_list_word_db = orm.Database()
 crosserville_word_list_word_db.bind(
     provider="sqlite",
@@ -131,11 +114,29 @@ class CrosservilleWord(crosserville_word_list_word_db.Entity):
 crosserville_word_list_word_db.generate_mapping(create_tables=True)
 
 
-def populate():
-    parse_word_score.parse_word_score(crosserville_word_list_path, CrosservilleWord, ";")
-    orm.commit()
+
+def read_crosserville_csv() -> pl.DataFrame:
+    df = pl.read_csv(crosserville_word_list_path, columns=["n", "s", "w"])
+    df = df.rename({"w": "word", "n": "count"})
+
+    s_min = df["s"].min()
+    s_max = df["s"].max()
+    s_span = s_max - s_min
+    df = df.with_columns(
+        score=((pl.col("s")-s_min)/s_span*100).round()
+    )
+    df= df.drop("s")
+    return df
+
+def save_crosserville_database():
+    db_uri = f"sqlite:///{crosserville_word_list_db_path}"
+    df = read_crosserville_csv()
+    df.write_database(
+        table_name="CrosservilleWord",
+        connection=db_uri,
+        if_table_exists="replace"
+    )
 
 
 if __name__ == "__main__":
-    # populate()
-    pass
+    save_crosserville_database()

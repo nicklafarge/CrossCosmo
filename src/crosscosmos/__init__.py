@@ -8,7 +8,7 @@ from .config import *
 import logging
 from .log_config import setup_logging
 
-setup_logging(project_root)
+setup_logging()
 logger = logging.getLogger("crosscosmos")
 
 # Basic classes

@@ -1,0 +1,18 @@
+[window]
+width=1700
+height=900
+title="CrossCosmos"
+
+[grid]
+outer_margin=20
+inner_margin=2
+
+[grid.width_pct]
+right_panel = 0.45
+
+[advanced]
+text_curser_blink_frequency=30
+#bottom=20
+#left=20
+#top=20
+#square_size=40
