@@ -6,7 +6,6 @@ from typing import Callable
 import polars as pl
 from pony import orm
 
-import crosscosmos as xc
 from crosscosmos import constants
 from crosscosmos.wordlists import LaFargeWord
 
@@ -71,7 +70,7 @@ def create_match_regex(match_str: str) -> str:
     while i < len(match_str):
         c = match_str[i]
 
-        if c in xc.constants.PLACEHOLDERS:
+        if c in constants.PLACEHOLDERS:
             regex_parts.append(constants.ANY_LETTER_RE_PATTERN)
         elif c == "*":
             regex_parts.append(f"{constants.ANY_LETTER_RE_PATTERN}*")
@@ -271,17 +270,17 @@ class Query:
         self.length(len(match_str))
 
         for i, c in enumerate(match_str):
-            if c in xc.constants.PLACEHOLDERS:
+            if c in constants.PLACEHOLDERS:
                 # Any letter - no additional filtering needed
                 continue
             elif c == "#":
                 # Consonant
-                self._query = self._query.filter(lambda w: w.word[i] in xc.constants.CONSONANTS)
-                # self._query = orm.select(w for w in self._query if w.word[i] in xc.constants.CONSONANTS)
+                self._query = self._query.filter(lambda w: w.word[i] in constants.CONSONANTS)
+                # self._query = orm.select(w for w in self._query if w.word[i] in constants.CONSONANTS)
             elif c == "@":
                 # Vowel
-                self._query = self._query.filter(lambda w: w.word[i] in xc.constants.VOWELS)
-                self._query = orm.select(w for w in self._query if w.word[i] in xc.constants.VOWELS)
+                self._query = self._query.filter(lambda w: w.word[i] in constants.VOWELS)
+                self._query = orm.select(w for w in self._query if w.word[i] in constants.VOWELS)
             else:
                 # Exact character match
                 self._query = self._query.filter(lambda w: w.word[i] == c)
@@ -313,7 +312,7 @@ def search(query_str: str, **kwargs) -> pl.DataFrame:
     pl.DataFrame
         Query results
     """
-    return xc.Query(**kwargs).match(str(query_str)).submit()
+    return Query(**kwargs).match(str(query_str)).submit()
 
 
 def contains_str_and_removed_str(db, substr: str, score_threshold=0, filter_start_end: bool = False):

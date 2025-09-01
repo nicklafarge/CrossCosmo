@@ -8,7 +8,7 @@ import crosscosmos as xc
 
 
 
-test_corpus = xc.corpus.Corpus.from_test()
+test_corpus = xc.corpus.TrieCorpus.from_test()
 grid = xc.grid.Grid((3, 5), test_corpus, shuffle=True)
 grid.set_word("CLASP", 0, 0, xc.WordDirection.HORIZONTAL, lock=True)
 grid.print()

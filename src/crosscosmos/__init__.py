@@ -18,22 +18,22 @@ from . import wordlists
 
 # Expose submodules
 from . import (
-    corpus,
     constants,
-    grid,
-    gui,
     io_utils,
     letter_utils,
     log_config,
     standards,
 )
-
-from .grid import Grid, Cell, Entry
-from .query import Query, search
 from .wordlists.lafarge import LaFargeWord
-from .refine import Refiner, WordMap, refine
-from . import scoring
+from .query import Query, search
+from .refine import Refiner, refine
 
+from . import corpus, scoring
+
+from . import grid
+from .grid import Grid, Cell, Entry
+
+from . import gui
 from .gui import grid_gui
 from .gui.new_grid import run_gui
 from .grid_pruner import GridPruningSolver

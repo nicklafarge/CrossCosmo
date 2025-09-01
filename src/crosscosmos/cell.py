@@ -7,26 +7,10 @@ from dataclasses import dataclass
 import copy
 import logging
 import random
-import string
-from collections.abc import Iterable
 from pathlib import Path
 
-import numpy as np
-import polars as pl
-from numpy.typing import NDArray
-from pydantic import BaseModel
-
-from crosscosmos import constants, io_utils, query
-from crosscosmos.corpus import Corpus
-from crosscosmos.enums import (
-    CellStatus,
-    GridDirection,
-    GridStatus,
-    GridSymmetry,
-    MoveDirection,
-    WordDirection,
-)
-from crosscosmos.wordlists.lafarge import LaFargeWord
+from crosscosmos import constants, io_utils
+from crosscosmos.enums import CellStatus, WordDirection
 
 logger = logging.getLogger(__name__)
 

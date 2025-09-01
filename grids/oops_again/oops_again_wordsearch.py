@@ -16,7 +16,7 @@ cols = ["word", "score", "length"]
 df_orig = xc.Query(db=LaFargeWord, default=False, q=0, limit=None).df()
 
 grid_path = Path(__file__).parent / "oops_again1.json"
-grid = xc.grid.Grid.load(grid_path, corpus=xc.corpus.Corpus.from_lafarge())
+grid = xc.grid.Grid.load(grid_path, corpus=xc.corpus.TrieCorpus.from_lafarge())
 
 
 ################################################################################################

@@ -840,7 +840,7 @@ if __name__ == "__main__":
     test_file = Path(xc.project_root / "test_grid_88.json")
     # test_file = Path(xc.crosscosmos_project_root / "test_grid_55.json")
     xc_grid = Grid.load(test_file)
-    xc_grid.corpus = xc.corpus.Corpus.from_test()
+    xc_grid.corpus = xc.corpus.TrieCorpus.from_test()
     xc_grid.build_tries()
     # xc_grid = Grid(size, corpus_backend)
 

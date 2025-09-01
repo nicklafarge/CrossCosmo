@@ -455,7 +455,7 @@ if __name__ == "__main__":
     # test_corpus = xc.corpus.Corpus.from_diehl()
     grid_size = (9, 8)
 
-    test_corpus = xc.corpus.Corpus.from_lafarge(max_length=8, q=1)
+    test_corpus = xc.corpus.TrieCorpus.from_lafarge(max_length=8, q=1)
 
     test_grid = xc.grid.Grid(grid_size, test_corpus, shuffle=False)
     test_grid.build_tries()

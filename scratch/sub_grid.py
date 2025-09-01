@@ -6,7 +6,7 @@ from crosscosmos.bot import DepthFirstSolver
 grid_path = xc.project_root / "scratch" / "sub_grid_main.json"
 
 
-corpus = xc.corpus.Corpus.from_lafarge(max_length=4, q=1)
+corpus = xc.corpus.TrieCorpus.from_lafarge(max_length=4, q=1)
 grid = xc.grid.Grid.load(grid_path, corpus=corpus)
 
 

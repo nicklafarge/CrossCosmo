@@ -4,10 +4,10 @@ Defines a crossword Grid class, interfacing between the data and gui laters
 """
 
 import copy
-from dataclasses import dataclass
 import logging
 import random
 import string
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable
 
@@ -16,7 +16,7 @@ import polars as pl
 from numpy.typing import NDArray
 
 from crosscosmos import constants, io_utils, query
-from crosscosmos.corpus import Corpus
+from crosscosmos.corpus import TrieCorpus
 from crosscosmos.enums import (
     CellStatus,
     GridDirection,
@@ -406,7 +406,7 @@ class Grid:
     def __init__(
         self,
         grid_size: tuple[int, int],
-        corpus: Corpus | None = None,
+        corpus: TrieCorpus | None = None,
         shuffle: bool = True,
         symmetry: GridSymmetry = GridSymmetry.ROTATIONAL,
         auto_symmetry: bool = False,
@@ -1138,7 +1138,7 @@ class Grid:
         query_cells: Entry | list[tuple[Cell, WordDirection]],
         grid_status: GridStatus = GridStatus.INCOMPLETE,
         query_level: int = 2,
-        corpus: Corpus | None = None,
+        corpus: TrieCorpus | None = None,
     ) -> int:
         """Count possible word configurations for a cell set.
 
@@ -1692,7 +1692,7 @@ class Grid:
 
 
 if __name__ == "__main__":
-    lc = Corpus.from_lafarge(q=2)
+    lc = TrieCorpus.from_lafarge(q=2)
     g = Grid((5, 5), lc)
     g.set_grid(1, 1, "B")
     g.set_grid(2, 2, "F")

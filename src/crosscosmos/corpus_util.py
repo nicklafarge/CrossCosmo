@@ -2,12 +2,12 @@
 
 import logging
 
-from crosscosmos.corpus import Corpus
+from crosscosmos.corpus import TrieCorpus
 
 logger = logging.getLogger(__name__)
 
 
-def match(corpus: Corpus, query: str | xc.grid.Entry):
+def match(corpus: TrieCorpus, query: str | xc.grid.Entry):
     return corpus.query(str(query))
 
 

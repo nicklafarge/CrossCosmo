@@ -9,100 +9,6 @@ from crosscosmos import constants, query
 
 logger = logging.getLogger(__name__)
 
-def initialize_word_index_map(max_len: int) -> dict[int, dict[int, dict[str, list]]]:
-    """Create nested dictionary mapping word lengths to positions to characters to indices."""
-    word_idx_map = {}
-    for word_len in range(1, max_len + 1):
-        word_idx_map[word_len] = {}
-        for pos in range(max_len):
-            word_idx_map[word_len][pos] = {char: [] for char in constants.ALPHABET}
-    return word_idx_map
-
-def create_word_index_map(df: pl.DataFrame):
-    max_len = df["word"].str.len_chars().max()
-    word_idx_map = initialize_word_index_map(max_len)
-
-    # Populate the index map
-    for w in df.iter_rows(named=True):
-        for i, c in enumerate(w["word"]):
-            if c not in constants.ALPHABET:
-                continue
-            word_idx_map[w["length"]][i][c].append(w["word"])
-
-    return word_idx_map
-
-
-class WordMap:
-    def __init__(self,df: pl.DataFrame):
-        """ Word-index map filterer for fast word filtering
-        """
-        self.words = create_word_index_map(df)
-
-    @lru_cache(maxsize=256)
-    def _generate_filter_func(self, constraints_tuple: tuple) -> callable:
-        """Generate optimized filter function for exact matches and subsets."""
-        if not constraints_tuple:
-            return lambda word_list: word_list
-
-        conditions = []
-        for pos, constraint in constraints_tuple:
-            if isinstance(constraint, str):
-                # Single letter constraint
-                conditions.append(f"w[{pos}] == {repr(constraint)}")
-            else:
-                # Subset constraint - constraint is a frozenset
-                letters = tuple(sorted(constraint))  # For consistent repr
-                conditions.append(f"w[{pos}] in {repr(letters)}")
-
-        condition_str = " and ".join(conditions)
-        code = f"lambda word_list: [w for w in word_list if {condition_str}]"
-        return eval(code)
-
-    def filter_by_letters(self, word_len: int,
-                         letter_constraints: dict[int, str | set[str]]) -> list[str]:
-        """Filter words by exact letters and/or letter subsets at positions."""
-        if not letter_constraints:
-            return []
-
-        # Convert sets to frozensets for hashing, keep strings as-is
-        hashable_constraints = []
-        for pos, constraint in sorted(letter_constraints.items()):
-            if isinstance(constraint, (set, frozenset)):
-                hashable_constraints.append((pos, frozenset(constraint)))
-            else:
-                hashable_constraints.append((pos, constraint))
-
-        constraints_tuple = tuple(hashable_constraints)
-
-        # Find best starting position (prefer exact matches, then smallest sets)
-        start_pos, start_constraint = min(
-            constraints_tuple,
-            key=lambda x: (isinstance(x[1], frozenset),
-                          len(x[1]) if isinstance(x[1], frozenset) else 1)
-        )
-
-        # Get initial word list
-        if isinstance(start_constraint, str):
-            # Exact match - use indexed structure
-            word_list = self.words[word_len][start_pos][start_constraint]
-        else:
-            # Subset - combine lists from multiple letters
-            word_list = []
-            for letter in start_constraint:
-                word_list.extend(self.words[word_len][start_pos][letter])
-
-        # Apply all constraints via generated function
-        filter_func = self._generate_filter_func(constraints_tuple)
-        return filter_func(word_list)
-
-    def match(self, match_str: str) -> list[str]:
-        """
-        """
-        match_dict = {
-            i: c for i, c in enumerate(match_str) if c.isalpha()
-        }
-        return self.filter_by_letters(len(match_str), match_dict)
-
 class Refiner:
     def __init__(
         self,
@@ -119,9 +25,7 @@ class Refiner:
         df : pl.DataFrame
             Database containing word data
         """
-        self.words = create_word_index_map(df)
-
-        self._df = df.clone()
+        self._df = df
 
         if alpha_only:
             self.alpha_only()
