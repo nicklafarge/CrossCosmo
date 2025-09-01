@@ -7,6 +7,7 @@ Source:
 
 import logging
 
+import polars as pl
 from pony import orm
 
 from crosscosmos.config import project_root
@@ -35,6 +36,12 @@ expanded_names_db.generate_mapping(create_tables=True)
 # Database population functions
 # ====================================================================================================
 
+def read_dataframe() -> pl.DataFrame:
+    """ Reads the wordlist csv into a polars dataframe
+    """
+    return pl.read_csv(expanded_names_file,  encoding="latin1", separator=";", has_header=False, 
+                       new_columns=["word", "score"])
+
 
 def populate():
     parse_word_score(expanded_names_file, ExpNameWord, ";", score_multiplier=1)
@@ -42,4 +49,6 @@ def populate():
 
 
 if __name__ == "__main__":
-    populate()
+    # populate()
+    df = read_dataframe()
+    print(df)

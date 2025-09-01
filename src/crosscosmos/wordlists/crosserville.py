@@ -115,7 +115,7 @@ crosserville_word_list_word_db.generate_mapping(create_tables=True)
 
 
 
-def read_crosserville_csv() -> pl.DataFrame:
+def read_dataframe() -> pl.DataFrame:
     df = pl.read_csv(crosserville_word_list_path, columns=["n", "s", "w"])
     df = df.rename({"w": "word", "n": "count"})
 
@@ -130,11 +130,11 @@ def read_crosserville_csv() -> pl.DataFrame:
 
 def save_crosserville_database():
     db_uri = f"sqlite:///{crosserville_word_list_db_path}"
-    df = read_crosserville_csv()
+    df = read_dataframe()
     df.write_database(
         table_name="CrosservilleWord",
         connection=db_uri,
-        if_table_exists="replace"
+        if_table_exists="append"
     )
 
 

@@ -10,11 +10,11 @@ Source (Diehl Trimmed List):
 
 import logging
 
+import polars as pl
 from pony import orm
 
-from .parse_utils import parse_word_score
-
 from crosscosmos.config import project_root
+from crosscosmos.wordlists.parse_utils import parse_word_score
 
 logger = logging.getLogger(__name__)
 
@@ -48,6 +48,10 @@ diehl_word_db.generate_mapping(create_tables=True)
 # Database population functions
 # ====================================================================================================
 
+def read_dataframe() -> pl.DataFrame:
+    """ Reads the wordlist csv into a polars dataframe
+    """
+    return pl.read_csv(diehl_path, separator=";", has_header=False, new_columns=["word", "score"])
 
 def populate():
     parse_word_score(diehl_path, DiehlWord, ";")
@@ -55,4 +59,5 @@ def populate():
 
 
 if __name__ == "__main__":
-    populate()
+    # populate()
+    df = read_dataframe()
