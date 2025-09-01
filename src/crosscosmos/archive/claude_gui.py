@@ -1152,7 +1152,7 @@ if __name__ == "__main__":
 
     # Load grid
     test_file = Path(xc.crosscosmos_root / "gui" / "test_grid.json")
-    xc_grid = xc.grid.Grid.load("/Users/lafarnb1/Projects/GitHub/CrossCosmos/grids/oops_again/oops_again1.json")
+    xc_grid = xc.grid.Grid.load("/grids/oops_again/oops_again1.json")
     # xc_grid = xc.grid.Grid.load("/Users/nlafarge/Repos/Personal/CrossCosmo/grids/oops_again/oops_again1.json")
     # xc_grid.corpus = xc.corpus.Corpus.from_lafarge()
     # xc_grid.build_tries()

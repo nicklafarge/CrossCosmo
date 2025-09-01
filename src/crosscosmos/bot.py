@@ -477,6 +477,6 @@ if __name__ == "__main__":
     solver = DepthFirstSolver()
     solver.solve(test_grid)
 
-    from crosscosmos.gui import grid_gui
+    from crosscosmos.archive import grid_gui
 
     grid_gui.run_default(test_grid)

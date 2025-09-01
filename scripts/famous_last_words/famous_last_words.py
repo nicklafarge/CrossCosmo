@@ -1,5 +1,5 @@
 from pathlib import Path
-from crosscosmos.gui import grid_gui
+from crosscosmos.archive import grid_gui
 import crosscosmos as xc
 
 grids_path = Path(__file__).parent / 'grids'

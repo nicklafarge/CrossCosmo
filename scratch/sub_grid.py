@@ -1,6 +1,4 @@
-from crosscosmos.grid import *
 import crosscosmos as xc
-from crosscosmos.gui import grid_gui
 from crosscosmos.bot import DepthFirstSolver
 
 grid_path = xc.project_root / "scratch" / "sub_grid_main.json"

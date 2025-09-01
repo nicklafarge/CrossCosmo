@@ -1,8 +1,5 @@
 from pathlib import Path
-from crosscosmos.gui import grid_gui
 import crosscosmos as xc
-
-from crosscosmos.wordlists import LaFargeWord
 
 grid_path = Path(__file__).parent / 'space_missions.json'
 xc_grid = xc.grid.Grid.load(grid_path)

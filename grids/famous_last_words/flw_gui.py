@@ -1,7 +1,7 @@
 from pathlib import Path
 
 import crosscosmos as xc
-from crosscosmos.gui import grid_gui
+from crosscosmos.archive import grid_gui
 
 grid_path = Path(__file__).parent / "flw2.json"
 xc_grid = xc.grid.Grid.load(grid_path)

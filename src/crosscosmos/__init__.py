@@ -34,7 +34,7 @@ from . import grid
 from .grid import Grid, Cell, Entry
 
 from . import gui
-from .gui import grid_gui
+from .archive import grid_gui
 from .gui.new_grid import run_gui
 from .grid_pruner import GridPruningSolver
 

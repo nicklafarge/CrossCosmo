@@ -4,7 +4,7 @@ import crosscosmos as xc
 from crosscosmos import query
 from crosscosmos.wordlists.crossword_tracker import XwordWord
 from crosscosmos.wordlists.lafarge import LaFargeWord
-from crosscosmos.gui import grid_gui
+from crosscosmos.archive import grid_gui
 
 
 def run_gui():
