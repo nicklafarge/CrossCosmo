@@ -1,10 +1,9 @@
 from pathlib import Path
 
 import crosscosmos as xc
-from crosscosmos import query
 from crosscosmos.wordlists.crossword_tracker import XwordWord
 from crosscosmos.wordlists.lafarge import LaFargeWord
-from crosscosmos.archive import grid_gui
+from crosscosmos.archive import grid_gui, query
 
 
 def run_gui():

@@ -12,14 +12,12 @@ from typing import overload
 
 import polars as pl
 
-from crosscosmos import constants, query, refine, scoring
-from crosscosmos.enums import CellStatus, WordDirection
-from crosscosmos.grid import Grid, Entry, Cell
-from crosscosmos.wordlists import LaFargeWord
+from crosscosmos import constants, refine, scoring, load_xc_wordlist
 from crosscosmos.corpus import WordMap
+from crosscosmos.enums import CellStatus, WordDirection
+from crosscosmos.grid import Cell, Entry, Grid
 
 logger = logging.getLogger(__name__)
-# logger.setLevel(logging.DEBUG)
 
 
 class GridPruningSolver:
@@ -583,7 +581,7 @@ if __name__ == "__main__":
     # Load word database into dataframe
     print("\nLoading word database...")
     min_score = 40  # Lower threshold for more words
-    word_df = query.Query(db=LaFargeWord, default=False, limit=None).min_score(min_score).df()
+    word_df = load_xc_wordlist(min_score=min_score)
     print(f"Loaded {len(word_df)} words with score >= {min_score}")
 
     # Create a simple 5x5 test grid

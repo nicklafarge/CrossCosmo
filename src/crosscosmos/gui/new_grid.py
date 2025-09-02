@@ -13,7 +13,6 @@ from crosscosmos.enums import CellStatus, GridSymmetry, MoveDirection, WordDirec
 from crosscosmos.grid import Cell, Grid
 from crosscosmos.gui.config import LayoutConfig
 from crosscosmos.gui.image_transform import RGBTransform
-from crosscosmos.query import Query
 from crosscosmos.grid_pruner import GridPruningSolver
 
 logger = logging.getLogger(__name__)

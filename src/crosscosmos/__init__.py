@@ -14,7 +14,6 @@ logger = logging.getLogger("crosscosmos")
 # Basic classes
 from .enums import *
 
-from . import wordlists
 
 # Expose submodules
 from . import (
@@ -24,8 +23,14 @@ from . import (
     log_config,
     standards,
 )
-from .wordlists.lafarge import LaFargeWord
-from .query import Query, search
+from .wordlist import (
+    load_collab_wordlist,
+    load_crosserville_wordlist,
+    load_diehl_wordlist,
+    load_expanded_names_wordlist,
+    load_spread_the_word_wordlist,
+    load_xc_wordlist,
+)
 from .refine import Refiner, refine
 
 from . import corpus, scoring

@@ -4,7 +4,7 @@ from itertools import chain
 import polars as pl
 import pygtrie
 
-from crosscosmos import Query, constants, query
+from crosscosmos import constants, load_xc_wordlist
 from crosscosmos.enums import ModelSource
 from crosscosmos.refine import Refiner
 
@@ -151,11 +151,15 @@ class WordMap:
 
 
 class Corpus:
-    def __init__(self, df: pl.DataFrame | None = None, db = None):
+    def __init__(self, df: pl.DataFrame | None = None):
         self._df: pl.DataFrame = df
-        self._db = db
+
+        if self._df is None:
+            logger.info("Loading default CrossCosmos wordlist...")
+            self._df = load_xc_wordlist()
 
         self._map: WordMap | None = None if self._df is None or self._df.is_empty() else WordMap(self._df)
+
 
     def __repr__(self):
         return f"CrossCosmos.Corpus(n={len(self.df)})"
@@ -163,10 +167,6 @@ class Corpus:
     @property
     def df(self) -> pl.DataFrame:
         return self._df
-
-    @property
-    def db(self):
-        return self._db
 
     def query_wordmap(self, query_str: str) -> pl.DataFrame:
         """Queries the corpus using the WordMap"""
@@ -180,17 +180,6 @@ class Corpus:
             raise ValueError("Cannot perform query: no DataFrame available")
         return Refiner(self._df, default=False, alpha_only=False).match(query_str).by_score()
 
-
-    def query_db(self, query_str: str, **kwargs) -> pl.DataFrame:
-        """Queries the corpus using the Database"""
-        if not self._db:
-            raise ValueError("Cannot perform query: no database available")
-        kwargs.setdefault("limit", None)
-        kwargs.setdefault("alpha_only", False)
-        kwargs.setdefault("default", False)
-        return Query(self.db, **kwargs).match(query_str).df()
-
-
     def query(self, query_str: str) -> pl.DataFrame:
         """Queries the current word list from the wordmap, dataframe, or database
         """
@@ -200,9 +189,6 @@ class Corpus:
         elif self._df is not None and not self._df.is_empty():
             # Dataframe
             return self.query_df(query_str)
-        elif self._db:
-            # Database
-            return self.query_db(query_str)
         else:
             raise ValueError("Unable to perform query: No data available!")
 
@@ -226,40 +212,21 @@ class TrieCorpus:
     def df(self, new_df):
         self._df = new_df
 
-    @classmethod
-    def from_crossword_tracker(cls, **kwargs):
-        from crosscosmos.wordlists.crossword_tracker import XwordWord
-
-        logger.info("Loading crossword tracker ...")
-        words = query.Query(XwordWord, **kwargs).df()
-        return cls(words, ModelSource.CrosswordTracker)
 
     @classmethod
     def from_collab(cls, **kwargs):
-        from crosscosmos.wordlists.collaborative_wordlist import CollabWordListWord
-
-        logger.info("Loading collab list ...")
-        words = query.Query(CollabWordListWord, **kwargs).df()
-        return cls(words, ModelSource.CollabWordList)
+        from crosscosmos.wordlist import load_collab_wordlist
+        return cls(load_collab_wordlist(), ModelSource.CollabWordList)
 
     @classmethod
     def from_lafarge(cls, max_length: int | None = None, **kwargs):
-        kwargs.setdefault("limit", None)
-        from crosscosmos.wordlists.lafarge import LaFargeWord
-
-        logger.info("Loading LaFarge...")
-        q = query.Query(LaFargeWord, **kwargs)
-        if max_length:
-            q.max_length(max_length)
-        return cls(q.df(), ModelSource.LaFarge)
+        from crosscosmos.wordlist import load_xc_wordlist
+        return cls(load_xc_wordlist(), ModelSource.CollabWordList)
 
     @classmethod
     def from_diehl(cls, **kwargs):
-        from crosscosmos.wordlists.diehl import DiehlWord
-
-        logger.info("Loading Diehl...")
-        words = query.Query(DiehlWord, **kwargs).df()
-        return cls(words, ModelSource.Diehl)
+        from crosscosmos.wordlist import load_diehl_wordlist
+        return cls(load_diehl_wordlist(), ModelSource.Diehl)
 
     def to_n_letter_corpus(self, n: int) -> "TrieCorpus":
         """Creates a new Corpus instance containing only words of a particular length"""

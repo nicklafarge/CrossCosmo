@@ -2,6 +2,7 @@
 
 import polars as pl
 
+from crosscosmos import refine
 from crosscosmos.config import project_root
 
 WORD_LISTS_FOLDER = project_root / "resources" / "word_lists"
@@ -290,7 +291,7 @@ def create_csvs():
     df_wordscore = df["word", "score"]
     df_wordscore.write_csv(XC_WORDSCORE_LIST_PATH, separator=";")
 
-def read_dataframe(word_score_only: bool = False) -> pl.DataFrame:
+def read_xc_wordlist(word_score_only: bool = False) -> pl.DataFrame:
     if word_score_only:
         return pl.read_csv(source=XC_WORDSCORE_LIST_PATH, separator=";")
 
@@ -308,8 +309,18 @@ def read_dataframe(word_score_only: bool = False) -> pl.DataFrame:
 
     return df.with_columns(source=pl.concat_list(expressions).list.drop_nulls())
 
+def load_xc_wordlist(word_score_only: bool = False, **kwargs) -> pl.DataFrame:
+    df = read_xc_wordlist(word_score_only)
+    if kwargs:
+        return refine(df, **kwargs)
+    else:
+        return df
 
 if __name__ == "__main__":
     create_csvs()
-    df = read_dataframe(word_score_only=False)
-    df_ws = read_dataframe(word_score_only=True)
+    df = load_xc_wordlist(word_score_only=False)
+    df_ws = load_xc_wordlist(word_score_only=True)
+
+    df_q3 = load_xc_wordlist(word_score_only=False, q=3, length=15)
+    dfz = load_xc_wordlist(word_score_only=False, q=4, length=15, new_to_nyt=True)
+

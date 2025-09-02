@@ -4,7 +4,7 @@ import string
 
 from pony import orm
 
-from crosscosmos import query
+from crosscosmos.archive import query
 from crosscosmos.wordlists import LaFargeWord
 
 dfl = query.contains_str_and_removed_str(LaFargeWord, "HOC", 0)

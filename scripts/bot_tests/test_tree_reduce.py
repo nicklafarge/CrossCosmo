@@ -27,7 +27,7 @@ cell_list = grid.cell_to_entry(x=x,
 original_grid = copy.deepcopy(grid)
 
 # Total possible words for candidate cell list
-possible_words = xc.query.match(test_corpus, str(cell_list))
+possible_words = crosscosmos.archive.query.match(test_corpus, str(cell_list))
 
 # That counts the number of possible entries
 

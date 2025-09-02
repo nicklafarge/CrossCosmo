@@ -11,11 +11,9 @@ import logging
 
 import polars as pl
 
-from crosscosmos import query, refine, constants
+from crosscosmos import refine, constants
 from crosscosmos.enums import CellStatus, WordDirection
 from crosscosmos.grid import Entry, Grid
-from crosscosmos.wordlists import LaFargeWord
-from crosscosmos.query import Query
 
 logger = logging.getLogger(__name__)
 

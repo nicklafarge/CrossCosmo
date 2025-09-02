@@ -8,10 +8,8 @@ from collections import defaultdict
 
 from constraint import Problem, AllDifferentConstraint
 
-from crosscosmos import query
 from crosscosmos.grid import Grid, Entry
 from crosscosmos.enums import WordDirection, CellStatus
-from crosscosmos.wordlists.lafarge import LaFargeWord
 
 logger = logging.getLogger(__name__)
 
@@ -22,6 +20,8 @@ class CrosswordConstraintSolver:
 
     Uses python-constraint to find valid solutions for partially filled grids,
     prioritizing words with higher scores from the database.
+
+    TODO - update to polars
     """
 
     def __init__(
@@ -167,11 +167,11 @@ class CrosswordConstraintSolver:
 
         # Query database
         candidates = (query.Query(db=self.db, default=False)
-                     .match(pattern)
-                     .min_score(self.min_score)
-                     .limit(self.max_candidates)
-                     .order_by_score()
-                     .words())
+                      .match(pattern)
+                      .min_score(self.min_score)
+                      .limit(self.max_candidates)
+                      .order_by_score()
+                      .words())
 
         # Cache and return
         self._word_cache[cache_key] = candidates

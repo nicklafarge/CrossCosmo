@@ -15,7 +15,7 @@ import numpy as np
 import polars as pl
 from numpy.typing import NDArray
 
-from crosscosmos import constants, io_utils, query
+from crosscosmos import constants, io_utils
 from crosscosmos.corpus import TrieCorpus
 from crosscosmos.enums import (
     CellStatus,
@@ -25,7 +25,6 @@ from crosscosmos.enums import (
     MoveDirection,
     WordDirection,
 )
-from crosscosmos.wordlists.lafarge import LaFargeWord
 
 logger = logging.getLogger(__name__)
 
@@ -1426,7 +1425,7 @@ class Grid:
         return self.word_len(i, j, WordDirection.VERTICAL)
 
     def get_possible_words(
-        self, entry_id: str, db=LaFargeWord, exclude: dict[int, list[str] | str] | None = None, **kwargs
+        self, entry_id: str, db, exclude: dict[int, list[str] | str] | None = None, **kwargs
     ) -> pl.DataFrame:
         """Get all possible words for a given entry given a data source and minimum score threshold
 
@@ -1441,6 +1440,9 @@ class Grid:
             "A" as the first character
         kwargs
             passed to Query
+
+
+        TODO - update to polars DatFrame
 
         Returns
         -------
