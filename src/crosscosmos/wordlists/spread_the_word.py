@@ -39,10 +39,12 @@ spread_the_word_list_word_db.generate_mapping(create_tables=True)
 def read_dataframe() -> pl.DataFrame:
     """ Reads the wordlist csv into a polars dataframe
     """
-    return pl.read_csv(spread_the_wrd_list_path,
-                       separator=";", 
-                       has_header=False, 
+    df = pl.read_csv(spread_the_wrd_list_path,
+                       separator=";",
+                       has_header=False,
                        new_columns=["word", "score"])
+    df = df.with_columns(pl.col("word").str.to_uppercase().alias("word"))
+    return df.sort("score", descending=True)
 
 
 

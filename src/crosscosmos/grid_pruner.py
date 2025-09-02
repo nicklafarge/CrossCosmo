@@ -12,10 +12,11 @@ from typing import overload
 
 import polars as pl
 
-from crosscosmos import WordMap, constants, query, refine, scoring
+from crosscosmos import constants, query, refine, scoring
 from crosscosmos.enums import CellStatus, WordDirection
 from crosscosmos.grid import Grid, Entry, Cell
 from crosscosmos.wordlists import LaFargeWord
+from crosscosmos.corpus import WordMap
 
 logger = logging.getLogger(__name__)
 # logger.setLevel(logging.DEBUG)

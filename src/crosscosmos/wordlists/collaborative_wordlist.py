@@ -9,11 +9,12 @@ Last checked: 08/31/2025
 
 import logging
 
+import polars as pl
 from pony import orm
 
-from .parse_utils import parse_word_score
-
 from crosscosmos.config import project_root
+from crosscosmos.wordlists.parse_utils import parse_word_score
+
 
 logger = logging.getLogger(__name__)
 
@@ -37,9 +38,14 @@ collab_word_list_word_db.generate_mapping(create_tables=True)
 
 
 def populate():
-    parse_word_score.parse_word_score(collab_word_list_path, CollabWordListWord, ";")
+    parse_word_score(collab_word_list_path, CollabWordListWord, ";")
     orm.commit()
 
+def read_dataframe() -> pl.DataFrame:
+    """ Reads the wordlist csv into a polars dataframe
+    """
+    return pl.read_csv(collab_word_list_path, separator=";", has_header=False, new_columns=["word", "score"])
 
 if __name__ == "__main__":
-    populate()
+    # populate()
+    cdf = read_dataframe()
