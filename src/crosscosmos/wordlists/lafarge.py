@@ -237,7 +237,7 @@ def update_score():
     orm.commit()
 
 
-def merge_scores_with_weights_native(
+def merge_scored_lists(
     dataframes: dict[str, pl.DataFrame],
     weights: dict[str, float] | float | None = None,
     discounts: dict[str, float] | None = None,
@@ -415,7 +415,7 @@ def from_dataframes():
     df_expnames = expanded_names.read_dataframe()
     df_stw = spread_the_word.read_dataframe()
 
-    return merge_scores_with_weights_native(
+    return merge_scored_lists(
         dataframes={
             "collab": df_collab,
             "crosserville": df_crosserville,

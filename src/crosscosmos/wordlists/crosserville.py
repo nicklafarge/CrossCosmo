@@ -90,7 +90,6 @@ import polars as pl
 from pony import orm
 
 from crosscosmos.config import project_root
-from crosscosmos.wordlists.parse_utils import parse_word_score
 
 logger = logging.getLogger(__name__)
 
