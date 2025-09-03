@@ -7,20 +7,15 @@ import crosscosmos as xc
 from crosscosmos import Refiner, WordMap
 
 max_len = 10
-df = xc.Query(q=3, limit=None).max_length(10).df()
-df = xc.Refiner(df).df()
+
+corpus = xc.Corpus()
+df = corpus.df
 refiner = xc.Refiner(df)
 word_map = WordMap(df)
 
-word_idx_map = {i: {j : {c: [] for c in xc.constants.ALPHABET} for j in range(max_len)} for i in range(1, max_len+1)}
-
-for w in df.iter_rows(named=True):
-    for i, c in enumerate(w["word"]):
-        word_idx_map[w["length"]][i][c].append(w["word"])
-
 word_len = 8
 def test1():
-    return [w for w in word_map.words[word_len][0]['A'] if w[2] == "A" and w[6] == "D"]
+    return [w for w, s in word_map.words[word_len][0]['A'] if w[2] == "A" and w[6] == "D"]
 
 def test2():
     return df.filter(
@@ -32,7 +27,7 @@ def test2():
 
 
 def test3():
-    return (xc.Refiner(df, default=False, alpha_only=False)
+    return (xc.Refiner(df)
             .length(word_len)
             .fix_letter(0, "A")
             .fix_letter(2, "A")
@@ -71,20 +66,24 @@ def test7():
         {2: "A", 6: {"A", "C", "L"}}
     )
 
+def test8():
+    return 10
+
 if __name__ == '__main__':
     import timeit
-    print(timeit.timeit("test1()", globals=locals(), number=30))
-    print(timeit.timeit("test2()", globals=locals(), number=30))
-    print(timeit.timeit("test3()", globals=locals(), number=30))
-    print(timeit.timeit("test4()", globals=locals(), number=30))
-    print(timeit.timeit("test5()", globals=locals(), number=30))
-    print(timeit.timeit("test6()", globals=locals(), number=30))
-    print(timeit.timeit("test7()", globals=locals(), number=30))
-
     v1 = test1()
     v2 = test2()
     v3 = test3()
     v4 = test4()
-    v5 = test5()
-    v6 = test6()
-    v7 = test7()
+    # v5 = test5()
+    # v6 = test6()
+    # v7 = test7()
+    # v8 = test8()
+
+
+    print(timeit.timeit("test3()", globals=locals(), number=100))
+    print(timeit.timeit("test4()", globals=locals(), number=100))
+    # print(timeit.timeit("test5()", globals=locals(), number=100))
+    # print(timeit.timeit("test6()", globals=locals(), number=100))
+    # print(timeit.timeit("test7()", globals=locals(), number=100))
+    # print(timeit.timeit("test8()", globals=locals(), number=100))

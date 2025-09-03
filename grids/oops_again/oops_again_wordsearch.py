@@ -4,7 +4,7 @@ import polars as pl
 
 import crosscosmos as xc
 from crosscosmos import LaFargeWord
-from crosscosmos.refine import Refiner
+from crosscosmos.refiner import Refiner
 
 ################################################################################################
 # Setup

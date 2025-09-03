@@ -2,89 +2,129 @@ import logging
 from itertools import chain
 
 import polars as pl
-import pygtrie
 
 from crosscosmos import constants, load_xc_wordlist
-from crosscosmos.enums import ModelSource
-from crosscosmos.refine import Refiner
+from crosscosmos.refiner import Refiner
 
 logger = logging.getLogger(__name__)
 
 WORD_SCORE_LIST_TYPE = list[tuple[str, float]]
 WORD_INDEX_MAP_TYPE = dict[int, dict[int, dict[str, WORD_SCORE_LIST_TYPE]]]
 
-
 def initialize_word_index_map(max_len: int) -> WORD_INDEX_MAP_TYPE:
-    """Creates an empty nested dictionary mapping word lengths to positions to characters to indices."""
+    """Creates an empty nested dictionary mapping word lengths to positions to characters.
+
+    Parameters
+    ----------
+    max_len : int
+        The maximum word length to accommodate in the dictionary structure.
+
+    Returns
+    -------
+    WORD_INDEX_MAP_TYPE
+        A pre-structured nested dictionary ready to be populated.
+    """
     word_idx_map = {}
-    for word_len in range(1, max_len + 1):
-        word_idx_map[word_len] = {}
-        for pos in range(max_len):
-            word_idx_map[word_len][pos] = {char: [] for char in constants.ALPHABET}
+    if max_len:
+        for word_len in range(1, max_len + 1):
+            word_idx_map[word_len] = {}
+            for pos in range(max_len):
+                word_idx_map[word_len][pos] = {char: [] for char in constants.ALPHABET}
     return word_idx_map
 
 
 def create_word_index_map(df: pl.DataFrame) -> WORD_INDEX_MAP_TYPE:
-    """Creates a word index map
+    """Creates a word index map using vectorized Polars operations.
 
-    E.g., for 4-letter words that being with "A":
-    4: {
-      0: {
-        "A": []
-      }
-    }
+    This method avoids slow row-wise iteration by first transforming the DataFrame
+    into a long format where each row represents a single character from a word,
+    then performs a group-by operation to aggregate words and scores.
 
     Parameters
     ----------
-    df : DataFrame containing words/scores to generate the index map
+    df : pl.DataFrame
+        DataFrame containing "word", "score", and "length" columns.
 
     Returns
     -------
-    dict
-        Index mapping
-
+    WORD_INDEX_MAP_TYPE
+        A nested dictionary mapping [length][position][char] to a list of (word, score) tuples.
     """
-    max_len = df["word"].str.len_chars().max()
+    if df.is_empty():
+        return {}
+
+    max_len = df["length"].max()
     word_idx_map = initialize_word_index_map(max_len)
 
-    # Populate the index map
-    for w in df.iter_rows(named=True):
-        for i, c in enumerate(w["word"]):
-            if c not in constants.ALPHABET:
-                continue
-            word_idx_map[w["length"]][i][c].append((w["word"], w["score"]))
+    # Create a long-form DataFrame where each row is a character of a word.
+    long_df = (
+        df.with_columns(
+            position=pl.int_ranges(0, pl.col("length")),
+            char=pl.col("word").str.split(by=""),
+        )
+        .explode(["position", "char"])
+        .filter(pl.col("char").is_in(list(constants.ALPHABET)))
+    )
+
+    # Group by the keys and aggregate words/scores into separate lists. This is
+    # more efficient than aggregating into a list of structs.
+    agg_df = long_df.group_by(["length", "position", "char"]).agg([
+        pl.col("word").alias("words"),
+        pl.col("score").alias("scores")
+    ])
+
+    # Iterate over the smaller aggregated DataFrame to build the final map.
+    for row in agg_df.iter_rows(named=True):
+        length, pos, char = row["length"], row["position"], row["char"]
+        # Use the highly efficient built-in zip() to create the tuples.
+        word_idx_map[length][pos][char] = list(zip(row["words"], row["scores"]))
 
     return word_idx_map
 
 
-def tuples_to_df(word_score_tuples: WORD_SCORE_LIST_TYPE) -> pl.DataFrame:
-    """Converts a list of (word, score) tuples to a polars dataframe"""
-    return pl.DataFrame(word_score_tuples, schema=["word", "score"])
+def tuples_to_df(word_score_tuples: list[tuple[str, float]]) -> pl.DataFrame:
+    """Converts a list of (word, score) tuples to a Polars DataFrame.
+
+    Parameters
+    ----------
+    word_score_tuples : list[tuple[str, float]]
+        A list of tuples, where each tuple contains a word and its score.
+
+    Returns
+    -------
+    pl.DataFrame
+        A Polars DataFrame with "word" and "score" columns. Returns an empty
+        DataFrame with the correct schema if the input list is empty.
+    """
+    return pl.DataFrame(word_score_tuples, schema=["word", "score"]) if word_score_tuples else pl.DataFrame(schema=["word", "score"])
 
 
 def is_wildcard_matched(word_letter: str, wildcard: str) -> bool:
-    """
-    Evaluates if a letter matches a letter or wildcard character
+    """Evaluates if a letter matches a specific character or wildcard pattern.
 
-    [A-Z] - specific character
-    * - any number of letters (0 or more)
-    # - consonant
-    @ - vowel
+    This function is case-insensitive and supports the following wildcards:
+    - '?' : Matches any single character (placeholder).
+    - '#' : Matches any consonant.
+    - '@' : Matches any vowel.
 
+    Parameters
     ----------
     word_letter : str
-        Letter to validate
+        A single character from the word being checked.
     wildcard : str
-        Letter or wildcard character to match against
+        The character or wildcard pattern to match against.
 
     Returns
     -------
     bool
-        True if word_letter is valid
+        True if the `word_letter` matches the `wildcard` condition, False otherwise.
 
+    Raises
+    ------
+    ValueError
+        If the `wildcard` is not a recognized character or pattern.
     """
-    wildcard = wildcard.upper().strip()
-
+    wildcard = str(wildcard).upper().strip()
     if wildcard in constants.ALPHABET:
         return word_letter == wildcard
     elif wildcard in constants.PLACEHOLDERS:
@@ -96,51 +136,104 @@ def is_wildcard_matched(word_letter: str, wildcard: str) -> bool:
     else:
         raise ValueError(f"Unexpected character: {wildcard}")
 
-
 class WordMap:
     def __init__(self, df: pl.DataFrame):
         """Word-index map filterer for fast word filtering"""
         self.words = create_word_index_map(df)
 
     def filter_by_letters(self, word_len: int, letter_location: dict[int, str] | None = None) -> pl.DataFrame:
-        """
-        Get words that match a specific input
+        """Filters words based on fixed letter positions, with a fast path for simple queries.
+
+        This method efficiently finds words of a specific length that match the given
+        letter constraints. It automatically detects if the query contains only
+        standard letters and, if so, uses a highly optimized "fast path" that
+        avoids function call overhead. For queries with wildcards ('#', '@'),
+        it seamlessly falls back to a more flexible matching function.
+
+        To further enhance performance, it analyzes the query to select the
+        smallest possible list of candidate words to iterate through.
 
         Parameters
         ----------
         word_len : int
-            Length of word
-        letter_location : dict[int, str]
-            Dictionary mapping fixed letter locations in the query string
+            The length of the words to search for.
+        letter_location : dict[int, str], optional
+            A dictionary mapping zero-based letter positions to a character
+            (e.g., 'A') or a wildcard ('#', '@'). If None or empty, all words
+            of the specified length are returned.
+
         Returns
         -------
         pl.DataFrame
+            A DataFrame containing the matching words and their associated scores,
+            sorted by score in descending order.
+
         """
-
-        def _all_with_length():
-            return tuples_to_df(
-                chain.from_iterable(
-                    value for inner_dict in self.words[word_len].values() for value in inner_dict.values()
-                )
-            )
-
+        # 1. Handle edge case of no specified letter locations.
         if not letter_location:
-            return _all_with_length()
+            all_words = chain.from_iterable(
+                v for pos_dict in self.words[word_len].values() for v in pos_dict.values()
+            )
+            return tuples_to_df(list(all_words))
 
-        letter_idx, letter = next(((k, v) for k, v in letter_location.items() if v in constants.ALPHABET), (None, None))
+        # 2. Determine if we can use the optimized "fast path".
+        is_fast_path = all(char in constants.ALPHABET for char in letter_location.values())
 
-        if not letter:
-            return _all_with_length()
+        # 3. Find the optimal starting list of words to minimize iteration.
+        # We check which letter/position pair in the query corresponds to the
+        # smallest pre-indexed list of words.
+        # 3. Find the optimal starting list of words to minimize iteration.
+        best_idx = -1
+        min_list_size = float("inf")
+        for idx, char in letter_location.items():
+            if char in constants.ALPHABET:
+                current_size = len(self.words[word_len][idx][char])
 
-        return tuples_to_df(
-            [
-                (w, score)
-                for w, score in self.words[word_len][letter_idx][letter]
-                if all(
-                    is_wildcard_matched(w[pos], letter) for pos, letter in letter_location.items() if pos != letter_idx
-                )
-            ]
-        )
+                # SHORT-CIRCUIT: If any required letter position has zero matches,
+                # the final result must be empty. We can exit immediately.
+                if current_size == 0:
+                    return pl.DataFrame({"word": [], "score": []}, schema=["word", "score"])
+
+                if current_size < min_list_size:
+                    min_list_size = current_size
+                    best_idx = idx
+
+        # 4. Select the initial word list and the remaining filter conditions.
+        if best_idx != -1:
+            start_char = letter_location[best_idx]
+            initial_list = self.words[word_len][best_idx][start_char]
+            # All other conditions that still need to be checked.
+            other_filters = {k: v for k, v in letter_location.items() if k != best_idx}
+        else:
+            # Fallback for queries containing only wildcards (e.g., "##@@").
+            initial_list = list(chain.from_iterable(
+                v for pos_dict in self.words[word_len].values() for v in pos_dict.values()
+            ))
+            other_filters = letter_location
+
+        if not other_filters:
+            return tuples_to_df(initial_list)
+
+        # 5. Execute the query using the appropriate path, building columns directly.
+        other_filters_items = other_filters.items()
+        words_col: list[str] = []
+        scores_col: list[float] = []
+
+        if is_fast_path:
+            # FAST PATH: Use direct, inline comparisons for maximum speed.
+            for word, score in initial_list:
+                if all(word[pos] == char for pos, char in other_filters_items):
+                    words_col.append(word)
+                    scores_col.append(score)
+        else:
+            # FLEXIBLE PATH: Use the wildcard matching function for complex queries.
+            for word, score in initial_list:
+                if all(is_wildcard_matched(word[pos], char) for pos, char in other_filters_items):
+                    words_col.append(word)
+                    scores_col.append(score)
+
+        # 6. Construct the DataFrame from the prepared columns.
+        return pl.DataFrame({"word": words_col, "score": scores_col}, schema=["word", "score"])
 
     def match(self, query_str: str) -> pl.DataFrame:
         """Query the wordmap based on a match string"""
@@ -151,13 +244,14 @@ class WordMap:
 
 
 class Corpus:
-    def __init__(self, df: pl.DataFrame | None = None):
+    def __init__(self, df: pl.DataFrame | None = None, **kwargs):
         self._df: pl.DataFrame = df
 
         if self._df is None:
             logger.info("Loading default CrossCosmos wordlist...")
-            self._df = load_xc_wordlist()
+            self._df = load_xc_wordlist(**kwargs)
 
+        logger.info("Creating wordmap representation...")
         self._map: WordMap | None = None if self._df is None or self._df.is_empty() else WordMap(self._df)
 
 
@@ -192,123 +286,41 @@ class Corpus:
         else:
             raise ValueError("Unable to perform query: No data available!")
 
-class TrieCorpus:
-    def __init__(self, df: pl.DataFrame, model: ModelSource):
-        self._df = df
-        self.trie = None
-        self.model = model
+df = load_xc_wordlist()
+word_map = WordMap(df)
 
-    def __getitem__(self, position):
-        return self.df[position]
+word_len = 8
+def test1():
+    return [w for w, s in word_map.words[word_len][0]['A'] if w[2] == "A" and w[6] == "D"]
 
-    def __repr__(self):
-        return f"CrossCosmos.Corpus(n={len(self.df)})"
+def test2():
+    return word_map.filter_by_letters(
+        word_len,
+        {0: "A", 2: "A", 6: "D"}
+    )
 
-    @property
-    def df(self):
-        return self._df
+def test3():
+    return word_map.filter_by_letters(
+        word_len,
+        {0: "A", 2: "#", 6: "D"}
+    )
 
-    @df.setter
-    def df(self, new_df):
-        self._df = new_df
-
-
-    @classmethod
-    def from_collab(cls, **kwargs):
-        from crosscosmos.wordlist import load_collab_wordlist
-        return cls(load_collab_wordlist(), ModelSource.CollabWordList)
-
-    @classmethod
-    def from_lafarge(cls, max_length: int | None = None, **kwargs):
-        from crosscosmos.wordlist import load_xc_wordlist
-        return cls(load_xc_wordlist(), ModelSource.CollabWordList)
-
-    @classmethod
-    def from_diehl(cls, **kwargs):
-        from crosscosmos.wordlist import load_diehl_wordlist
-        return cls(load_diehl_wordlist(), ModelSource.Diehl)
-
-    def to_n_letter_corpus(self, n: int) -> "TrieCorpus":
-        """Creates a new Corpus instance containing only words of a particular length"""
-        return self.to_subcorpus(n, n)
-
-    def max_length(self, word_len: int) -> "TrieCorpus":
-        """Filter to words less than or equal to a given length"""
-        self._df = Refiner(self._df, default=False).max_length(word_len).df()
-        return self
-
-    def to_subcorpus(self, min_len: int, max_len: int) -> "TrieCorpus":
-        """Creates a new Corpus instance containing only words between a min/max length bound"""
-        assert 3 <= min_len <= constants.NYT_SUNDAY_SIZE
-        assert 3 <= max_len <= constants.NYT_SUNDAY_SIZE
-        assert max_len >= min_len
-
-        sub_df = Refiner(self._df, default=False).length((min_len, max_len)).df()
-        return TrieCorpus(sub_df, self.model)
-
-    def to_n_tries(self, n: int, padded: bool = False) -> list[pygtrie.CharTrie]:
-        """Constructs 'n' trie instances for sequential word lengths, starting at 3.
-
-        Parameters
-        ----------
-        n : int
-            Number of tries to create, starting at 3
-        padded : bool, optional
-            If true, insert 'None' values at the beginning of the returned list (for indices 0,1,2)
-
-        Returns
-        -------
-        list of pygtrie.CharTrie:
-            List of create trie objects
-        """
-        assert n >= 3
-
-        tries = [self.to_n_letter_corpus(i).to_trie() for i in range(3, n + 1)]
-        return [None, None, None, *tries] if padded else tries
-
-    def query(self, query_str: str) -> pl.DataFrame:
-        """Queries the current word list"""
-        return Refiner(self._df, default=False).match(query_str).by_score()
-
-    def build_trie(self):
-        """Updates the 'trie' variable with values from the current word list"""
-        self.trie = self.to_trie()
-
-    def to_trie(self) -> pygtrie.CharTrie:
-        """Construct a trie from the current word list"""
-        t = pygtrie.CharTrie()
-        for row in self.df.iter_rows(named=True):
-            t[row["word"]] = True
-        return t
-
-    def subtree(self, prefix: str, as_corpus: bool = True):
-        """Uses the trie to extract words that exist given a particular prefix"""
-        if not self.trie:
-            self.build_trie()
-
-        try:
-            subree_words = [x[0] for x in self.trie.items(prefix)]
-        except KeyError:
-            return []
-
-        sub_df = self.df.filter(pl.col("word").str in subree_words)
-        if as_corpus:
-            return TrieCorpus(sub_df, self.model)
-
-        return sub_df
-
+def test4():
+    return Corpus()
 
 if __name__ == "__main__":
-    df = query.search("?????", limit=None)
-    _map = WordMap(df)
+    import timeit
+    print(timeit.timeit("test1()", globals=locals(), number=100))
+    print(timeit.timeit("test2()", globals=locals(), number=100))
+    print(timeit.timeit("test3()", globals=locals(), number=100))
 
-    q1 = _map.filter_by_letters(5, {2: "A", 3: "@"})
-    q11 = _map.match("--A@-")
-    q2 = _map.filter_by_letters(5, {2: "@", 3: "A"})
-    q21 = _map.match("--@A-")
-    q3 = _map.filter_by_letters(5)
-    q31 = _map.match("-----")
-    q32 = _map.filter_by_letters(5, dict.fromkeys(range(5), "-"))
+    print(timeit.timeit("test4()", globals=locals(), number=5))
 
-    corpus = Corpus(df=df)
-    print(corpus.query("--@AD"))
+    #
+    # corpus = Corpus(min_score=30, max_length=15, min_length=3, alpha_only=True)
+    # print(corpus.query("--@AD"))
+    # print(corpus.query("?????"))
+    # print(corpus.query("H???"))
+    #
+    # corpus.query("H???").filter(pl.col("score").is_between(20, 30))
+    # # corpus.df

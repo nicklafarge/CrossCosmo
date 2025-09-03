@@ -23,6 +23,7 @@ from . import (
     log_config,
     standards,
 )
+from .refiner import Refiner, refine
 from .wordlist import (
     load_collab_wordlist,
     load_crosserville_wordlist,
@@ -31,9 +32,10 @@ from .wordlist import (
     load_spread_the_word_wordlist,
     load_xc_wordlist,
 )
-from .refine import Refiner, refine
 
 from . import corpus, scoring
+
+from .corpus import Corpus, WordMap
 
 from . import grid
 from .grid import Grid, Cell, Entry

@@ -292,6 +292,18 @@ def create_csvs():
     df_wordscore.write_csv(XC_WORDSCORE_LIST_PATH, separator=";")
 
 def read_xc_wordlist(word_score_only: bool = False) -> pl.DataFrame:
+    """ Load the default CrossCosmos wordlist from a CSV file
+
+    Parameters
+    ----------
+    word_score_only : bool
+        If true, load the csv that contains only the "word" and "score" column
+
+    Returns
+    -------
+    pl.DataFrame
+        Loaded wordlist
+    """
     if word_score_only:
         return pl.read_csv(source=XC_WORDSCORE_LIST_PATH, separator=";")
 
@@ -310,6 +322,20 @@ def read_xc_wordlist(word_score_only: bool = False) -> pl.DataFrame:
     return df.with_columns(source=pl.concat_list(expressions).list.drop_nulls())
 
 def load_xc_wordlist(word_score_only: bool = False, **kwargs) -> pl.DataFrame:
+    """ Load the default CrossCosmos wordlist from a CSV file
+
+    Parameters
+    ----------
+    word_score_only : bool
+        If true, load the csv that contains only the "word" and "score" column
+    kwargs
+        Passed to the 'refine' function
+
+    Returns
+    -------
+    pl.DataFrame
+        Loaded wordlist, refined by kwargs (if specified)
+    """
     df = read_xc_wordlist(word_score_only)
     if kwargs:
         return refine(df, **kwargs)
@@ -317,7 +343,7 @@ def load_xc_wordlist(word_score_only: bool = False, **kwargs) -> pl.DataFrame:
         return df
 
 if __name__ == "__main__":
-    create_csvs()
+    # create_csvs()
     df = load_xc_wordlist(word_score_only=False)
     df_ws = load_xc_wordlist(word_score_only=True)
 

@@ -1,11 +1,11 @@
 """ """
 import string
 
-PLACEHOLDERS = [r"?", r"-", r" "]
+PLACEHOLDERS = {r"?", r"-", r" "}
 
-ALPHABET = string.ascii_uppercase
-VOWELS = "aeiouAEIOU"
-CONSONANTS = "bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ"
+ALPHABET = set(string.ascii_uppercase)
+VOWELS = set("aeiouAEIOU")
+CONSONANTS = set("bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ")
 ANY_LETTER_RE_PATTERN = "[a-zA-Z]"
 
 NYT_REGULAR_SIZE = 15

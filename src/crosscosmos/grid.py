@@ -16,7 +16,6 @@ import polars as pl
 from numpy.typing import NDArray
 
 from crosscosmos import constants, io_utils
-from crosscosmos.corpus import TrieCorpus
 from crosscosmos.enums import (
     CellStatus,
     GridDirection,
@@ -379,8 +378,6 @@ class Grid:
     ----------
     grid_size : tuple[int, int]
         Dimensions as (rows, columns)
-    corpus : Corpus, optional
-        Word corpus for solving
     shuffle : bool, optional
         Whether to shuffle letter queues (default: True)
     symmetry : GridSymmetry, optional
@@ -405,7 +402,6 @@ class Grid:
     def __init__(
         self,
         grid_size: tuple[int, int],
-        corpus: TrieCorpus | None = None,
         shuffle: bool = True,
         symmetry: GridSymmetry = GridSymmetry.ROTATIONAL,
         auto_symmetry: bool = False,
@@ -430,14 +426,6 @@ class Grid:
         # Word tracking
         self.h_heads = []
         self.v_heads = []
-
-        # Corpus and solving
-        if corpus:
-            max_len = max(self.row_count, self.col_count)
-            self.corpus = corpus.max_length(max_len)
-        else:
-            self.corpus = None
-        self.tries = []
 
         # Grid properties
         self.symmetry: GridSymmetry = symmetry
@@ -1137,7 +1125,6 @@ class Grid:
         query_cells: Entry | list[tuple[Cell, WordDirection]],
         grid_status: GridStatus = GridStatus.INCOMPLETE,
         query_level: int = 2,
-        corpus: TrieCorpus | None = None,
     ) -> int:
         """Count possible word configurations for a cell set.
 
